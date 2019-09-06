@@ -1,0 +1,95 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/view/home/index",
+			"style": {
+				"navigationBarTitleText": "背单词",
+				"usingComponents": {
+					"van-icon": "../../../wxcomponents/vant-weapp/dist/icon/index",
+					"van-progress": "../../../wxcomponents/vant-weapp/dist/progress/index"
+				}
+		
+			}
+		},
+		{
+			"path": "pages/view/home/revisionPlan/index",
+			"style": {
+				"navigationBarTitleText": "修改计划",
+				"usingComponents": {
+					"van-icon": "../../../../wxcomponents/vant-weapp/dist/icon/index",
+					"van-progress": "../../../wxcomponents/vant-weapp/dist/progress/index"
+				}
+			}
+		},
+		{
+			"path": "pages/view/home/wordTasks/viewRanking/index",
+			"style": {
+				"navigationBarTitleText": "任务排行榜"
+			}
+		},
+		{
+			"path": "pages/view/home/wordTasks/index",
+			"style": {
+				"navigationBarTitleText": "单词任务",
+				"usingComponents": {
+					"van-icon": "../../../../wxcomponents/vant-weapp/dist/icon/index"
+				}
+			}
+		},
+	
+		{
+			"path": "pages/view/home/cardCalendar/index",
+			"style": {
+				"navigationBarTitleText": "打卡日历",
+				"usingComponents": {
+					"van-icon": "../../../../wxcomponents/vant-weapp/dist/icon/index"
+				}
+			}
+		},
+		{
+			"path": "pages/view/rankingList/index",
+			"style": {
+				"navigationBarTitleText": "排行榜"
+			}
+		},
+		{
+			"path": "pages/view/my/index",
+			"style": {
+				"navigationBarTitleText": "我的"
+			}
+		}
+
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8",
+		"navigationStyle": "custom"
+	},
+	"tabBar": {
+		"color": "#979DAB",
+		"selectedColor": "#03BFB7",
+		"borderStyle": "white",
+		"list": [{
+				"selectedIconPath": "static/images/tabbar_icon_home_selected@2x.png",
+				"iconPath": "static/images/tabbar_icon_home_default@2x.png",
+				"pagePath": "pages/view/home/index",
+				"text": "首页"
+			},
+			{
+				"selectedIconPath": "static/images/tabbar_icon_top_selected@2x.png",
+				"iconPath": "static/images/tabbar_icon_top_default@2x.png",
+				"pagePath": "pages/view/rankingList/index",
+				"text": "排行榜"
+			},
+			{
+				"selectedIconPath": "static/images/tabbar_icon_my_selected@2x.png",
+				"iconPath": "static/images/tabbar_icon_my_default@2x.png",
+				"pagePath": "pages/view/my/index",
+				"text": "我的"
+			}
+		]
+	}
+
+}
