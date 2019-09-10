@@ -8,6 +8,24 @@
 		<!-- 内容 -->
 		<view class="wordTasksConBox">
 			<view class="taskVocabularyBox">
+				<view class="taskBox">
+					<!-- 左边 -->
+					<view class="taskLeft">
+						<view class="taskTitle">任务词汇量：<label class="taskNum">10</label></view>
+						<view class="taskTime">7-10 15:00</view>
+					</view>
+					<!-- 中间 -->
+					<view class="taskCenter" v-if="isDone">
+						<image src="../../../../static/images/Completed@2x.png" mode=""></image>
+					</view>
+					<!-- 右边 -->
+					<view class="taskRight">
+						<view class="status study" @click="toStudy()">
+							去学习
+						</view>
+					</view>
+				</view>
+
 				<view class="taskBox" v-for='(item,index) in 20' :key='index'>
 					<!-- 左边 -->
 					<view class="taskLeft">
@@ -21,11 +39,11 @@
 					<!-- 右边 -->
 					<view class="taskRight">
 						<view class="status" :class="isDone==true?'viewRanking':'study'">
-							{{isDone==true?'查看排行':'去学习'}}							
+							{{isDone==true?'查看排行':'去学习'}}
 						</view>
 					</view>
 				</view>
-			
+
 			</view>
 
 		</view>
@@ -36,7 +54,7 @@
 	export default {
 		data() {
 			return {
-				isDone:true
+				isDone: true
 			}
 		},
 		methods: {
@@ -46,6 +64,12 @@
 					delta: 1
 				});
 			},
+			// 去学习跳转
+			toStudy() {
+				uni.navigateTo({
+					url: '../wordTasks/wordTaskLearning/study/index'
+				})
+			},
 		}
 	}
 </script>
@@ -54,12 +78,14 @@
 	.wordTasks {
 		.wordTasksConBox {
 			margin-top: 160rpx;
-			padding:0 40rpx;			
+			padding: 0 40rpx;
 			box-sizing: border-box;
+
 			.taskVocabularyBox {
 				width: 99%;
 				border: 1px solid rgba(243, 245, 245, 1);
 				border-radius: 5px;
+
 				.taskBox {
 					background: rgba(255, 255, 255, 1);
 					width: 100%;

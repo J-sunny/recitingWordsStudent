@@ -15,10 +15,10 @@
 						<view class="planTitle">当前计划</view>
 						<view class="dayNum">每日学习、复习词数</view>
 					</view>
-					<view class="right">
-						<label class="num" for="">20</label>
+					<view class="right" @click="showPopupWord()">
+						<label class="num" for="">{{wordsNum}}</label>
 						<label class="ci" for="">词</label>
-						<van-icon class='arrowDown' name="arrow-down" />
+						<van-icon class="arrowDown" :name="show==true?'arrow-up':'arrow-down'" />
 					</view>
 				</view>
 				<!-- 当前词书 -->
@@ -50,7 +50,7 @@
 
 				</view>
 				<!-- 清除当前词书学习记录 -->
-				<view class="clearRecordsBox">
+				<view class="clearRecordsBox" @click="showPopupClear()">
 					<image class="iconPic" src="../../../../static/images/icon_del@2x.png" mode=""></image>
 					<label>清除当前词书学习记录</label>
 				</view>
@@ -77,13 +77,46 @@
 							</label>
 						</view>
 					</view>
-					<view class="right">
+					<view class="right" @click="showPopupBook()">
 						<label for="" class="statusBtn selected">当前已选</label>
 					</view>
 				</view>
-
 			</view>
 		</view>
+
+		<!-- 选择每日学习词数弹出框 -->
+		<van-popup :show="showSelectWord" position="bottom" style="height: 20%" @close="onCloseWord()">
+			<van-picker show-toolbar title="选择每日学习词数" :default-index="2" :columns="columns" @cancel="onCancelWord()" @confirm="onConfirmWord()" />
+		</van-popup>
+		<!-- 选择图书已学完弹框 -->
+		<view class="selectedBookBox">
+			<van-popup :show="showSelectBook">
+				<view class="selectBookBox">
+					<van-icon @click="onCloseBook()" class="closeBtn" name="cross" />
+					<image class="selBookCover" src="../../../../static/images/img_end@2x.png"  mode=""></image>
+					<view class="complete">当前词书已学完</view>
+					<view class="eliminate">是否清除学习记录重新学习</view>
+					<view class="re-study">重新学习</view>
+					<view class="changeBook">换一本书</view>
+				</view>
+			</van-popup>
+		</view>
+
+		<!-- 清除学习记录弹框 -->
+		<view class="selectedBookBox">
+			<van-popup :show="showClearBox">
+				<view class="selectBookBox">
+					<van-icon @click="onCloseClear()" class="closeBtn" name="cross" />
+					<view class="complete">是否清除学习记录重新学习</view>
+					<view class="eliminate">清除记录后，当前学习进度将清零</view>
+					<view class="re-study">不了，我还想继续学习</view>
+					<view class="reStudy">重新学习</view>
+				</view>
+			</van-popup>
+		</view>
+
+
+
 	</view>
 </template>
 
@@ -91,7 +124,12 @@
 	export default {
 		data() {
 			return {
-				isSing: true
+				isSing: true,
+				showSelectWord: false,
+				showSelectBook: false,
+				showClearBox: false,
+				columns: ['10', '20', '30', '40', '50', '60', '70'],
+				wordsNum: '20'
 			}
 		},
 		methods: {
@@ -100,7 +138,47 @@
 				uni.navigateBack({
 					delta: 1
 				});
-			}
+			},
+			//选择每日学习词数弹出框 打开弹出层
+			showPopupWord() {
+				this.showSelectWord = true
+			},
+			// 选择每日学习词数弹出框 关闭弹出层
+			onCloseWord() {
+				this.showSelectWord = false
+			},
+			//选择每日学习词数弹出框   picker选择器取消事件
+			onCancelWord() {
+				// Toast('取消');
+				this.showSelectWord = false
+			},
+			//选择每日学习词数弹出框   picker选择器确认事件
+			onConfirmWord(event) {
+				const {
+					picker,
+					value,
+					index
+				} = event.detail;
+				// Toast(`当前值：${value}, 当前索引：${index}`);
+				this.wordsNum = value
+				this.showSelectWord = false
+			},
+			// 选择图书已学完弹框   打开弹出层
+			showPopupBook() {
+				this.showSelectBook = true
+			},
+			// 选择图书已学完弹框   关闭弹出层
+			onCloseBook() {
+				this.showSelectBook = false
+			},
+			// 清除学习记录弹框   打开弹出层
+			showPopupClear() {
+				this.showClearBox = true
+			},
+			// 清除学习记录弹框   关闭弹出层
+			onCloseClear() {
+				this.showClearBox = false
+			},
 		}
 	}
 </script>
@@ -336,10 +414,11 @@
 
 			// 下部分
 			.bottomBox {
-				padding:40rpx;
-				background-color:#FFFFFF;
+				padding: 40rpx;
+				background-color: #FFFFFF;
 				margin-top: 16rpx;
-				 .allTitle {
+
+				.allTitle {
 					font-size: 36rpx;
 					font-family: PingFang SC;
 					font-weight: bold;
@@ -348,6 +427,104 @@
 					margin-bottom: 32rpx;
 				}
 			}
+
+
 		}
+
+		// 选择图书已学完弹框
+		.van-popup {
+			border-radius: 20rpx;
+		}
+
+		.selectedBookBox {
+			display: block;
+			width: 560rpx;
+			background: rgba(255, 255, 255, 1);
+			opacity: 1;
+			position: relative;
+
+			.selectBookBox {
+				width: 100%;
+				height: 100%;
+				padding: 60rpx 80rpx;
+				box-sizing: border-box;
+
+				.closeBtn {
+					position: absolute;
+					top: 28rpx;
+					right: 28rpx;
+				}
+
+				.selBookCover {
+					width: 192rpx;
+					height: 128rpx;
+					background-color: #F0F0F2;
+					display: block;
+					margin: 0 auto;
+				}
+
+				.complete {
+					font-size: 32rpx;
+					font-family: PingFang SC;
+					font-weight: bold;
+					color: rgba(0, 0, 0, 1);
+					margin-top: 32rpx;
+					text-align: center;
+				}
+
+				.eliminate {
+					font-size: 28rpx;
+					font-family: PingFang SC;
+					font-weight: 400;
+					color: rgba(92, 99, 113, 1);
+					margin-top: 16rpx;
+					text-align: center;
+				}
+
+				.re-study {
+					width: 440rpx;
+					height: 80rpx;
+					background: linear-gradient(90deg, rgba(15, 196, 183, 1) 0%, rgba(63, 210, 177, 1) 100%);
+					border-radius: 40rpx;
+					text-align: center;
+					font-size: 28rpx;
+					font-family: PingFang SC;
+					font-weight: bold;
+					line-height: 80rpx;
+					color: rgba(255, 255, 255, 1);
+					margin-top: 56rpx;
+				}
+				.reStudy{
+					width: 440rpx;
+					height: 80rpx;
+					background:rgba(239,239,241,1);
+					border:1px solid rgba(151,157,171,1);
+					border-radius: 40rpx;
+					text-align: center;
+					font-size: 28rpx;
+					font-family: PingFang SC;
+					font-weight: bold;
+					line-height: 80rpx;
+					color: #5C6371;
+					margin-top: 56rpx;
+				}
+
+				.changeBook {
+					width: 440rpx;
+					height: 80rpx;
+					background: rgba(243, 255, 254, 1);
+					border: 2rpx solid rgba(15, 196, 183, 1);
+					border-radius: 40rpx;
+					text-align: center;
+					font-size: 28rpx;
+					font-family: PingFang SC;
+					font-weight: bold;
+					line-height: 80rpx;
+					color: rgba(3, 191, 183, 1);
+					margin-top: 32rpx;
+				}
+			}
+		}
+
 	}
 </style>

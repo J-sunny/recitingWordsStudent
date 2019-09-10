@@ -25,7 +25,7 @@
 							</view>
 							<!-- 右边 -->
 							<view class="taskRight">
-								<view class="status study">
+								<view class="status study" @click="toStudy()">
 									去学习
 								</view>
 							</view>
@@ -132,7 +132,13 @@
 				uni.navigateTo({
 					url: 'revisionPlan/index'
 				})
-			}
+			},
+			// 去学习跳转
+			toStudy() {
+				uni.navigateTo({
+					url: 'wordTasks/wordTaskLearning/study/index'
+				})
+			},
 		}
 	}
 </script>

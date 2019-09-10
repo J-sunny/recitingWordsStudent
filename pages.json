@@ -1,5 +1,75 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+	{
+		"path": "pages/view/my/login/index",
+		"style": {
+			"navigationBarTitleText": "登录"
+		}
+	},
+		{
+			"path": "pages/view/my/index",
+			"style": {
+				"navigationBarTitleText": "我的",
+				"usingComponents": {
+					"van-popup": "../../../wxcomponents/vant-weapp/dist/popup/index"
+				}
+			}
+		},
+		
+		{
+			"path": "pages/view/my/dataDetails/index",
+			"style": {
+				"navigationBarTitleText": "数据详情"
+			}
+		},
+		
+		{
+			"path": "pages/view/my/jionClass/index",
+			"style": {
+				"navigationBarTitleText": "加入班级",
+				"usingComponents": {
+					"van-icon": "../../../wxcomponents/vant-weapp/dist/icon/index",
+					"van-picker": "../../../wxcomponents/vant-weapp/dist/picker/index",
+					"van-popup": "../../../wxcomponents/vant-weapp/dist/popup/index"
+				}
+			}
+		},
+		{
+			"path": "pages/view/rankingList/learningDetails",
+			"style": {
+				"navigationBarTitleText": "学习详情"
+			}
+		},
+		{
+			"path": "pages/view/rankingList/index",
+			"style": {
+				"navigationBarTitleText": "排行榜",
+				"usingComponents": {
+					"van-icon": "../../../wxcomponents/vant-weapp/dist/icon/index",
+					"van-picker": "../../../wxcomponents/vant-weapp/dist/picker/index",
+					"van-popup": "../../../wxcomponents/vant-weapp/dist/popup/index"
+				}
+			}
+		},
+		{
+			"path": "pages/view/home/wordTasks/wordTaskLearning/test/passedTask",
+			"style": {
+				"navigationBarTitleText": "单词任务测试",
+				"usingComponents": {
+					"van-icon": "../../../wxcomponents/vant-weapp/dist/icon/index"
+				}
+			}
+		},
+		{
+			"path": "pages/view/home/wordTasks/wordTaskLearning/test/index",
+			"style": {
+				"navigationBarTitleText": "单词任务测试",
+				"usingComponents": {
+					"van-icon": "../../../wxcomponents/vant-weapp/dist/icon/index",
+					"van-progress": "../../../wxcomponents/vant-weapp/dist/progress/index"
+				}
+			}
+		},
 		{
 			"path": "pages/view/home/index",
 			"style": {
@@ -8,16 +78,31 @@
 					"van-icon": "../../../wxcomponents/vant-weapp/dist/icon/index",
 					"van-progress": "../../../wxcomponents/vant-weapp/dist/progress/index"
 				}
-		
 			}
 		},
+
+		{
+			"path": "pages/view/home/wordTasks/wordTaskLearning/study/index",
+			"style": {
+				"navigationBarTitleText": "单词任务学习",
+				"usingComponents": {
+					"van-icon": "../../../wxcomponents/vant-weapp/dist/icon/index",
+					"van-progress": "../../../wxcomponents/vant-weapp/dist/progress/index",
+					"van-popup": "../../../wxcomponents/vant-weapp/dist/popup/index"
+				}
+			}
+		},
+
 		{
 			"path": "pages/view/home/revisionPlan/index",
 			"style": {
 				"navigationBarTitleText": "修改计划",
 				"usingComponents": {
 					"van-icon": "../../../../wxcomponents/vant-weapp/dist/icon/index",
-					"van-progress": "../../../wxcomponents/vant-weapp/dist/progress/index"
+					"van-progress": "../../../wxcomponents/vant-weapp/dist/progress/index",
+					"van-picker": "../../../wxcomponents/vant-weapp/dist/picker/index",
+					"van-popup": "../../../wxcomponents/vant-weapp/dist/popup/index",
+					"van-toast": "../../../wxcomponents/vant-weapp/dist/toast/index"
 				}
 			}
 		},
@@ -36,7 +121,6 @@
 				}
 			}
 		},
-	
 		{
 			"path": "pages/view/home/cardCalendar/index",
 			"style": {
@@ -46,18 +130,28 @@
 				}
 			}
 		},
+		// 听力选词组件
 		{
-			"path": "pages/view/rankingList/index",
+			"path": "pages/component/listeningWordSelection",
 			"style": {
-				"navigationBarTitleText": "排行榜"
+				"navigationBarTitleText": "单词任务测试",
+				"usingComponents": {
+					"van-icon": "../../../../wxcomponents/vant-weapp/dist/icon/index"
+				}
 			}
 		},
+		// 英语选意组件
 		{
-			"path": "pages/view/my/index",
+			"path": "pages/component/englishSelection",
 			"style": {
-				"navigationBarTitleText": "我的"
+				"navigationBarTitleText": "单词任务测试",
+				"usingComponents": {
+					"van-icon": "../../../../wxcomponents/vant-weapp/dist/icon/index"
+				}
 			}
 		}
+
+
 
 	],
 	"globalStyle": {
