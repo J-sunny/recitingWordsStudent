@@ -61,7 +61,7 @@
 					date: '2019-09-16'
 				},
 				],
-				isSing:true
+				isSing:false
 			}
 		},
 
@@ -93,13 +93,13 @@
 			padding: 0 40rpx;
 			box-sizing: border-box;
 			overflow: hidden;
-
 			// 累计签到
 			.cumulativeCheckBox {
 				width: 100%;
 				height: 196rpx;
-				background: linear-gradient(332deg, rgba(15, 196, 183, 1) 0%, rgba(63, 210, 177, 1) 100%);
+				background-image: url(../../../../static/images/bg@2x.png);
 				opacity: 1;
+				background-size: 100% 100%;
 				border-radius: 10px;
 				overflow: hidden;
 

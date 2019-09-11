@@ -1,5 +1,5 @@
 <template>
-	<view class="myBox">
+	<view class="myBox">	
 		<!-- 头部 -->
 		<view class="mHeadBox">
 			<image class="backgroundImg" src="../../../static/images/bj@2x.png" mode=""></image>
@@ -11,7 +11,7 @@
 			</view>
 			<!-- 登录未加入班级状态 -->
 			<view class="loginedHeadBox">
-				<view class="infoBox">
+				<view class="infoBox" @click="toMyInformation()">
 					<image class="infoTx" src="../../../static/images/people@2.png" mode=""></image>
 					<label class="infoName">
 						<view class="name">Fanny萱</view>
@@ -106,7 +106,7 @@
 	export default {
 		data() {
 			return {
-				show: true
+				show: false
 			}
 		},
 		methods: {
@@ -120,6 +120,12 @@
 			look() {
 				uni.navigateTo({
 					url: 'dataDetails/index'
+				})
+			},
+			// 个人资料跳转
+			toMyInformation(){
+				uni.navigateTo({
+					url: 'myInformation/index'
 				})
 			},
 			// 退出登录
@@ -140,7 +146,7 @@
 		// 头部
 		.mHeadBox {
 			position: fixed;
-			top: 0;
+			top:0 ;
 			left: 0;
 			width: 100%;
 

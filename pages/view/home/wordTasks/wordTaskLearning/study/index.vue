@@ -123,10 +123,16 @@
 
 		/* 内容 */
 		.TaskLearningBox {
-			margin-top: 128rpx;
+			margin-top: 248rpx;
 
 			// 进度条框
 			.progressBox {
+				position:fixed;
+				top: 128rpx;
+				left: 0;
+				background-color:#FFFFFF;
+				width: 100%;
+				z-index:100;
 
 				.progressTxtBox {
 					height: 74rpx;

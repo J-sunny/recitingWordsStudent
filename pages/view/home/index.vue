@@ -66,7 +66,7 @@
 						<label class="verticalLine"></label>每日一练
 					</view>
 					<view class="right">
-						<label class="explain" v-if="!isSing">完成当日学习即可签到</label>
+						<label class="explain" v-if="!isSing" @click="toSignIn()">完成当日学习即可签到</label>
 						<label class="explain" v-if="isSing">今日已签到</label>
 						<label class="sing">
 							<!-- <van-icon name="sign" /> -->
@@ -81,7 +81,10 @@
 							<image class="cover" src="../../../static/images/img_book1@2x.png" mode=""></image>
 						</view>
 						<view class="right">
-							<view class="practiceTitleBox"><label for="" class="practiceTitle">四级词汇</label><label for="" class="updatePlan" @tap="updatePlan()"><image class="updateIcon" src="../../../static/images/home_icon_switchover@2x.png" mode=""></image>修改计划</label></view>
+							<view class="practiceTitleBox"><label for="" class="practiceTitle">四级词汇</label><label for="" class="updatePlan"
+								 @tap="updatePlan()">
+									<image class="updateIcon" src="../../../static/images/home_icon_switchover@2x.png" mode=""></image>修改计划
+								</label></view>
 							<view class="progressBar">
 								<van-progress percentage="50" color="#0FC4B7" :show-pivot='false' />
 							</view>
@@ -111,7 +114,7 @@
 	export default {
 		data() {
 			return {
-				isSing: true
+				isSing: false
 			}
 		},
 		methods: {
@@ -139,6 +142,12 @@
 					url: 'wordTasks/wordTaskLearning/study/index'
 				})
 			},
+			// 签到页面跳转
+			toSignIn(){
+				uni.navigateTo({
+					url: 'cardCalendar/index'
+				})
+			}
 		}
 	}
 </script>
@@ -398,7 +407,8 @@
 									line-height: 40rpx;
 									color: rgba(46, 53, 72, 1);
 									text-align: center;
-									.updateIcon{
+
+									.updateIcon {
 										width: 16rpx;
 										height: 16rpx;
 									}

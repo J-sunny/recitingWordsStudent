@@ -1,11 +1,24 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
-	{
-		"path": "pages/view/my/login/index",
-		"style": {
-			"navigationBarTitleText": "登录"
-		}
-	},
+		{
+			"path": "pages/view/my/allCollections/index",
+			"style": {
+				"navigationBarTitleText": "所有收藏",
+				"usingComponents": {
+					"van-icon": "../../../wxcomponents/vant-weapp/dist/icon/index"
+				}
+			}
+		},
+		{
+			"path": "pages/view/home/index",
+			"style": {
+				"navigationBarTitleText": "背单词",
+				"usingComponents": {
+					"van-icon": "../../../wxcomponents/vant-weapp/dist/icon/index",
+					"van-progress": "../../../wxcomponents/vant-weapp/dist/progress/index"
+				}
+			}
+		},
 		{
 			"path": "pages/view/my/index",
 			"style": {
@@ -15,14 +28,39 @@
 				}
 			}
 		},
-		
+		{
+			"path": "pages/view/my/myInformation/index",
+			"style": {
+				"navigationBarTitleText": "我的资料",
+				"usingComponents": {
+					"van-icon": "../../../wxcomponents/vant-weapp/dist/icon/index",
+					"van-picker": "../../../wxcomponents/vant-weapp/dist/picker/index",
+					"van-popup": "../../../wxcomponents/vant-weapp/dist/popup/index",
+					"van-datetime-picker": "../../../wxcomponents/vant-weapp/dist/datetime-picker/index"
+				}
+			}
+		},
+		{
+			"path": "pages/view/my/login/index",
+			"style": {
+				"navigationBarTitleText": "登录"
+			}
+		},
+		{
+			"path": "pages/view/my/myInformation/changePassword",
+			"style": {
+				"navigationBarTitleText": "修改密码"
+			}
+		},
+
+
 		{
 			"path": "pages/view/my/dataDetails/index",
 			"style": {
 				"navigationBarTitleText": "数据详情"
 			}
 		},
-		
+
 		{
 			"path": "pages/view/my/jionClass/index",
 			"style": {
@@ -70,17 +108,6 @@
 				}
 			}
 		},
-		{
-			"path": "pages/view/home/index",
-			"style": {
-				"navigationBarTitleText": "背单词",
-				"usingComponents": {
-					"van-icon": "../../../wxcomponents/vant-weapp/dist/icon/index",
-					"van-progress": "../../../wxcomponents/vant-weapp/dist/progress/index"
-				}
-			}
-		},
-
 		{
 			"path": "pages/view/home/wordTasks/wordTaskLearning/study/index",
 			"style": {

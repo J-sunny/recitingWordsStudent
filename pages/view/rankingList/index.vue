@@ -11,13 +11,13 @@
 				<!-- 切换栏 -->
 				<view class="switchBar">
 					<view class="navs" @click="changeNav('wordNum')" :class="activeNavs=='wordNum'?'activeNavs':''">单词数
-						<van-icon class='arrows' name="play" />
+						<image v-if="activeNavs=='wordNum'" class="arrows" src="../../../static/images/Polygon 3@2x.png" mode=""></image>
 					</view>
 					<view class="navs"  @click="changeNav('studyTime')" :class="activeNavs=='studyTime'?'activeNavs':''">学习时长
-						<van-icon class='arrows' name="play" />
+					<image  v-if="activeNavs=='studyTime'" class="arrows" src="../../../static/images/Polygon 3@2x.png" mode=""></image>
 					</view>
 					<view class="navs"  @click="changeNav('onLineTime')" :class="activeNavs=='onLineTime'?'activeNavs':''">在线时长
-						<van-icon class='arrows' name="play" />
+					<image v-if="activeNavs=='onLineTime'"  class="arrows" src="../../../static/images/Polygon 3@2x.png" mode=""></image>
 					</view>
 				</view>
 			</view>
@@ -217,11 +217,13 @@
 						position: relative;
 
 						.arrows {
-							position: absolute;
+							width: 20rpx;
+							height: 12rpx;
 							// transform: rotate(-90deg);
 							position: absolute;
 							bottom: 0;
 							left: 50%;
+							margin-left: -10rpx;
 						}
 					}
 
@@ -324,7 +326,7 @@
 					text-align: center;
 
 					.list {
-						width: 200rpx;
+						width: 32%;
 						display: inline-block;
 					}
 
