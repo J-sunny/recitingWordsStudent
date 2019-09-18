@@ -19,7 +19,7 @@
 					<view class="text">完成当日学习即可签到</view>
 				</view>
 				<view class="right">
-					<label for="" class="siginInBtn" :class="isSing==true?'siginIned':'notSiginIned'">{{isSing==true?'已签到':'签到'}}</label>
+					<label for="" class="siginInBtn" :class="isSing==true?'siginIned':'notSiginIned'" @click="siginIn()">{{isSing==true?'已签到':'签到'}}</label>
 				</view>
 			</view>
 		</view>
@@ -41,27 +41,26 @@
 		},
 		data() {
 			return {
-				selected: [
+				selected: [{
+						date: '2019-09-05'
+					},
 					{
-					date: '2019-09-05'
-				},
-				{
-					date: '2019-09-01'
-				},
-				{
-					date: '2019-09-08'
-				},
-				{
-					date: '2019-09-22'
-				},
-				{
-					date: '2019-09-26'
-				},
-				{
-					date: '2019-09-16'
-				},
+						date: '2019-09-01'
+					},
+					{
+						date: '2019-09-08'
+					},
+					{
+						date: '2019-09-22'
+					},
+					{
+						date: '2019-09-26'
+					},
+					{
+						date: '2019-09-16'
+					},
 				],
-				isSing:false
+				isSing: false
 			}
 		},
 
@@ -74,12 +73,29 @@
 			},
 			// 日历
 			change(e) {
-				console.log(e)
+				// console.log(e)
 			},
-
+			// 签到
+			siginIn() {
+				var now = new Date();
+				var year = now.getFullYear();
+				var month = now.getMonth() + 1;
+				var day = now.getDate();
+				if (month < 10) {
+					month = '0' + month;
+				};
+				if (day < 10) {
+					day = '0' + day;
+				};
+				let systemDate = year + '-' + month + '-' + day;
+				// console.log(systemDate)
+				this.selected.push({
+					date: systemDate
+				})
+				this.isSing=true
+				// console.log(this.selected)
+			}
 		},
-
-
 	};
 </script>
 
@@ -87,12 +103,13 @@
 <style lang="scss">
 	.calendarBox {
 		background: #FFFFFF;
-	
+
 		.signInBox {
 			margin-top: 164rpx;
 			padding: 0 40rpx;
 			box-sizing: border-box;
 			overflow: hidden;
+
 			// 累计签到
 			.cumulativeCheckBox {
 				width: 100%;
@@ -168,11 +185,13 @@
 						opacity: 1;
 						line-height: 64rpx;
 					}
-					.notSiginIned{
+
+					.notSiginIned {
 						background: linear-gradient(90deg, rgba(15, 196, 183, 1) 0%, rgba(63, 210, 177, 1) 100%);
 						color: rgba(255, 255, 255, 1);
 					}
-					.siginIned{
+
+					.siginIned {
 						background-color: #F5F6FB;
 						color: #A8AAB3;
 					}

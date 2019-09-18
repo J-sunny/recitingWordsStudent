@@ -1,5 +1,5 @@
 <template>
-	<view class="myBox">	
+	<view class="myBox">
 		<!-- 头部 -->
 		<view class="mHeadBox">
 			<image class="backgroundImg" src="../../../static/images/bj@2x.png" mode=""></image>
@@ -76,7 +76,7 @@
 						</view>
 					</view>
 					<view class="conRight">
-						<label class="looAll">查看全部</label>
+						<label class="looAll" @click="toAllCollections()">查看全部</label>
 						<label class="specialReview">专项复习</label>
 					</view>
 				</view>
@@ -110,6 +110,12 @@
 			}
 		},
 		methods: {
+			// 返回
+			goBack() {
+				uni.navigateBack({
+					delta: 1
+				});
+			},
 			// 加入班级跳转
 			jion() {
 				uni.navigateTo({
@@ -123,14 +129,36 @@
 				})
 			},
 			// 个人资料跳转
-			toMyInformation(){
+			toMyInformation() {
 				uni.navigateTo({
 					url: 'myInformation/index'
 				})
 			},
+			// 查看全部收藏跳转
+			toAllCollections() {
+				uni.navigateTo({
+					url: 'allCollections/index'
+				})
+			},
 			// 退出登录
-			loginOut(){
-				this.show=false
+			loginOut() {
+				this.$minApi.loginOut({}).then(data => {
+					// Toast(data.msg);
+					console.log(data)
+					uni.removeStorageSync('token');
+					uni.redirectTo({
+						url: '../my/login/index'
+					});
+				})
+				this.show = false
+			}
+		},
+		created() {
+			// 没有登录则跳转到登录页面
+			if (!uni.getStorageSync('token')) {
+				uni.redirectTo({
+					url: 'login/index'
+				});
 			}
 		}
 	}
@@ -146,7 +174,7 @@
 		// 头部
 		.mHeadBox {
 			position: fixed;
-			top:0 ;
+			top: 0;
 			left: 0;
 			width: 100%;
 

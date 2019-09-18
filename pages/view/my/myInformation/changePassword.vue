@@ -15,7 +15,7 @@
 					<!-- <input class="pwdInput" type="{{pwdType1}}" placeholder="请填写旧密码" /> -->
 					<input class="pwdInput" :password="isPassword1" type="text" placeholder="请填写旧密码" v-model="oldPwd"></input>
 
-					<view class="pwdEyeBox" @click="lookPwd1()">
+					<view class="pwdEyeBox" @click="lookPwd(1)">
 						<image class="open" :src="isPassword1==true?'../../../../static/images/eye@2x.png':'../../../../static/images/closeEye@2x.png'"
 						 mode=""></image>
 					</view>
@@ -24,7 +24,7 @@
 					<label class="pwdName">新密码</label>
 					<!-- <input class="pwdInput" type="{{pwdType2}}" placeholder="请填写新密码" /> -->
 					<input class="pwdInput" :password='isPassword2' type="text" placeholder="请填写新密码" v-model="newPwd"></input>
-					<view class="pwdEyeBox" @tap="lookPwd2()">
+					<view class="pwdEyeBox" @tap="lookPwd(2)">
 						<image class="open" :src="isPassword2==true?'../../../../static/images/eye@2x.png':'../../../../static/images/closeEye@2x.png'"
 						 mode=""></image>
 					</view>
@@ -32,13 +32,15 @@
 			</view>
 			<!--  -->
 			<view class="explain">密码长度8-12位，需包含数字、字母、符号至少两种或以上元素</view>
-			<view class="saveBtn" :class="showNew==true&&showOld==true?'activeSaveBtn':''">保存</view>
-
+			<view v-if='oldPwd.length==0||newPwd.length==0' class="saveBtn">保存</view>
+			<view v-if='oldPwd.length>0&&newPwd.length>0' class="saveBtn activeSaveBtn" @click="changePwd()">保存</view>
 		</view>
+		<van-toast id="van-toast" />
 	</view>
 </template>
 
 <script>
+	import Toast from '../../../../wxcomponents/vant-weapp/dist/toast/toast';
 	export default {
 		data() {
 			return {
@@ -48,31 +50,11 @@
 				isPassword2: true,
 				oldPwd: '',
 				newPwd: '',
-				showOld: false,
-				showNew: false
+				studentPwd: ''
 			}
 		},
 		components: {
 
-		},
-		watch: {
-
-			// oldPwd(){
-			// 	if(this.oldPwd!=''){
-			// 		console.log(this.oldPwd)
-			// 		this.showOld==true
-			// 	}
-			// 	
-			// 	console.log(this.showOld)
-			// 	console.log(this.oldPwd)
-			// },
-			// newPwd(){
-			// 	if(this.newPwd!=''){
-			// 		this.showNew==true
-			// 	}
-			// 	
-			// 	console.log(this.showNew)
-			// }
 		},
 		methods: {
 			// 返回
@@ -82,29 +64,56 @@
 				});
 			},
 			// 切换input框类型
-			lookPwd1() {
-				console.log('1113')
-				// var isPassword=!this.isPassword
-				this.isPassword1 = !this.isPassword1
-				console.log(this.isPassword1, '111’')
-
-				if (this.pwdType1 == 'password') {
-					this.pwdType1 = 'text'
-				} else if (this.pwdType1 == 'text') {
-					this.pwdType1 = 'password'
+			lookPwd(val) {
+				console.log(val)
+				if (val == 1) {
+					this.isPassword1 = !this.isPassword1
+					if (this.pwdType1 == 'password') {
+						this.pwdType1 = 'text'
+					} else if (this.pwdType1 == 'text') {
+						this.pwdType1 = 'password'
+					}
+				}
+				if (val == 2) {
+					this.isPassword2 = !this.isPassword2
+					// console.log(this.isPassword2, '111’')
+					if (this.pwdType2 == 'password') {
+						this.pwdType2 = 'text'
+					} else if (this.pwdType2 == 'text') {
+						this.pwdType2 = 'password'
+					}
 				}
 			},
 			lookPwd2() {
-				console.log('222’')
-				this.isPassword2 = !this.isPassword2
-				console.log(this.isPassword2, '111’')
-				if (this.pwdType2 == 'password') {
-					this.pwdType2 = 'text'
-				} else if (this.pwdType2 == 'text') {
-					this.pwdType2 = 'password'
+
+			},
+			// 获取用户信息
+			getUserInfo() {
+				this.$minApi.getUserInfo({}).then(data => {
+					this.studentPwd = data.data.studentPwd
+					// console.log(data.data.studentPwd)
+				})
+			},
+			// 修改密码
+			changePwd() {
+				// console.log(this.studentPwd)
+				// console.log(this.oldPwd)
+				if (this.studentPwd != this.oldPwd) {
+					Toast('旧密码不正确')
+					return
+				}
+				var reg = /(?!^\d+$)(?!^[A-Za-z]+$)(?!^[^A-Za-z0-9]+$)(?!^.*[\u4E00-\u9FA5].*$)^\S{8,12}$/;
+				if (!reg.test(this.newPwd)) {
+					Toast('新密码格式不正确！')
+					return
+				} else {
+					Toast('密码正确！')
 				}
 			}
 		},
+		created() {
+			this.getUserInfo()
+		}
 	}
 </script>
 
@@ -245,7 +254,7 @@
 			}
 
 			.activeSaveBtn {
-				background: linear-gradient(180deg, rgba(254, 201, 27, 1) 0%, rgba(255, 187, 0, 1) 100%);
+				background: #03BFB7;
 			}
 		}
 	}

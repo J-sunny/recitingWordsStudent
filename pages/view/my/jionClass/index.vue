@@ -11,17 +11,20 @@
 		<view class="joinConBox">
 			<view class="selectBox" @click="showBox('School')">
 				<image class="iconPic" src="../../../../static/images/schoolTB@2x.png" mode=""></image>
-				<label class="placeholder" for="">请选择学校</label>
+				<label v-if="selectSchool==''" class="placeholder" for="">请选择学校</label>
+				<label v-if="selectSchool!=''" class="placeholder" for="">{{selectSchool}}</label>
 				<image class="s_arrow" src="../../../../static/images/arrow@2x.png" mode=""></image>
 			</view>
 			<view class="selectBox" @click="showBox( 'Grade')">
 				<image class="iconPic" src="../../../../static/images/nianjiTB@2x.png" mode=""></image>
-				<label class="placeholder" for="">请选择年级</label>
+				<label v-if="selectGrade==''" class="placeholder" for="">请选择年级</label>
+				<label v-if="selectGrade!=''" class="placeholder" for="">{{selectGrade}}</label>
 				<image class="s_arrow" src="../../../../static/images/arrow@2x.png" mode=""></image>
 			</view>
 			<view class="selectBox" @click="showBox('Class')">
 				<image class="iconPic" src="../../../../static/images/classTB@2x.png" mode=""></image>
-				<label class="placeholder" for="">请选择班级</label>
+				<label v-if="selectClass==''" class="placeholder" for="">请选择班级</label>
+				<label v-if="selectClass!=''" class="placeholder" for="">{{selectClass}}</label>
 				<image class="s_arrow" src="../../../../static/images/arrow@2x.png" mode=""></image>
 			</view>
 			<!-- 确认按钮 -->
@@ -49,11 +52,14 @@
 		data() {
 			return {
 				showSchool: false,
-				columnsSchool: ['XXX学校', 'XXX学校', 'XXX学校', 'XXX学校', 'XXX学校'],
+				columnsSchool: [],
 				showGrade: false,
 				columnsGrade: ['XX年级', 'XX年级', 'XX年级', 'XX年级', 'XX年级', 'XX年级'],
 				showClass: false,
 				columnsClass: ['XX班级', 'XX班级', 'XX班级', 'XX班级', 'XX班级', 'XX班级'],
+				selectSchool: '',
+				selectClass: '',
+				selectGrade: ''
 			}
 		},
 		methods: {
@@ -67,30 +73,65 @@
 			showBox(val) {
 				if (val == 'School') {
 					this.showSchool = !this.showSchool
-				} if (val == 'Grade') {
+				}
+				if (val == 'Grade') {
 					this.showGrade = !this.showGrade
-				}  if (val == 'Class') {
+				}
+				if (val == 'Class') {
 					this.showClass = !this.showClass
 				} else {}
 			},
 			onCancel(val) {
 				if (val == 'School') {
 					this.showSchool = false
-				} if (val == 'Grade') {
+				}
+				if (val == 'Grade') {
 					this.showGrade = false
-				}  if (val == 'Class') {
+				}
+				if (val == 'Class') {
 					this.showClass = false
 				} else {}
 			},
 			onConfirmSchool(e) {
 				this.showSchool = false
+				console.log(e)
+				this.selectSchool = e.detail.value
 			},
 			onConfirmGrade(e) {
 				this.showGrade = false
+				this.selectGrade = e.detail.value
 			},
 			onConfirmClass(e) {
 				this.showClass = false
-			}
+				this.selectClass = e.detail.value
+			},
+			// 获取学校下拉列表
+			getSchoolList() {
+				this.$minApi.schoolList({}).then(data => {
+					console.log(data)
+					data.data.forEach(val => {
+						this.columnsSchool.push(val.schoolName)
+					})
+					// this.columnsSchool = data.data.schoolName;
+
+					console.log(this.columnsSchool)
+				})
+			},
+			// 获取班级下拉列表
+			getClassList() {
+				this.$minApi.classList({}).then(data => {
+					console.log(data)
+					data.data.forEach(val => {
+						this.columnsClass.push(val.classlName)
+					})
+					// this.columnsSchool = data.data.schoolName;
+					console.log(this.columnsClass)
+				})
+			},
+		},
+		created() {
+			this.getSchoolList()
+			this.getClassList()
 		}
 	}
 </script>

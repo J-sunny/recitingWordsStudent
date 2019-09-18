@@ -65,8 +65,8 @@
 					<view class="left">
 						<label class="verticalLine"></label>每日一练
 					</view>
-					<view class="right">
-						<label class="explain" v-if="!isSing" @click="toSignIn()">完成当日学习即可签到</label>
+					<view class="right" @click="toSignIn()">
+						<label class="explain" v-if="!isSing" >完成当日学习即可签到</label>
 						<label class="explain" v-if="isSing">今日已签到</label>
 						<label class="sing">
 							<!-- <van-icon name="sign" /> -->
@@ -81,28 +81,28 @@
 							<image class="cover" src="../../../static/images/img_book1@2x.png" mode=""></image>
 						</view>
 						<view class="right">
-							<view class="practiceTitleBox"><label for="" class="practiceTitle">四级词汇</label><label for="" class="updatePlan"
-								 @tap="updatePlan()">
+							<view class="practiceTitleBox"><label for="" class="practiceTitle">{{dailyPracticeList.thesaurusName}}</label><label
+								 for="" class="updatePlan" @tap="updatePlan()">
 									<image class="updateIcon" src="../../../static/images/home_icon_switchover@2x.png" mode=""></image>修改计划
 								</label></view>
 							<view class="progressBar">
-								<van-progress percentage="50" color="#0FC4B7" :show-pivot='false' />
+								<van-progress :percentage="progress" color="#0FC4B7" :show-pivot='false' />
 							</view>
 							<view class="progressInfo">
 								<label class="learnedBox">
 									<van-icon class='play' name="play" />
-									<label for="" class="learnedNum">已学 200</label>
+									<label for="" class="learnedNum">已学 {{dailyPracticeList.completeCount}}</label>
 								</label>
 								<label class="allWord">
-									总词数 2000
+									总词数 {{dailyPracticeList.thesaurusCount}}
 								</label>
 							</view>
 						</view>
 					</view>
 					<!-- 复习 开始学习按钮 -->
 					<view class="btnBox">
-						<label class="review">复习(20)</label>
-						<label class="startBtn">开始学习(20)</label>
+						<label class="review">复习({{dailyPracticeList.reviewCount}})</label>
+						<label class="startBtn">开始学习({{dailyPracticeList.studyCount}})</label>
 					</view>
 				</view>
 			</view>
@@ -114,7 +114,9 @@
 	export default {
 		data() {
 			return {
-				isSing: false
+				isSing: false,
+				dailyPracticeList: [],
+				progress: ''
 			}
 		},
 		methods: {
@@ -143,11 +145,22 @@
 				})
 			},
 			// 签到页面跳转
-			toSignIn(){
+			toSignIn() {
 				uni.navigateTo({
 					url: 'cardCalendar/index'
 				})
+			},
+			// 获取每日一练数据
+			dailyPractice() {
+				this.$minApi.dailyPractice({}).then(data => {
+					this.dailyPracticeList = data.data
+					this.progress = data.data.completeCount / data.data.thesaurusCount * 100
+					console.log(this.progress)
+				})
 			}
+		},
+		created() {
+			this.dailyPractice()
 		}
 	}
 </script>

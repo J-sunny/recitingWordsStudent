@@ -1,15 +1,6 @@
 {
 	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
 		{
-			"path": "pages/view/my/allCollections/index",
-			"style": {
-				"navigationBarTitleText": "所有收藏",
-				"usingComponents": {
-					"van-icon": "../../../wxcomponents/vant-weapp/dist/icon/index"
-				}
-			}
-		},
-		{
 			"path": "pages/view/home/index",
 			"style": {
 				"navigationBarTitleText": "背单词",
@@ -19,6 +10,16 @@
 				}
 			}
 		},
+		{
+			"path": "pages/view/my/allCollections/index",
+			"style": {
+				"navigationBarTitleText": "所有收藏",
+				"usingComponents": {
+					"van-icon": "../../../wxcomponents/vant-weapp/dist/icon/index"
+				}
+			}
+		},
+
 		{
 			"path": "pages/view/my/index",
 			"style": {
@@ -43,13 +44,20 @@
 		{
 			"path": "pages/view/my/login/index",
 			"style": {
-				"navigationBarTitleText": "登录"
+				"navigationBarTitleText": "登录",
+				"usingComponents": {
+					"van-toast": "../../../wxcomponents/vant-weapp/dist/toast/index"
+				}
 			}
+
 		},
 		{
 			"path": "pages/view/my/myInformation/changePassword",
 			"style": {
-				"navigationBarTitleText": "修改密码"
+				"navigationBarTitleText": "修改密码",
+				"usingComponents": {
+					"van-toast": "../../../wxcomponents/vant-weapp/dist/toast/index"
+				}
 			}
 		},
 

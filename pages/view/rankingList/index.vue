@@ -11,7 +11,7 @@
 				<!-- 切换栏 -->
 				<view class="switchBar">
 					<view class="navs" @click="changeNav('wordNum')" :class="activeNavs=='wordNum'?'activeNavs':''">单词数
-						<image v-if="activeNavs=='wordNum'" class="arrows" src="../../../static/images/Polygon 3@2x.png" mode=""></image>
+						<image v-if="activeNavs=='wordNum'" class="arrows" src="../../../static/images/Polygon 3@2x.png" mode="">999</image>
 					</view>
 					<view class="navs"  @click="changeNav('studyTime')" :class="activeNavs=='studyTime'?'activeNavs':''">学习时长
 					<image  v-if="activeNavs=='studyTime'" class="arrows" src="../../../static/images/Polygon 3@2x.png" mode=""></image>
@@ -217,6 +217,7 @@
 						position: relative;
 
 						.arrows {
+							display: block;
 							width: 20rpx;
 							height: 12rpx;
 							// transform: rotate(-90deg);

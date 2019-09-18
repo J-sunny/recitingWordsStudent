@@ -10,30 +10,66 @@
 		<view class="loginConBox">
 			<view class="userNameBox">
 				<image class="nameIcon" src="../../../../static/images/userNameTB@2x.png" mode=""></image>
-				<input class="nameInput" placeholder='请输入用户名' type="text" value="" />
+				<input class="nameInput" v-model="username" placeholder='请输入用户名' type="text" value="" />
 			</view>
 			<view class="userNameBox">
 				<image class="nameIcon" src="../../../../static/images/pwdTB@2x.png" mode=""></image>
-				<input class="nameInput" placeholder='请输入密码' :password='true' type="text" value="" />
+				<input class="nameInput" v-model="password" placeholder='请输入密码' :password='true' type="text" value="" />
 			</view>
 			<view class="userNameBox" v-if="isLogin==false">
 				<image class="nameIcon" src="../../../../static/images/pwdTB@2x.png" mode=""></image>
-				<input class="nameInput" placeholder='请确认密码' :password='true' type="text" value="" />
+				<input class="nameInput" v-model="againPwd" placeholder='请确认密码' :password='true' type="text" value="" />
 			</view>
 			<!-- 登录按钮 -->
-			<view class="loginBtn">{{isLogin==true?'登录':'注册'}}</view>
+			<view class="loginBtn" @click="loginByAccount()" v-if='isLogin'>登录</view>
+			<!-- 注册 -->
+			<view class="loginBtn" v-if='!isLogin'>注册</view>
 			<!-- 注册 -->
 			<view class="register" @click="isLogin=!isLogin">{{isLogin==true?'没有账号？注册':'已有账号？登录'}}</view>
 		</view>
+		<van-toast id="van-toast" />
 	</view>
 </template>
 
 <script>
+	import Toast from '../../../../wxcomponents/vant-weapp/dist/toast/toast';
 	export default {
 		data() {
 			return {
-				isLogin: false
+				isLogin: true,
+				username: '',
+				password: '',
+				againPwd: ''
 			}
+		},
+		methods: {
+			// 登录
+			loginByAccount() {
+				if (this.username == '' || this.password == '') {
+					Toast('请输入用户名或者密码');
+					return
+				}
+				this.$minApi.loginByAccount({
+					password: this.password,
+					username: this.username,
+					userSchoolId: '1',
+					userIdenty: '0'
+				}).then(data => {
+					if (data.code == 200) {
+						Toast(data.msg);
+						uni.setStorageSync('token', data.data.token),
+							uni.switchTab({
+								url: '../../home/index'
+							})
+					} else {
+						Toast(data.msg);
+					}
+
+				})
+			},
+		},
+		created() {
+
 		}
 	}
 </script>

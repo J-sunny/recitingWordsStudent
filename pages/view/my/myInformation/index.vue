@@ -17,23 +17,23 @@
 		<!-- 内容 -->
 		<view class="infoCon">
 			<view class="conBox">
-				<label class="name">昵称/姓名</label><label class="con">{{getUserInfoList.teacherAccount}}</label>
+				<label class="name">昵称/姓名</label><label class="con">{{getUserInfoList.studentName}}</label>
 			</view>
-			
+
 			<view class="conBox" @tap="show1()">
-				<label class="name">性别</label><label class="con cons">{{teacherGender==0?'女':'男'}}</label><label class="arrowRight"></label>
+				<label class="name">性别</label><label class="con cons">{{studentGender==0?'女':'男'}}</label><label class="arrowRight"></label>
 			</view>
 			<view class="conBox" @tap="show2()">
-				<label class="name">生日</label><label class="con cons">{{teacherBirth}}</label><label class="arrowRight"></label>
+				<label class="name">生日</label><label class="con cons">{{studentBirth}}</label><label class="arrowRight"></label>
 			</view>
 			<view class="conBox">
-				<label class="name">学校</label><label class="con">XX学校</label>
+				<label class="name">学校</label><label class="con">{{getUserInfoList.belongSchoolId}}</label>
 			</view>
 			<view class="conBox">
-				<label class="name">年级</label><label class="con">2018级动画1班</label>
+				<label class="name">年级</label><label class="con">{{getUserInfoList.studentGrade}}</label>
 			</view>
 			<view class="conBox">
-				<label class="name">班级</label><label class="con">2018级动画1班</label>
+				<label class="name">班级</label><label class="con">{{getUserInfoList.studentClass}}</label>
 			</view>
 			<navigator url="changePassword" class="conBox">
 				<label class="name">修改密码</label>
@@ -58,7 +58,7 @@
 		<view class="genderPopup">
 			<van-popup :show="showSex" position="bottom">
 				<view class="popupBox">
-					<van-picker show-toolbar title="性别" :columns='columns' :default-index='getUserInfoList.teacherGender' @cancel="onCancel()"
+					<van-picker show-toolbar title="性别" :columns='columns' :default-index='getUserInfoList.studentGender' @cancel="onCancel()"
 					 @confirm="onConfirm()" />
 				</view>
 			</van-popup>
@@ -84,8 +84,8 @@
 			return {
 				columns: ['女', '男'],
 				maxDate: new Date().getTime(),
-				teacherBirth: '',
-				teacherGender: '',
+				studentBirth: '',
+				studentGender: '',
 				formatter(type, value) {
 					if (type === 'year') {
 						return `${value}年`;
@@ -114,17 +114,17 @@
 			},
 			// 头像弹框
 			show(type) {
-				this.showTx=true
+				this.showTx = true
 			},
 			close(type) {
-				this.showTx=false
+				this.showTx = false
 			},
 			// 性别弹框
 			show1() {
-				this.showSex=true
+				this.showSex = true
 			},
 			close1() {
-				this.showSex=false
+				this.showSex = false
 			},
 
 			onConfirm(event) {
@@ -136,7 +136,7 @@
 					index
 				} = event.detail;
 				console.log(`当前值：${value}, 当前索引：${index}`);
-				this.teacherGender = index
+				this.studentGender = index
 			},
 
 			onCancel() {
@@ -146,10 +146,10 @@
 
 			// 生日弹框
 			show2() {
-				this.showBir=true
+				this.showBir = true
 			},
 			close2() {
-				this.showBir=false
+				this.showBir = false
 			},
 			birInput(val) {
 				// console.log(val)
@@ -159,7 +159,7 @@
 				// this.setData({
 				// 	currentDate: val.detail
 				// });
-				this.teacherBirth = time.formatTime(new Date(val.detail), 'Y-M-D')
+				this.studentBirth = time.formatTime(new Date(val.detail), 'Y-M-D')
 				console.log(this.teacherBirth)
 				// var a=time.formatTimeTwo(this.birthday)				
 				this.close2()
@@ -169,12 +169,12 @@
 			},
 			// 获取用户信息
 			getUserInfo() {
-				// this.$minApi.getUserInfo({}).then(data => {
-				// 	console.log(data)
-				// 	this.getUserInfoList = data.data
-				// 	this.teacherBirth=data.data.teacherBirth
-				// 	this.teacherGender=data.data.teacherGender
-				// })
+				this.$minApi.getUserInfo({}).then(data => {
+					console.log(data)
+					this.getUserInfoList = data.data
+					this.studentBirth = data.data.studentBirth
+					this.studentGender = data.data.studentGender
+				})
 			},
 		},
 		created() {
@@ -186,9 +186,10 @@
 
 <style lang="scss">
 	.infoBox {
-		.van-popup{
+		.van-popup {
 			background-color: rgba($color: #000000, $alpha: 0);
 		}
+
 		.hedbox {
 
 			// 顶部背景图片
@@ -297,7 +298,8 @@
 
 		// 头像弹出框
 		.headPicPopup {
-			overflow: hidden;	
+			overflow: hidden;
+
 			.popupBox {
 				padding: 0 32rpx;
 				box-sizing: border-box;

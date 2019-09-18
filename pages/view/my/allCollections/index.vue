@@ -37,6 +37,22 @@
 </template>
 
 <script>
+	export default {
+		data() {
+			return {
+
+			}
+		},
+		methods: {
+			// 返回
+			goBack() {
+				uni.navigateBack({
+					delta: 1
+				});
+			},
+		}
+
+	}
 </script>
 
 <style lang="scss">
@@ -134,11 +150,11 @@
 			}
 
 			.text {
-				font-size:20rpx;
-				font-family:PingFang SC;
-				font-weight:400;
-				color:rgba(255,255,255,1);
-				opacity:1;
+				font-size: 20rpx;
+				font-family: PingFang SC;
+				font-weight: 400;
+				color: rgba(255, 255, 255, 1);
+				opacity: 1;
 				text-align: center;
 			}
 		}
