@@ -54,14 +54,13 @@
 				</view>
 				<!-- 最近一周-按月查看 -->
 				<view class="lookChange">
-					<label class="week">最近一周</label>
-					<label class="mouth">按月查看</label>
+					<label :class="toDayactive=='toDayWeek'?'active':''" class="week" @click="toDayChange('toDayWeek')">最近一周</label>
+					<label :class="toDayactive=='toDayMouth'?'active':''" class="mouth" @click="toDayChange('toDayMouth')">按月查看</label>
 				</view>
 				<!-- 柱状图 -->
 				<view class="qiun-columns">
 					<view class="qiun-charts">
 						<canvas canvas-id="canvasColumnStack" id="canvasColumnStack" class="charts" @touchstart="touchColumn"></canvas>
-
 					</view>
 				</view>
 				<!-- 当日学习 -->
@@ -71,9 +70,6 @@
 				</view>
 			</view>
 
-
-
-
 			<!-- 折线统计图 -->
 			<view class="histogram">
 				<!-- 折线图标题 -->
@@ -82,8 +78,8 @@
 				</view>
 				<!-- 最近一周-按月查看 -->
 				<view class="lookChange">
-					<label class="week">最近一周</label>
-					<label class="mouth">按月查看</label>
+					<label :class="timesActive=='timesWeek'?'active':''" class="week" @click="timesChange('timesWeek')">最近一周</label>
+					<label :class="timesActive=='timesMouth'?'active':''" class="mouth" @click="timesChange('timesMouth')">按月查看</label>
 				</view>
 				<!-- 折线图 -->
 				<view class="qiun-columns">
@@ -116,13 +112,67 @@
 				cHeight: '',
 				pixelRatio: 1,
 				serverData: '',
+				toDayactive: 'toDayWeek',
+				timesActive: 'timesWeek',
+
+				Area: {
+					// x轴
+					categories: ['2012', '2013', '2014', '2015', '2016', '2017'],
+					// y轴
+					series: [{
+						data: [100, 80, 95, 150, 112, 132],
+						name: " 分钟"
+					}]
+				},
+				Area1: {
+					// x轴
+					categories: ['7-8', '7-9', '7-10', '7-11', '7-12', '7-13', '7-14'],
+					// y轴
+					series: [{
+						data: [100, 80, 95, 180, 112, 132, 34, 111],
+						name: "分钟"
+					}]
+				},
+
+				ColumnStack: {
+					// x轴
+					categories: ['2012', '2013', '2014', '2015', '2016'],
+					// y轴
+					series: [{
+							data: [35, 55, 12, 14, 10],
+							name: "学习"
+						},
+						{
+							data: [56, 66, 34, 23, 41],
+							name: "复习"
+						},
+					]
+				},
+				ColumnStack1: {
+					// x轴
+					categories: ['2019-01', '2019-02', '2019-03', '2019-04', '2019-05'],
+					// y轴
+					series: [{
+							data: [100, 55, 129, 134, 190],
+							name: "学习"
+						},
+						{
+							data: [56, 66, 34, 23, 41],
+							name: "复习"
+						},
+					]
+				}
+			
+			
+			
+			
 			}
 		},
 		onLoad() {
 			_self = this;
 			this.cWidth = uni.upx2px(750);
 			this.cHeight = uni.upx2px(500);
-			this.getServerData();
+			this.getServerData(this.toDayactive,this.timesActive);
 		},
 		methods: {
 			// 返回
@@ -132,27 +182,46 @@
 				});
 			},
 			// 获取图标数据
-			getServerData() {
+			getServerData(today,times) {
+				console.log(today,times)
+				let _this = this
 				uni.request({
 					url: 'https://www.ucharts.cn/data.json',
 					data: {},
 					success: function(res) {
-						console.log(res.data.data)
+						console.log(res)
 						_self.serverData = res.data.data;
+						// 折线图
 						let Area = {
 							categories: [],
 							series: []
 						};
-						Area.categories = res.data.data.Area.categories;
-						Area.series = res.data.data.Area.series;
+						if (times == 'timesWeek') {
+							Area.categories = _this.Area.categories;
+							Area.series = _this.Area.series;
+						}
+						if (times == 'timesMouth') {
+							Area.categories = _this.Area1.categories;
+							Area.series = _this.Area1.series;
+						}
+						
+
 						_self.showArea("canvasArea", Area);
+						// 柱状图
 						let ColumnStack = {
 							categories: [],
 							series: []
 						};
 						//这里我后台返回的是数组，所以用等于，如果您后台返回的是单条数据，需要push进去
-						ColumnStack.categories = res.data.data.ColumnStack.categories;
-						ColumnStack.series = res.data.data.ColumnStack.series;
+						if (today == 'toDayWeek') {
+							ColumnStack.categories = _this.ColumnStack.categories;
+							ColumnStack.series = _this.ColumnStack.series;
+						}
+						if (today == 'toDayMouth') {
+							ColumnStack.categories = _this.ColumnStack1.categories;
+							ColumnStack.series = _this.ColumnStack1.series;
+						}
+						
 						_self.showColumnStack("canvasColumnStack", ColumnStack);
 					},
 					fail: () => {
@@ -175,7 +244,7 @@
 					categories: chartData.categories,
 					series: chartData.series,
 					animation: false,
-					colors: ['#FF5C5C', '#FFBB00', '#979DAB'],
+					colors: ['#03BFB7'],
 					xAxis: {
 						disableGrid: true,
 					},
@@ -209,7 +278,7 @@
 			},
 
 
-			// 配置图   详情见u-charts
+			// 配置柱状图   详情见u-charts
 			showColumnStack(canvasId, chartData) {
 				canvaColumn = new uCharts({
 					$this: _self,
@@ -218,7 +287,7 @@
 					legend: {
 						show: true
 					},
-					colors: ['#FF5C5C', '#FFBB00', '#979DAB'],
+					colors: ['#03BFB7', '#FF5C5C'],
 					fontSize: 11,
 					background: '#FFFFFF',
 					pixelRatio: _self.pixelRatio,
@@ -251,6 +320,14 @@
 				// 		return category + ' ' + item.name + ':' + item.data
 				// 	}
 				// });
+			},
+			toDayChange(val) {
+				this.toDayactive = val
+				this.getServerData(val,this.timesActive)
+			},
+			timesChange(val) {
+				this.timesActive = val
+				this.getServerData(this.toDayactive,val)
 			}
 		}
 	}
@@ -438,6 +515,13 @@
 
 					.mouth {
 						margin-left: 56rpx;
+					}
+
+					.active {
+						font-size: 15px;
+						font-family: PingFang SC;
+						font-weight: 800;
+						color: rgba(46, 53, 72, 1);
 					}
 				}
 			}

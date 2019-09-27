@@ -29,17 +29,17 @@
 							<image class="bookCover" src="../../../../static/images/img_book1@2x.png" mode=""></image>
 						</view>
 						<view class="center">
-							<view class="bookTitle">四级词汇</view>
+							<view class="bookTitle">{{dailyPracticeList.thesaurusName}}</view>
 							<view class="progressBar">
-								<van-progress :show-pivot='false' color="#0FC4B7" percentage="25" />
+								<van-progress :show-pivot='false' color="#0FC4B7" :percentage="dailyPracticeList.completeCount/dailyPracticeList.thesaurusCount*100" />
 							</view>
 							<view class="progressInfo">
 								<label class="learnedBox">
 									<van-icon class='play' name="play" />
-									<label for="" class="learnedNum">已学 200</label>
+									<label for="" class="learnedNum">已学 {{dailyPracticeList.completeCount}}</label>
 								</label>
 								<label class="allWord">
-									总词数 2000
+									总词数 {{dailyPracticeList.thesaurusCount}}
 								</label>
 							</view>
 						</view>
@@ -58,27 +58,29 @@
 			<!-- 下部分 -->
 			<view class="bottomBox">
 				<view class="allTitle">所有词书</view>
-				<view class="wordsBookConBox" v-for="item in 10" :key='item'>
+				<view class="wordsBookConBox" v-for="item in thesaurusArr" :key='item.backwordPlanId'>
 					<view class="left">
 						<image class="bookCover" src="../../../../static/images/img_book1@2x.png" mode=""></image>
 					</view>
 					<view class="center">
-						<view class="bookTitle">四级词汇</view>
+						<view class="bookTitle">{{item.thesaurusName}}</view>
 						<view class="progressBar">
-							<van-progress :show-pivot='false' color="#0FC4B7" percentage="25" />
+							<van-progress :show-pivot='false' color="#0FC4B7" :percentage="item.completeCount/item.thesaurusCount*100" />
 						</view>
 						<view class="progressInfo">
 							<label class="learnedBox">
 								<van-icon class='play' name="play" />
-								<label for="" class="learnedNum">已学 200</label>
+								<label for="" class="learnedNum">已学 {{item.completeCount}}</label>
 							</label>
 							<label class="allWord">
-								总词数 2000
+								总词数 {{item.thesaurusCount}}
 							</label>
 						</view>
 					</view>
-					<view class="right" @click="showPopupBook()">
-						<label for="" class="statusBtn selected">当前已选</label>
+					<view class="right">
+						<label v-if="item.backwordPlanId==dailyPracticeList.backwordPlanId" for="" class="statusBtn selected">当前已选</label>
+						<label @click="modifyPlanThesaurus(item.backwordPlanId)" v-if="item.backwordPlanId!=dailyPracticeList.backwordPlanId"
+						 for="" class="statusBtn noSelected">选择这本</label>
 					</view>
 				</view>
 			</view>
@@ -88,12 +90,13 @@
 		<van-popup :show="showSelectWord" position="bottom" style="height: 20%" @close="onCloseWord()">
 			<van-picker show-toolbar title="选择每日学习词数" :default-index="2" :columns="columns" @cancel="onCancelWord()" @confirm="onConfirmWord()" />
 		</van-popup>
+
 		<!-- 选择图书已学完弹框 -->
 		<view class="selectedBookBox">
 			<van-popup :show="showSelectBook">
 				<view class="selectBookBox">
 					<van-icon @click="onCloseBook()" class="closeBtn" name="cross" />
-					<image class="selBookCover" src="../../../../static/images/img_end@2x.png"  mode=""></image>
+					<image class="selBookCover" src="../../../../static/images/img_end@2x.png" mode=""></image>
 					<view class="complete">当前词书已学完</view>
 					<view class="eliminate">是否清除学习记录重新学习</view>
 					<view class="re-study">重新学习</view>
@@ -109,18 +112,17 @@
 					<van-icon @click="onCloseClear()" class="closeBtn" name="cross" />
 					<view class="complete">是否清除学习记录重新学习</view>
 					<view class="eliminate">清除记录后，当前学习进度将清零</view>
-					<view class="re-study">不了，我还想继续学习</view>
-					<view class="reStudy">重新学习</view>
+					<view @click="onCloseClear()" class="re-study">不了，我还想继续学习</view>
+					<view class="reStudy" @click="clearThesaurus()">重新学习</view>
 				</view>
 			</van-popup>
 		</view>
-
-
-
+		<van-toast id="van-toast" />
 	</view>
 </template>
 
 <script>
+	import Toast from '../../../../wxcomponents/vant-weapp/dist/toast/toast';
 	export default {
 		data() {
 			return {
@@ -129,7 +131,9 @@
 				showSelectBook: false,
 				showClearBox: false,
 				columns: ['10', '20', '30', '40', '50', '60', '70'],
-				wordsNum: '20'
+				wordsNum: '',
+				thesaurusArr: [],
+				dailyPracticeList: []
 			}
 		},
 		methods: {
@@ -152,7 +156,7 @@
 				// Toast('取消');
 				this.showSelectWord = false
 			},
-			//选择每日学习词数弹出框   picker选择器确认事件
+			// 修改计划单词数 选择每日学习词数弹出框   picker选择器确认事件  
 			onConfirmWord(event) {
 				const {
 					picker,
@@ -160,7 +164,14 @@
 					index
 				} = event.detail;
 				// Toast(`当前值：${value}, 当前索引：${index}`);
-				this.wordsNum = value
+				// this.wordsNum = value
+				this.$minApi.modifyPlanWords({
+					backwordPlanId: this.dailyPracticeList.backwordPlanId,
+					planCount: parseInt(value)
+				}).then(data => {
+					console.log(data)
+					this.dailyPractice()
+				})
 				this.showSelectWord = false
 			},
 			// 选择图书已学完弹框   打开弹出层
@@ -179,6 +190,46 @@
 			onCloseClear() {
 				this.showClearBox = false
 			},
+			// 获取所有词书列表
+			thesaurusList() {
+				this.$minApi.thesaurusList({}).then(data => {
+					console.log(data)
+					this.thesaurusArr = data.data
+				})
+			},
+			// 获取当前图书
+			dailyPractice() {
+				this.$minApi.dailyPractice({}).then(data => {
+					this.dailyPracticeList = data.data
+					this.wordsNum = data.data.planCount
+					console.log(data)
+				})
+			},
+			// 清除学习记录
+			clearThesaurus() {
+				this.$minApi.clearThesaurus({
+					backwordPlanId: this.dailyPracticeList.backwordPlanId
+				}).then(data => {
+					console.log(data)
+					this.onCloseClear()
+					Toast('清除记录成功！')
+				})
+			},
+			// 修改学习词库
+			modifyPlanThesaurus(backwordPlanId) {
+				this.$minApi.modifyPlanThesaurus({
+					backwordPlanId: backwordPlanId
+				}).then(data => {
+					console.log(data)
+					this.dailyPractice()
+					this.thesaurusList()
+				})
+			},
+
+		},
+		created() {
+			this.thesaurusList(),
+				this.dailyPractice()
 		}
 	}
 </script>
@@ -494,11 +545,12 @@
 					color: rgba(255, 255, 255, 1);
 					margin-top: 56rpx;
 				}
-				.reStudy{
+
+				.reStudy {
 					width: 440rpx;
 					height: 80rpx;
-					background:rgba(239,239,241,1);
-					border:1px solid rgba(151,157,171,1);
+					background: rgba(239, 239, 241, 1);
+					border: 1px solid rgba(151, 157, 171, 1);
 					border-radius: 40rpx;
 					text-align: center;
 					font-size: 28rpx;

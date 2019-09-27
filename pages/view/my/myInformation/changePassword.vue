@@ -84,9 +84,7 @@
 					}
 				}
 			},
-			lookPwd2() {
-
-			},
+			
 			// 获取用户信息
 			getUserInfo() {
 				this.$minApi.getUserInfo({}).then(data => {
