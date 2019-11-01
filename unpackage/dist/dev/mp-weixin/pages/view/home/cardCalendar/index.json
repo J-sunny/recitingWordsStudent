@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "打卡日历",
+  "usingComponents": {
+    "van-icon": "../../../../wxcomponents/vant-weapp/dist/icon/index",
+    "uni-calendar": "/components/uni-calendar/uni-calendar"
+  }
+}

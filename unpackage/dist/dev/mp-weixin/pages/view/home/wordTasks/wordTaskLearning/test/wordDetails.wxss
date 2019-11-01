@@ -1,0 +1,183 @@
+@charset "UTF-8";
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+page {
+  background: #fff !important;
+}
+.wordTaskLearning {
+  overflow: hidden;
+  /* 内容 */
+}
+.wordTaskLearning .TaskLearningBox {
+    margin-top: 128rpx;
+}
+.wordTaskLearning .TaskLearningBox .progressTxtBox {
+      height: 74rpx;
+      width: 100%;
+      border-bottom: 2rpx solid #EFEFF1;
+      font-size: 28rpx;
+      font-family: PingFang SC;
+      font-weight: 500;
+      line-height: 74rpx;
+      color: #5c6371;
+      opacity: 1;
+      position: relative;
+}
+.wordTaskLearning .TaskLearningBox .progressTxtBox .count {
+        position: absolute;
+        left: 40rpx;
+}
+.wordTaskLearning .TaskLearningBox .progressTxtBox .times {
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+}
+.wordTaskLearning .TaskLearningBox .progressTxtBox .passed {
+        position: absolute;
+        right: 40rpx;
+}
+.wordTaskLearning .TaskLearningBox .progressTxtBox .passed .skyColor {
+          color: #0FC4B7;
+}
+.wordTaskLearning .TaskLearningBox .wordsBox {
+      margin-top: 40rpx;
+}
+.wordTaskLearning .TaskLearningBox .wordsBox .word {
+        font-size: 64rpx;
+        font-family: SF Pro Display;
+        font-weight: 600;
+        color: #2e3548;
+        opacity: 1;
+        text-align: center;
+}
+.wordTaskLearning .TaskLearningBox .wordsBox .playWord {
+        margin-top: 28rpx;
+        text-align: center;
+        overflow: hidden;
+}
+.wordTaskLearning .TaskLearningBox .wordsBox .playWord .volume-o {
+          color: #0FC4B7;
+          font-size: 30rpx;
+          float: left;
+          margin-left: 274rpx;
+}
+.wordTaskLearning .TaskLearningBox .wordsBox .playWord .phonetic {
+          font-size: 28rpx;
+          font-family: SF Pro Display;
+          font-weight: 500;
+          color: #979dab;
+          opacity: 1;
+          margin-left: 12rpx;
+          float: left;
+}
+.wordTaskLearning .TaskLearningBox .interpretation {
+      padding: 0 40rpx 32rpx;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box;
+      margin-top: 92rpx;
+      overflow: hidden;
+      border-bottom: 2rpx solid #EFEFF1;
+}
+.wordTaskLearning .TaskLearningBox .interpretation .title {
+        font-size: 26rpx;
+        font-family: PingFang SC;
+        font-weight: 500;
+        color: #979dab;
+}
+.wordTaskLearning .TaskLearningBox .interpretation .nadjBox {
+        font-size: 28rpx;
+        font-family: PingFang SC;
+        font-weight: 500;
+        line-height: 24px;
+        color: #2e3548;
+        opacity: 1;
+        margin-top: 18rpx;
+}
+.wordTaskLearning .TaskLearningBox .interpretation .nadjBox .noun {
+          margin-right: 60rpx;
+}
+.wordTaskLearning .TaskLearningBox .exampleSentenceBox {
+      padding: 0 40rpx 120rpx;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box;
+      margin-top: 32rpx;
+      overflow: hidden;
+}
+.wordTaskLearning .TaskLearningBox .exampleSentenceBox .title {
+        font-size: 26rpx;
+        font-family: PingFang SC;
+        font-weight: 500;
+        color: #979dab;
+        opacity: 1;
+}
+.wordTaskLearning .TaskLearningBox .exampleSentenceBox .exampleSentence {
+        margin-top: 24rpx;
+        font-size: 28rpx;
+        font-family: PingFang SC;
+        font-weight: 500;
+        color: #2e3548;
+        opacity: 1;
+}
+.wordTaskLearning .TaskLearningBox .exampleSentenceBox .exampleSentence .inEnglish {
+          line-height: 44rpx;
+}
+.wordTaskLearning .TaskLearningBox .exampleSentenceBox .exampleSentence .inChinese {
+          line-height: 22px;
+}
+.wordTaskLearning .TaskLearningBox .nextBigBox {
+      padding: 0 40rpx;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box;
+      position: fixed;
+      bottom: 0rpx;
+      left: 0;
+      width: 100%;
+      height: 108rpx;
+      background: rgba(255, 255, 255, 0.8);
+      opacity: 1;
+}
+.wordTaskLearning .TaskLearningBox .nextBigBox .nextBox {
+        width: 100%;
+        height: 80rpx;
+        line-height: 80rpx;
+        background: -webkit-gradient(linear, left top, right top, from(#0fc4b7), to(#3fd2b1));
+        background: -o-linear-gradient(left, #0fc4b7 0%, #3fd2b1 100%);
+        background: linear-gradient(90deg, #0fc4b7 0%, #3fd2b1 100%);
+        opacity: 1;
+        border-radius: 40rpx;
+        color: #fff;
+        text-align: center;
+        margin-top: 14rpx;
+}
+.wordTaskLearning .TaskLearningBox .nextBigBox .nextBox .arrow {
+          float: left;
+          margin-top: 6rpx;
+          margin-left: 38rpx;
+}
+.wordTaskLearning .TaskLearningBox .nextBigBox .nextBox .nextTxt {
+          margin-left: -80rpx;
+}
+

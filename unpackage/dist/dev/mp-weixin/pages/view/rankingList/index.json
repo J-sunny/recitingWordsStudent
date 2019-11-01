@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "排行榜",
+  "usingComponents": {
+    "van-icon": "../../../wxcomponents/vant-weapp/dist/icon/index",
+    "van-picker": "../../../wxcomponents/vant-weapp/dist/picker/index",
+    "van-popup": "../../../wxcomponents/vant-weapp/dist/popup/index"
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "我的",
+  "usingComponents": {
+    "van-popup": "../../../wxcomponents/vant-weapp/dist/popup/index"
+  }
+}

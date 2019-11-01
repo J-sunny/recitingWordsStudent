@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "我的资料",
+  "usingComponents": {
+    "van-icon": "../../../wxcomponents/vant-weapp/dist/icon/index",
+    "van-picker": "../../../wxcomponents/vant-weapp/dist/picker/index",
+    "van-popup": "../../../wxcomponents/vant-weapp/dist/popup/index",
+    "van-datetime-picker": "../../../wxcomponents/vant-weapp/dist/datetime-picker/index"
+  }
+}

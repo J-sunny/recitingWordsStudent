@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "背单词",
+  "usingComponents": {
+    "van-icon": "../../../wxcomponents/vant-weapp/dist/icon/index",
+    "van-progress": "../../../wxcomponents/vant-weapp/dist/progress/index"
+  }
+}

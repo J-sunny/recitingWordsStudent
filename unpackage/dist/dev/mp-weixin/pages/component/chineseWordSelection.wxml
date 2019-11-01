@@ -1,0 +1,1 @@
+<view class="wordSelectionBox"><view class="inChinese">{{''+questionList.question_stem+''}}</view><view class="optionBox"><block wx:for="{{optionsList}}" wx:for-item="item" wx:for-index="index" wx:key="index"><view data-event-opts="{{[['tap',[['check',[index]]]]]}}" class="{{['option',answer==index?'green':'red']}}" bindtap="__e">{{item}}</view></block></view></view>

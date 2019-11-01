@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "单词任务测试",
+  "usingComponents": {
+    "van-icon": "../../../wxcomponents/vant-weapp/dist/icon/index"
+  }
+}

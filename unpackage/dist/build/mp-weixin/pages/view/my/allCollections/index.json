@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "所有收藏",
+  "usingComponents": {
+    "van-icon": "../../../wxcomponents/vant-weapp/dist/icon/index"
+  }
+}

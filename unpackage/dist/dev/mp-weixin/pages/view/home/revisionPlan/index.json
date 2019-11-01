@@ -1,0 +1,10 @@
+{
+  "navigationBarTitleText": "修改计划",
+  "usingComponents": {
+    "van-icon": "../../../../wxcomponents/vant-weapp/dist/icon/index",
+    "van-progress": "../../../wxcomponents/vant-weapp/dist/progress/index",
+    "van-picker": "../../../wxcomponents/vant-weapp/dist/picker/index",
+    "van-popup": "../../../wxcomponents/vant-weapp/dist/popup/index",
+    "van-toast": "../../../wxcomponents/vant-weapp/dist/toast/index"
+  }
+}

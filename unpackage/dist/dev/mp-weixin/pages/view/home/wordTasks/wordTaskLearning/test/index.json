@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "单词任务测试",
+  "usingComponents": {
+    "van-icon": "../../../wxcomponents/vant-weapp/dist/icon/index",
+    "van-progress": "../../../wxcomponents/vant-weapp/dist/progress/index",
+    "word-spelling": "/pages/component/wordSpelling",
+    "chinese-word-selection": "/pages/component/chineseWordSelection",
+    "listening-word-selection": "/pages/component/listeningWordSelection",
+    "english-selection": "/pages/component/englishSelection"
+  }
+}

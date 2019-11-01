@@ -1,0 +1,64 @@
+{
+  "pages": [
+    "pages/view/home/index",
+    "pages/view/my/allCollections/index",
+    "pages/view/my/index",
+    "pages/view/my/myInformation/index",
+    "pages/view/my/login/index",
+    "pages/view/my/myInformation/changePassword",
+    "pages/view/my/dataDetails/index",
+    "pages/view/my/jionClass/index",
+    "pages/view/rankingList/learningDetails",
+    "pages/view/rankingList/index",
+    "pages/view/home/wordTasks/wordTaskLearning/test/passedTask",
+    "pages/view/home/wordTasks/wordTaskLearning/test/index",
+    "pages/view/home/wordTasks/wordTaskLearning/test/wordDetails",
+    "pages/view/home/wordTasks/wordTaskLearning/study/index",
+    "pages/view/home/revisionPlan/index",
+    "pages/view/home/wordTasks/viewRanking/index",
+    "pages/view/home/wordTasks/index",
+    "pages/view/home/cardCalendar/index",
+    "pages/component/listeningWordSelection",
+    "pages/component/englishSelection"
+  ],
+  "subPackages": [],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "uni-app",
+    "navigationBarBackgroundColor": "#F8F8F8",
+    "backgroundColor": "#F8F8F8",
+    "navigationStyle": "custom"
+  },
+  "tabBar": {
+    "color": "#979DAB",
+    "selectedColor": "#03BFB7",
+    "borderStyle": "white",
+    "list": [
+      {
+        "selectedIconPath": "static/images/tabbar_icon_home_selected@2x.png",
+        "iconPath": "static/images/tabbar_icon_home_default@2x.png",
+        "pagePath": "pages/view/home/index",
+        "text": "首页"
+      },
+      {
+        "selectedIconPath": "static/images/tabbar_icon_top_selected@2x.png",
+        "iconPath": "static/images/tabbar_icon_top_default@2x.png",
+        "pagePath": "pages/view/rankingList/index",
+        "text": "排行榜"
+      },
+      {
+        "selectedIconPath": "static/images/tabbar_icon_my_selected@2x.png",
+        "iconPath": "static/images/tabbar_icon_my_default@2x.png",
+        "pagePath": "pages/view/my/index",
+        "text": "我的"
+      }
+    ]
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "页面展示效果"
+    }
+  },
+  "usingComponents": {},
+  "sitemapLocation": "sitemap15.json"
+}

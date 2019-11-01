@@ -1,0 +1,194 @@
+@charset "UTF-8";
+/**
+ * 这里是uni-app内置的常用样式变量
+ *
+ * uni-app 官方扩展插件及插件市场（https://ext.dcloud.net.cn）上很多三方插件均使用了这些样式变量
+ * 如果你是插件开发者，建议你使用scss预处理，并在插件代码中直接使用这些变量（无需 import 这个文件），方便用户通过搭积木的方式开发整体风格一致的App
+ *
+ */
+/**
+ * 如果你是App开发者（插件使用者），你可以通过修改这些变量来定制自己的插件主题，实现自定义主题功能
+ *
+ * 如果你的项目同样使用了scss预处理，你也可以直接在你的 scss 代码中使用如下变量，同时无需 import 这个文件
+ */
+/* 颜色变量 */
+/* 行为相关颜色 */
+/* 文字基本颜色 */
+/* 背景颜色 */
+/* 边框颜色 */
+/* 尺寸变量 */
+/* 文字尺寸 */
+/* 图片尺寸 */
+/* Border Radius */
+/* 水平间距 */
+/* 垂直间距 */
+/* 透明度 */
+/* 文章场景相关 */
+.rankingBox {
+  margin: 0;
+  padding: 0;
+}
+.rankingBox .rheadBigBox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+.rankingBox .rheadBigBox .rheadBox {
+      position: relative;
+}
+.rankingBox .rheadBigBox .rheadBox .headImg {
+        width: 100%;
+        height: 394rpx;
+}
+.rankingBox .rheadBigBox .rheadBox .rankingTxt {
+        position: absolute;
+        top: 166rpx;
+        left: 58rpx;
+        font-size: 56rpx;
+        font-family: PingFang SC;
+        font-weight: 800;
+        color: white;
+        opacity: 1;
+}
+.rankingBox .rheadBigBox .rheadBox .rankingTxt .icon_swit {
+          width: 32rpx;
+          height: 28rpx;
+          margin-left: 16rpx;
+}
+.rankingBox .rheadBigBox .rheadBox .switchBar {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 80rpx;
+        background-color: #23C4A3;
+        line-height: 80rpx;
+        text-align: center;
+        color: #FFFFFF;
+        font-size: 30rpx;
+        font-family: PingFang SC;
+        font-weight: bold;
+        color: white;
+}
+.rankingBox .rheadBigBox .rheadBox .switchBar .navs {
+          width: 250rpx;
+          float: left;
+          position: relative;
+}
+.rankingBox .rheadBigBox .rheadBox .switchBar .navs .arrows {
+            display: block;
+            width: 20rpx;
+            height: 12rpx;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            margin-left: -10rpx;
+}
+.rankingBox .rheadBigBox .rheadBox .switchBar .activeNavs {
+          background: #21b899;
+}
+.rankingBox .rankingConBox {
+    margin-top: 394rpx;
+    padding-bottom: 100rpx;
+}
+.rankingBox .rankingConBox .minePh {
+      width: 100%;
+      height: 112rpx;
+      background: white;
+      padding: 0rpx 40rpx;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box;
+      line-height: 112rpx;
+      overflow: hidden;
+}
+.rankingBox .rankingConBox .minePh .mineleft {
+        float: left;
+}
+.rankingBox .rankingConBox .minePh .mineleft .myRanking {
+          font-size: 28rpx;
+          font-weight: 500;
+          color: #979dab;
+}
+.rankingBox .rankingConBox .minePh .mineleft .xz {
+          width: 44rpx;
+          height: 46rpx;
+          vertical-align: middle;
+}
+.rankingBox .rankingConBox .minePh .mineleft .myPic {
+          width: 64rpx;
+          height: 64rpx;
+          vertical-align: middle;
+          margin-left: 28rpx;
+          margin-right: 32rpx;
+}
+.rankingBox .rankingConBox .minePh .mineleft .myName {
+          font-size: 30rpx;
+          font-weight: 500;
+          color: #23252a;
+}
+.rankingBox .rankingConBox .minePh .mineRight {
+        float: right;
+}
+.rankingBox .rankingConBox .minePh .mineRight .ge {
+          font-size: 24rpx;
+          font-weight: 500;
+          color: #979dab;
+}
+.rankingBox .rankingConBox .minePh .mineRight .wordNum {
+          font-size: 28rpx;
+          font-weight: 500;
+          color: #2e3548;
+          margin-right: 16rpx;
+}
+.rankingBox .rankingConBox .timeListBox {
+      width: 100%;
+      height: 88rpx;
+      background: white;
+      opacity: 1;
+      position: fixed;
+      bottom: 0rpx;
+      left: 0;
+      padding: 18rpx 0;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box;
+}
+.rankingBox .rankingConBox .timeListBox .timelist {
+        width: 608rpx;
+        margin: auto;
+        border-radius: 4rpx;
+        height: 52rpx;
+        font-size: 26rpx;
+        font-family: PingFang SC;
+        font-weight: 500;
+        line-height: 52rpx;
+        color: #5C6371;
+        opacity: 1;
+        text-align: center;
+}
+.rankingBox .rankingConBox .timeListBox .timelist .list {
+          width: 32%;
+          display: inline-block;
+}
+.rankingBox .rankingConBox .timeListBox .timelist .dayList {
+          border: 2rpx solid #b4bbcc;
+          opacity: 1;
+          border-radius: 4rpx 0rpx 0rpx 4rpx;
+}
+.rankingBox .rankingConBox .timeListBox .timelist .weekList {
+          border-top: 2rpx solid #b4bbcc;
+          border-bottom: 2rpx solid #b4bbcc;
+          opacity: 1;
+}
+.rankingBox .rankingConBox .timeListBox .timelist .mouthList {
+          border: 2rpx solid #b4bbcc;
+          opacity: 1;
+          border-radius: 0rpx 4rpx 4rpx 0rpx;
+}
+.rankingBox .rankingConBox .timeListBox .timelist .active {
+          background: #f6b922;
+          opacity: 1;
+          color: #FFFFFF;
+          border: 2rpx solid #f6b922;
+}
+

@@ -1,0 +1,1 @@
+<view class="listeningWordSelectionBox"><view class="voiceBox"><van-icon class="voice" vue-id="1" name="volume-o" data-com-type="wx" bind:__l="__l"></van-icon></view><view class="optionBox"><view class="option green">handle</view><view class="option red">hacker</view><view class="option">hairstyle</view><view class="option">high-tech</view></view></view>
