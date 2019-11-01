@@ -4,20 +4,48 @@
 			<view class="word">support</view>
 			<view class="playWord">
 				<van-icon class='volume-o' name="volume-o" />
-				<label class="phonetic">/kəm'ponənt/ </label>
+				<label class="phonetic">{{questionList.question_stem}} </label>
 			</view>
 		</view>
 		<!-- 选项 -->
 		<view class="optionBox">
-			<view class="option green">handle</view>
-			<view class="option red">hacker</view>
-			<view class="option">hairstyle</view>
-			<view class="option">high-tech</view>
+			<view @click="check(index)" :class="answer==index?'green':'red'" class="option" v-for="(item,index) in optionsList" :key="index">{{item}}</view>
 		</view>
 	</view>
 </template>
 
 <script>
+	export default {
+	props: ["questionList","index","time","allCount"],
+		data() {
+			return {
+				optionsList: [],
+				answer:''
+			}
+		},
+		methods: {
+			// 选择题目
+			check(index) {
+				console.log(index)
+				if(index==this.answer){
+					this.$emit('nextQuestion');
+				}
+				else{
+					console.log(this.questionList)
+					console.log(333)
+					uni.navigateTo({
+						url:"wordDetails?wordId="+this.questionList.word_id+"&doneCount="+this.index+"&allCount="+this.questionList.length+"&time="+this.time
+					})
+				}
+			}
+		},
+		created() {
+			console.log(this.questionList)
+			this.optionsList = this.questionList.question_option.split("丶")
+			this.answer=this.questionList.question_answer
+			console.log(this.optionsList)
+		}
+	}
 </script>
 
 <style lang="scss">
@@ -53,4 +81,6 @@
 			}
 		}
 	}
+
+
 </style>

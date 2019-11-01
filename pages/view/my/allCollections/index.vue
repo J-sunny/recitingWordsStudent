@@ -11,9 +11,9 @@
 			<view class="todyBox">
 				<view class="title">今天</view>
 				<view class="todayConBox">
-					<view class="todayCons" v-for="item in 2" :key='item'>
-						<view class="wordBox"><label class="word">plentiful</label><label class="from">大学四级核心</label></view>
-						<view class="explain">n.实例，情况，建议；vt.举...为例</view>
+					<view class="todayCons" v-for="item in collectWordList.today" :key='item.wordCollectionId'>
+						<view class="wordBox"><label class="word">{{item.wordSpell}}</label><label class="from">{{item.belongThesaurus}}</label></view>
+						<view class="explain">{{item.interpretation}}</view>
 					</view>
 				</view>
 			</view>
@@ -21,9 +21,9 @@
 			<view class="todyBox">
 				<view class="title">昨天</view>
 				<view class="todayConBox">
-					<view class="todayCons" v-for="item in 3" :key='item'>
-						<view class="wordBox"><label class="word">plentiful</label><label class="from">大学四级核心</label></view>
-						<view class="explain">n.实例，情况，建议；vt.举...为例</view>
+					<view class="todayCons" v-for="item in collectWordList.yesterday" :key='item.wordCollectionId'>
+					<view class="wordBox"><label class="word">{{item.wordSpell}}</label><label class="from">{{item.belongThesaurus}}</label></view>
+					<view class="explain">{{item.interpretation}}444</view>
 					</view>
 				</view>
 			</view>
@@ -40,7 +40,7 @@
 	export default {
 		data() {
 			return {
-
+				collectWordList: []
 			}
 		},
 		methods: {
@@ -50,6 +50,19 @@
 					delta: 1
 				});
 			},
+			// 获取全部收藏
+			getCollectWordsList() {
+				this.$minApi.getCollectWordsList({
+					studentId: getApp().globalData.studentId
+				}).then(data => {
+					console.log(data)
+					this.collectWordList = data.data
+				})
+			}
+
+		},
+		created() {
+			this.getCollectWordsList()
 		}
 
 	}
@@ -64,7 +77,7 @@
 
 		// 内容
 		.allCollegeConBox {
-			padding: 0 40rpx;
+			padding: 0 40rpx 200rpx;
 			box-sizing: border-box;
 			margin-top: 128rpx;
 			overflow: hidden;

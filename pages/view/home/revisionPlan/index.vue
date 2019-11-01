@@ -122,7 +122,7 @@
 </template>
 
 <script>
-	import Toast from '../../../../wxcomponents/vant-weapp/dist/toast/toast';
+	import Toast from '@/wxcomponents/vant-weapp/dist/toast/toast';
 	export default {
 		data() {
 			return {
@@ -170,6 +170,7 @@
 					planCount: parseInt(value)
 				}).then(data => {
 					console.log(data)
+					Toast("修改成功！")
 					this.dailyPractice()
 				})
 				this.showSelectWord = false
@@ -213,6 +214,8 @@
 					console.log(data)
 					this.onCloseClear()
 					Toast('清除记录成功！')
+					this.thesaurusList()
+					this.dailyPractice()
 				})
 			},
 			// 修改学习词库
@@ -223,6 +226,7 @@
 					console.log(data)
 					this.dailyPractice()
 					this.thesaurusList()
+					Toast("修改成功！")
 				})
 			},
 

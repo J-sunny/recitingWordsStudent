@@ -5,19 +5,19 @@
 			<view class="rheadBox">
 				<image class="headImg" src="../../../static/images/ranking1@2x.png" mode=""></image>
 				<view class="rankingTxt" @click="changeRanking()">
-					班级榜
+					{{rankTypeText}}
 					<image class="icon_swit" src="../../../static/images/icon_switchover@2x.png" mode=""></image>
 				</view>
 				<!-- 切换栏 -->
 				<view class="switchBar">
-					<view class="navs" @click="changeNav('wordNum')" :class="activeNavs=='wordNum'?'activeNavs':''">单词数
-						<image v-if="activeNavs=='wordNum'" class="arrows" src="../../../static/images/Polygon 3@2x.png" mode="">999</image>
+					<view class="navs" @click="changeNav('wordNum')" :class="sortCondition=='wordNum'?'sortCondition':''">单词数
+						<image v-if="sortCondition=='wordNum'" class="arrows" src="../../../static/images/Polygon 3@2x.png" mode="">999</image>
 					</view>
-					<view class="navs"  @click="changeNav('studyTime')" :class="activeNavs=='studyTime'?'activeNavs':''">学习时长
-					<image  v-if="activeNavs=='studyTime'" class="arrows" src="../../../static/images/Polygon 3@2x.png" mode=""></image>
+					<view class="navs" @click="changeNav('sttudyLength')" :class="sortCondition=='sttudyLength'?'sortCondition':''">学习时长
+						<image v-if="sortCondition=='sttudyLength'" class="arrows" src="../../../static/images/Polygon 3@2x.png" mode=""></image>
 					</view>
-					<view class="navs"  @click="changeNav('onLineTime')" :class="activeNavs=='onLineTime'?'activeNavs':''">在线时长
-					<image v-if="activeNavs=='onLineTime'"  class="arrows" src="../../../static/images/Polygon 3@2x.png" mode=""></image>
+					<view v-if="false" class="navs" @click="changeNav('onLineTime')" :class="sortCondition=='onLineTime'?'sortCondition':''">在线时长
+						<image v-if="sortCondition=='onLineTime'" class="arrows" src="../../../static/images/Polygon 3@2x.png" mode=""></image>
 					</view>
 				</view>
 			</view>
@@ -25,76 +25,41 @@
 		<!-- 内容 -->
 		<view class="rankingConBox">
 			<!-- 我的排名 -->
-			<view class="minePh">
+			<view class="minePh" v-if="studentStudyRank.rankList.length!=0" @click="linkTo(studentStudyRank.myself.studentId,studentStudyRank.myself.studentRealname,studentStudyRank.myself.studentAvatar)">
 				<view class="mineleft f_float">
-					<label for="" class="myRanking">200</label>
-					<image class="myPic" src="../../../static/images/people@2.png" mode=""></image>
-					<label for="" class="myName">Fanny萱</label>
+					<label for="" class="myRanking">{{studentStudyRank.myself.rankNum}}</label>
+					<image class="myPic" :src="studentStudyRank.myself.studentAvatar" ></image>
+					<label for="" class="myName">{{studentStudyRank.myself.studentRealname}}</label>
 				</view>
 				<view class="mineRight r_float">
-					<label for="" class="wordNum">500</label>
-					<label for="" class="ge">个</label>
+					<label for="" class="wordNum">{{sortCondition=='wordNum'?studentStudyRank.myself.exerciseCount:studentStudyRank.myself.lengthOfStudy}}</label>
+					<label for="" class="ge">{{sortCondition=='wordNum'?'个':'分钟'}}</label>
 				</view>
 			</view>
 			<!-- 其他排名 -->
-			<view style="margin-top: 24rpx;">
-				<view class="minePh">
+			<view style="margin-top: 24rpx;" v-if="studentStudyRank.rankList.length!=0">
+				<view class="minePh" v-for="item in studentStudyRank.rankList" :key="item.studentId"  @click="linkTo(item.studentId,item.studentRealname,item.studentAvatar)">
 					<view class="mineleft f_float">
-						<label for="" class="myRanking" v-if="false">200</label>
+						<label for="" class="myRanking" v-if="item.rankNum!=1&&item.rankNum!=2&&item.rankNum!=3">200</label>
 						<!-- 排行勋章 -->
-						<image v-if='true' class="xz" src="../../../static/images/xz1@2.png" mode=""></image>
-						<image v-if='false' class="xz" src="../../../static/images/xz2@2.png" mode=""></image>
-						<image v-if='false' class="xz" src="../../../static/images/xz3@2.png" mode=""></image>
-						<image class="myPic" src="../../../static/images/people@2.png" mode=""></image>
-						<label for="" class="myName">Fanny萱</label>
+						<image v-if='item.rankNum==1' class="xz" src="../../../static/images/xz1@2.png" mode=""></image>
+						<image v-if='item.rankNum==2' class="xz" src="../../../static/images/xz2@2.png" mode=""></image>
+						<image v-if='item.rankNum==3' class="xz" src="../../../static/images/xz3@2.png" mode=""></image>
+						<image class="myPic" :src="item.studentAvatar" mode=""></image>
+						<label for="" class="myName">{{item.studentRealname}}</label>
 					</view>
 					<view class="mineRight r_float">
-						<label for="" class="wordNum">500</label>
-						<label for="" class="ge">个</label>
-					</view>
-				</view>
-				<view class="minePh">
-					<view class="mineleft f_float">
-						<!-- 排行勋章 -->
-						<image v-if='true' class="xz" src="../../../static/images/xz2@2.png" mode=""></image>
-						<image class="myPic" src="../../../static/images/people@2.png" mode=""></image>
-						<label class="myName">Fanny萱</label>
-					</view>
-					<view class="mineRight r_float">
-						<label for="" class="wordNum">500</label>
-						<label for="" class="ge">个</label>
-					</view>
-				</view>
-				<view class="minePh">
-					<view class="mineleft f_float">
-						<!-- 排行勋章 -->
-						<image v-if="true" class="xz" src="../../../static/images/xz3@2.png" mode=""></image>
-						<image class="myPic" src="../../../static/images/people@2.png" mode=""></image>
-						<label class="myName">Fanny萱</label>
-					</view>
-					<view class="mineRight r_float">
-						<label for="" class="wordNum">500</label>
-						<label for="" class="ge">个</label>
-					</view>
-				</view>
-				<view class="minePh" v-for="iten in 10" :key='iten'>
-					<view class="mineleft f_float">
-						<label for="" class="myRanking">{{iten}}</label>
-						<image class="myPic" src="../../../static/images/people@2.png" mode=""></image>
-						<label for="" class="myName">Fanny萱</label>
-					</view>
-					<view class="mineRight r_float">
-						<label for="" class="wordNum">500</label>
-						<label for="" class="ge">个</label>
+						<label for="" class="wordNum">{{sortCondition=='wordNum'?item.exerciseCount:item.lengthOfStudy}}</label>
+						<label for="" class="ge">{{sortCondition=='wordNum'?'个':'分钟'}}</label>
 					</view>
 				</view>
 			</view>
 			<!-- 日榜，周榜，月榜 -->
 			<view class="timeListBox">
 				<view class="timelist">
-					<label class='list dayList' @click="change('day')" :class="activeList=='day'?'active':''">日榜</label>
-					<label class='list weekList' @click="change('week')" :class="activeList=='week'?'active':''">近一周榜</label>
-					<label class='list mouthList' @click="change('mouth')" :class="activeList=='mouth'?'active':''">近一月榜</label>
+					<label class='list dayList' @click="change('currentDate')" :class="dateType=='currentDate'?'active':''">日榜</label>
+					<label class='list weekList' @click="change('week')" :class="dateType=='week'?'active':''">近一周榜</label>
+					<label class='list mouthList' @click="change('month')" :class="dateType=='month'?'active':''">近一月榜</label>
 				</view>
 			</view>
 
@@ -111,9 +76,37 @@
 		data() {
 			return {
 				show: false,
-				columns: ['学校榜', '班级榜', '世界榜'],
-				activeNavs: 'wordNum',
-				activeList: 'day'
+				columns: [{
+						text: '班级榜',
+						textEng: "classList"
+					},
+					{
+						text: '学校榜',
+						textEng: "schoolList"
+					},
+					{
+						text: '世界榜',
+						textEng: "worldList"
+					}
+
+				],
+				rankTypeText:"班级榜",
+				sortCondition: 'wordNum',
+				dateType: 'currentDate',
+				rankType: 'classList',
+				studentStudyRank:[]
+
+			}
+		},
+		watch:{
+			dateType(){
+				this.getstudentStudyRank()
+			},
+			rankType(){
+				this.getstudentStudyRank()
+			},
+			sortCondition(){
+				this.getstudentStudyRank()
 			}
 		},
 		methods: {
@@ -127,13 +120,10 @@
 			},
 			// picker选择器
 			onConfirm(event) {
-				const {
-					picker,
-					value,
-					index
-				} = event.detail;
-				console.log((`当前值：${value}, 当前索引：${index}`));
+				console.log(event)
 				this.show = false;
+				this.rankType=event.detail.value.textEng
+				this.rankTypeText=event.detail.value.text
 			},
 			onCancel() {
 				this.show = false;
@@ -143,17 +133,39 @@
 				this.show = true;
 			},
 			// 改变单词数，学习时长，在线时长
-			changeNav(val){
-				this.activeNavs=val
+			changeNav(val) {
+				this.sortCondition = val
 			},
 			// 改变 日榜，周榜，月榜
 			change(val) {
-				this.activeList = val
+				this.dateType = val
+			},
+			// 获取学生学习信息排行
+			getstudentStudyRank() {
+				console.log(getApp().globalData.studentId)
+				this.$minApi.getstudentStudyRank({
+					dateType: this.dateType,
+					rankType: this.rankType,
+					sortCondition: this.sortCondition,
+					studentId: uni.getStorageSync("studentId")
+				}).then(data => {
+					if(data.code==200){
+						console.log(data)
+						this.studentStudyRank = data.data
+						console.log(this.studentStudyRank)
+					}
+				})
+			},
+			// 跳转
+			linkTo(studentId,studentRealname,studentAvatar){
+				console.log(studentRealname)
+				uni.navigateTo({
+					url:"learningDetails?studentId="+studentId+"&studentRealname="+studentRealname+"&studentAvatar="+studentAvatar
+				})
 			}
-
 		},
-		created() {
-
+		onShow() {
+			this.getstudentStudyRank()
 		}
 	}
 </script>
@@ -212,7 +224,8 @@
 					color: rgba(255, 255, 255, 1);
 
 					.navs {
-						width: 250rpx;
+						width: 375rpx;
+						// width: 250rpx;
 						float: left;
 						position: relative;
 
@@ -228,7 +241,7 @@
 						}
 					}
 
-					.activeNavs {
+					.sortCondition {
 						background: rgba(33, 184, 153, 1);
 					}
 				}
@@ -273,6 +286,8 @@
 						vertical-align: middle;
 						margin-left: 28rpx;
 						margin-right: 32rpx;
+						background-color: #F1F1F1;
+						border-radius: 50%;
 					}
 
 					.myName {

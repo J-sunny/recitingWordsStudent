@@ -1,17 +1,17 @@
 <template>
 	<view class="stuDetailsBox">
 		<!-- 顶部背景图 -->
-		<image class='site-img'  catchtap='navmap'></image>
+		<image class='site-img' catchtap='navmap'></image>
 		<!-- 返回按钮 -->
 		<view class="arrow" bindtap="goBack" @tap="goBack"></view>
 		<!-- 标题 -->
-		<view class="title">学生学习详情</view>
+		<view class="title">学习详情</view>
 		<!-- 头像 -->
 		<view class="touBox">
 			<view class="touXiang">
-				<image src="../../../static/images/people@2.png"></image>
+				<image :src="studentAvatar"></image>
 			</view>
-			<view class="touName">武蒙蒙·20190112</view>
+			<view class="touName">{{studentRealname}}·20190112</view>
 		</view>
 		<!-- 主体内容 -->
 		<view class="conBox">
@@ -23,25 +23,25 @@
 						<view class="dayTitle">
 							<image class="titleIcon" src="../../../static/images/today3.png"></image>今日学习
 						</view>
-						<view class="dayNum"><label class="bigFont">2</label>词</view>
+						<view class="dayNum"><label class="bigFont">{{learningToday}}</label>词</view>
 					</view>
 					<view class="toDay">
 						<view class="dayTitle">
-							<image class="titleIcon" src="../../../static/images/Cumulative.png"></image>累计学习
+							<image class="titleIcon" src="../../../static/images/Cumulative1.png"></image>累计学习
 						</view>
-						<view class="dayNum"><label class="bigFont">2</label>词</view>
+						<view class="dayNum"><label class="bigFont">{{cumulativeLearning}}</label>词</view>
 					</view>
 					<view class="toDay">
 						<view class="dayTitle">
-							<image class="titleIcon" src="../../../static/images/Duration.png"></image>今日学习时长
+							<image class="titleIcon" src="../../../static/images/todayTime.png"></image>今日学习时长
 						</view>
-						<view class="dayNum"><label class="bigFont">2</label>词</view>
+						<view class="dayNum"><label class="bigFont">{{learningHoursToday}}</label>分钟</view>
 					</view>
 					<view class="toDay">
 						<view class="dayTitle">
-							<image class="titleIcon" src="../../../static/images/Cumulativelength.png"></image>累计学习时长
+							<image class="titleIcon" src="../../../static/images/Cumulativelength3.png"></image>累计学习时长
 						</view>
-						<view class="dayNum"><label class="bigFont">2</label>词</view>
+						<view class="dayNum"><label class="bigFont">{{accumulatedLearningTime}}</label>分钟</view>
 					</view>
 				</view>
 			</view>
@@ -54,19 +54,33 @@
 				</view>
 				<!-- 最近一周-按月查看 -->
 				<view class="lookChange">
-					<label class="week">最近一周</label>
-					<label class="mouth">按月查看</label>
+					<view :class="toDayactive=='week'?'active':''" class="week" @click="toDayChange('week')">
+						<view class="">最近一周</view>
+						<view class='line'></view>
+					</view>
+					<view :class="toDayactive=='month'?'active':''" class="month" @click="toDayChange('month')">
+						<view class="">按月查看</view>
+						<view class='line'></view>
+					</view>
 				</view>
 				<!-- 柱状图 -->
 				<view class="qiun-columns">
 					<view class="qiun-charts">
+						<!-- <myCharts :opts="opts" canvas-id="canvasColumnStack" id="canvasColumnStack" class="charts" @touchstart="touchColumn"></myCharts> -->
+						<!-- <canvas canvas-id="canvasColumnStack" id="canvasColumnStack" class="charts" @touchstart="touchColumn"></canvas> -->
 						<canvas canvas-id="canvasColumnStack" id="canvasColumnStack" class="charts" @touchstart="touchColumn"></canvas>
+
 					</view>
 				</view>
 				<!-- 当日学习 -->
-				<view class="todayStudyBox">
-					<label class="study">当日学习：<label class="grayColor">12词</label></label>
-					<label class="review">当日复习：<label class="grayColor">12词</label></label>
+				<view class="todayStudyBox" v-if="toDayactive=='week'?true:''">
+					<label class="study">当日学习：<label class="grayColor">{{worfChartList.studentStudyInfoVOList.length==0?'0':worfChartList.exerciseCount}}词</label></label>
+					<label class="review">当日复习：<label class="grayColor">{{worfChartList.studentStudyInfoVOList.length==0?'0':worfChartList.reviewCount}}词</label></label>
+				</view>
+				<!-- 当月学习 -->
+				<view class="todayStudyBox" v-if="toDayactive=='month'?true:''">
+					<label class="study">当月学习：<label class="grayColor">{{worfChartList.studentStudyInfoVOList.length==0?'0':worfChartList.exerciseCount}}词</label></label>
+					<label class="review">当月复习：<label class="grayColor">{{worfChartList.studentStudyInfoVOList.length==0?'0':worfChartList.reviewCount}}词</label></label>
 				</view>
 			</view>
 
@@ -78,8 +92,17 @@
 				</view>
 				<!-- 最近一周-按月查看 -->
 				<view class="lookChange">
-					<label class="week">最近一周</label>
-					<label class="mouth">按月查看</label>
+					<label :class="timesActive=='week'?'active':''" class="week" @click="timesChange('week')">
+						<view class="">
+							最近一周
+						</view>
+						<view class="line"></view>
+						</label>
+					<view :class="timesActive=='month'?'active':''" class="month" @click="timesChange('month')">
+						<view class="">
+							按月查看
+						</view>
+						<view class="line"></view></view>
 				</view>
 				<!-- 折线图 -->
 				<view class="qiun-columns">
@@ -88,13 +111,22 @@
 					</view>
 				</view>
 				<!-- 当日学习 -->
-				<view class="todayStudyBox">
-					<label class="study">当日学习：<label class="grayColor">12分钟</label></label>
-					<label class="review">总时长：<label class="grayColor">120分钟</label></label>
+				<view class="todayStudyBox" v-if="timesActive=='week'?true:''">
+					<label class="study">当日学习：<label class="grayColor">{{timeChartList.studentStudyInfoVOList.length==0?'0':timeChartList.lengthOfStudy}}分钟</label></label>
+					<label class="review">总时长：<label class="grayColor">{{timeChartList.studentStudyInfoVOList.length==0?'0':timeChartList.lengthOfStudyCount}}分钟</label></label>
+				</view>
+				<!-- 当月学习 -->
+				<view class="todayStudyBox" v-if="timesActive=='month'?true:''">
+					<label class="study">当月学习：<label class="grayColor">{{timeChartList.studentStudyInfoVOList.length==0?'0':timeChartList.lengthOfStudy}}分钟</label></label>
+					<label class="review">总时长：<label class="grayColor">{{timeChartList.studentStudyInfoVOList.length==0?'0':timeChartList.lengthOfStudyCount}}分钟</label></label>
 				</view>
 			</view>
 
+
+
 		</view>
+
+
 	</view>
 </template>
 
@@ -111,13 +143,19 @@
 				cHeight: '',
 				pixelRatio: 1,
 				serverData: '',
+				studentId: '',
+				toDayactive: 'week',
+				timesActive: 'week',
+				timeChartList: [],
+				worfChartList: [],
+				studentRecordList: [],
+				learningToday: 0,
+				cumulativeLearning: 0,
+				learningHoursToday: 0,
+				accumulatedLearningTime: 0,
+				studentRealname: "",
+				studentAvatar: ""
 			}
-		},
-		onLoad() {
-			_self = this;
-			this.cWidth = uni.upx2px(750);
-			this.cHeight = uni.upx2px(500);
-			this.getServerData();
 		},
 		methods: {
 			// 返回
@@ -126,34 +164,215 @@
 					delta: 1
 				});
 			},
-			// 获取图标数据
-			getServerData() {
-				uni.request({
-					url: 'https://www.ucharts.cn/data.json',
-					data: {},
-					success: function(res) {
-						console.log(res.data.data)
-						_self.serverData = res.data.data;
-						let Area = {
-							categories: [],
-							series: []
-						};
-						Area.categories = res.data.data.Area.categories;
-						Area.series = res.data.data.Area.series;
+
+			// 获取用户学习情况(今日时长,今日单词,总时长,总单词)
+			getStudentRecord(studentId) {
+				this.$minApi.getStudentRecord({
+					studentId: this.studentId
+				}).then(data => {
+					this.studentRecordList = data.data
+					console.log(this.studentRecordList, 99)
+					this.studentRecordList.forEach(data => {
+						console.log(data.dateType, 66)
+						if (data.dateType == "all") {
+							this.cumulativeLearning = data.exerciseCount
+							this.accumulatedLearningTime = data.lengthOfStudy
+						} else if (data.dateType == "today") {
+							this.learningToday = data.exerciseCount
+							this.learningHoursToday = data.lengthOfStudy
+						}
+					})
+				})
+			},
+
+			// 获取用户学习时长图表
+			getTimeChart(val) {
+				let _this = this
+				// 折线图
+				let Area = {
+					categories: [],
+					series: [{
+						data: [],
+						name: ""
+					}]
+				};
+				if (val == 'week') {
+					this.$minApi.getTimeChart({
+						studentId: this.studentId,
+						type: "week"
+					}).then(data => {
+						console.log("dara")
+						let arrX = []
+						let arrY = []
+						this.timeChartList = data.data
+						for (var i = -6; i <= 0; i++) {
+							arrX.push(_this.getDay(i))
+							arrY.push(0)
+						}
+						Area.categories = arrX
+						Area.series[0].data = arrY
+						let arrDuration = []
+						if (this.timeChartList.studentStudyInfoVOList.length != 0) {
+							arrX.forEach(data => {
+								this.timeChartList.studentStudyInfoVOList.forEach(val => {
+									if (data == val.recordTime.slice(5)) {
+										arrX.indexOf(data)
+										// console.log(arrX.indexOf(data))
+										arrY[arrX.indexOf(data)] = val.lengthOfStudy
+									}
+								})
+							})
+						}
+						Area.categories = arrX;
+						Area.series[0].data = arrY;
 						_self.showArea("canvasArea", Area);
-						let ColumnStack = {
-							categories: [],
-							series: []
-						};
-						//这里我后台返回的是数组，所以用等于，如果您后台返回的是单条数据，需要push进去
-						ColumnStack.categories = res.data.data.ColumnStack.categories;
-						ColumnStack.series = res.data.data.ColumnStack.series;
+					})
+				}
+				if (val == 'month') {
+					this.$minApi.getTimeChart({
+						studentId: this.studentId,
+						type: "month"
+					}).then(data => {
+						this.timeChartList = data.data
+						// console.log(data)
+						let arrX = []
+						let arrY = []
+						let month = this.timeChartList.dateTimeType.slice(5)
+						for (var i = 1; i <= month; i++) {
+							if (i < 10) {
+								i = "0" + i
+							} else {
+								i = i.toString()
+							}
+							arrX.push(i)
+							arrY.push(0)
+						}
+						if (this.timeChartList.studentStudyInfoVOList.length != 0) {
+							arrX.forEach(data => {
+								this.timeChartList.studentStudyInfoVOList.forEach(val => {
+									if (data == val.recordTime.slice(5, 7)) {
+										arrX.indexOf(data)
+										// console.log(arrX.indexOf(data))
+										arrY[arrX.indexOf(data)] = val.lengthOfStudy
+									}
+								})
+							})
+						}
+
+						Area.categories = arrX;
+						Area.series[0].data = arrY;
+						_self.showArea("canvasArea", Area);
+					})
+
+				}
+			},
+
+			// 获取用户学习单词数图表
+			getWordChart(val) {
+				let _this = this
+				// 柱状图
+				let ColumnStack = {
+					categories: [],
+					series: [{
+							data: [],
+							name: "学习"
+						},
+						{
+							data: [],
+							name: "复习"
+						},
+					]
+				};
+				if (val == "week") {
+					this.$minApi.getWordChart({
+						studentId: this.studentId,
+						type: "week"
+					}).then(data => {
+						// console.log(data)
+						this.worfChartList = data.data
+						let arrX = []
+						let arrStudy = []
+						let arrReview = []
+						for (var i = -6; i <= 0; i++) {
+							arrX.push(_this.getDay(i))
+							arrStudy.push(0)
+							arrReview.push(0)
+						}
+						ColumnStack.categories = arrX
+						ColumnStack.series[0].data = arrStudy
+						ColumnStack.series[1].data = arrReview
+						if (this.worfChartList.studentStudyInfoVOList.length != 0) {
+							arrX.forEach(data => {
+								this.worfChartList.studentStudyInfoVOList.forEach(val => {
+									console.log(val.recordTime.slice(5))
+									if (data == val.recordTime.slice(5)) {
+										arrX.indexOf(data)
+										console.log(arrX.indexOf(data))
+										arrStudy[arrX.indexOf(data)] = val.exerciseCount
+										arrReview[arrX.indexOf(data)] = val.reviewCount
+									}
+								})
+							})
+						}
+						ColumnStack.categories = arrX
+						ColumnStack.series[0].data = arrStudy
+						ColumnStack.series[1].data = arrReview
 						_self.showColumnStack("canvasColumnStack", ColumnStack);
-					},
-					fail: () => {
-						_self.tips = "网络错误，小程序端请检查合法域名";
-					},
-				});
+						// console.log(ColumnStack)
+					})
+
+				}
+				if (val == "month") {
+					this.$minApi.getWordChart({
+						studentId: this.studentId,
+						type: "month"
+					}).then(data => {
+						// console.log(data)
+						this.worfChartList = data.data
+						let arrX = []
+						let arrStudy = []
+						let arrReview = []
+						let month = this.worfChartList.dateTimeType.slice(5)
+						for (var i = 1; i <= month; i++) {
+							if (i < 10) {
+								i = "0" + i
+							} else {
+								i = i.toString()
+							}
+							arrX.push(i)
+							arrStudy.push(0)
+							arrReview.push(0)
+						}
+						ColumnStack.categories = arrX
+						ColumnStack.series[0].data = arrStudy
+						ColumnStack.series[1].data = arrReview
+						if (this.worfChartList.studentStudyInfoVOList.length != 0) {
+							// console.log(arrX)
+							arrX.forEach(data => {
+								this.worfChartList.studentStudyInfoVOList.forEach(val => {
+									if (data == val.recordTime.slice(5, 7)) {
+										arrX.indexOf(data)
+										arrStudy[arrX.indexOf(data)] = val.exerciseCount
+										arrReview[arrX.indexOf(data)] = val.reviewCount
+									}
+								})
+							})
+						}
+						ColumnStack.categories = arrX
+						ColumnStack.series[0].data = arrStudy
+						ColumnStack.series[1].data = arrReview
+						_self.showColumnStack("canvasColumnStack", ColumnStack);
+					})
+				}
+			},
+
+			timesChange(val) {
+				this.timesActive = val
+				this.getTimeChart(val)
+			},
+			toDayChange(val) {
+				this.toDayactive = val
+				this.getWordChart(val)
 			},
 			// 配置折线图   详情见u-charts
 			showArea(canvasId, chartData) {
@@ -170,7 +389,7 @@
 					categories: chartData.categories,
 					series: chartData.series,
 					animation: false,
-					colors: ['#FF5C5C', '#FFBB00', '#979DAB'],
+					colors: ['#03BFB7'],
 					xAxis: {
 						disableGrid: true,
 					},
@@ -194,15 +413,6 @@
 				});
 
 			},
-			// 点击某一列显示某列的具体数据
-			touchArea(e) {
-				// canvaArea.showToolTip(e, {
-				// 	format: function(item, category) {
-				// 		return category + ' ' + item.name + ':' + item.data
-				// 	}
-				// });
-			},
-
 
 			// 配置图   详情见u-charts
 			showColumnStack(canvasId, chartData) {
@@ -213,7 +423,7 @@
 					legend: {
 						show: true
 					},
-					colors: ['#FF5C5C', '#FFBB00', '#979DAB'],
+					colors: ['#03BFB7', '#FF5C5C'],
 					fontSize: 11,
 					background: '#FFFFFF',
 					pixelRatio: _self.pixelRatio,
@@ -239,23 +449,50 @@
 					padding: [15, 10, 15, 10]
 				})
 			},
-			// 点击某一列显示某列的具体数据
-			touchColumn(e) {
-				// canvaColumn.showToolTip(e, {
-				// 	format: function(item, category) {
-				// 		return category + ' ' + item.name + ':' + item.data
-				// 	}
-				// });
-			}
+
+			// 获取某天前日期
+			getDay(day) {
+				var today = new Date();
+				var targetday_milliseconds = today.getTime() + 1000 * 60 * 60 * 24 * day;
+				today.setTime(targetday_milliseconds); //注意，这行是关键代码
+				var tYear = today.getFullYear();
+				var tMonth = today.getMonth();
+				var tDate = today.getDate();
+				tMonth = this.doHandleMonth(tMonth + 1);
+				tDate = this.doHandleMonth(tDate);
+				// return tYear+"-"+tMonth+"-"+tDate;
+				return tMonth + "-" + tDate;
+			},
+			doHandleMonth(month) {
+				var m = month;
+				if (month.toString().length == 1) {
+					m = "0" + month;
+				}
+				return m;
+			},
+		},
+
+		onLoad(options) {
+			_self = this;
+			this.cWidth = uni.upx2px(750);
+			this.cHeight = uni.upx2px(500);
+			this.studentId = options.studentId
+			this.studentRealname = options.studentRealname
+			this.studentAvatar = options.studentAvatar
+			this.getStudentRecord()
+			this.getTimeChart("week")
+			this.getWordChart("week")
+
 		}
 	}
 </script>
 
 
 <style lang="scss">
-	page{
-		background-clip: #FBFBFB!important;
+	page {
+		background-clip: #FBFBFB !important;
 	}
+
 	.qiun-charts {
 		width: 100%;
 		height: 500upx;
@@ -280,10 +517,10 @@
 			top: 0;
 			height: 376rpx;
 			z-index: 10;
-			
-			
-			background:linear-gradient(180deg,rgba(3,191,183,1) 0%,rgba(59,209,158,1) 100%);
-		
+
+
+			background: linear-gradient(180deg, rgba(3, 191, 183, 1) 0%, rgba(59, 209, 158, 1) 100%);
+
 		}
 
 		// 返回按钮
@@ -326,6 +563,8 @@
 				width: 108rpx;
 				height: 108rpx;
 				margin: 0 auto;
+				background-color: #F1F1F1;
+				border-radius: 50%;
 			}
 
 			.touName {
@@ -433,13 +672,31 @@
 					font-weight: 400;
 					color: rgba(151, 157, 171, 1);
 					margin-bottom: 40rpx;
+					overflow: hidden;
 
 					.week {
 						margin-left: 228rpx;
+						float: left;
+
 					}
 
-					.mouth {
+					.month {
 						margin-left: 56rpx;
+						float: left;
+					}
+
+					.active {
+						font-size: 30rpx;
+						font-family: PingFang SC;
+						font-weight: 800;
+						color: rgba(46, 53, 72, 1);
+
+						.line {
+							border-bottom: 4rpx solid #03BFB7;
+							width: 32rpx;
+							margin-left: 46rpx;
+							margin-top: 16rpx;
+						}
 					}
 				}
 			}

@@ -8,41 +8,28 @@
 		<!-- 内容 -->
 		<view class="wordTasksConBox">
 			<view class="taskVocabularyBox">
-				<view class="taskBox">
+				<view class="taskBox" v-for='(item,index) in taskListList' :key='index'>
 					<!-- 左边 -->
 					<view class="taskLeft">
-						<view class="taskTitle">任务词汇量：<label class="taskNum">10</label></view>
-						<view class="taskTime">7-10 15:00</view>
+						<view class="taskTitle">任务词汇量：<label class="taskNum">{{item.allWordCount}}</label></view>
+						<view class="taskTime">{{item.taskTime}}</view>
 					</view>
 					<!-- 中间 -->
-					<view class="taskCenter" v-if="isDone">
+					<view class="taskCenter" v-if="item.completeStatus==1">
 						<image src="../../../../static/images/Completed@2x.png" mode=""></image>
 					</view>
 					<!-- 右边 -->
 					<view class="taskRight">
-						<view class="status study" @click="toStudy()">
+						<view class="status study" v-if="item.completeStatus==0" @click="toStudy(item.wordId,item.taskId)">
 							去学习
+						</view>
+						<view v-if="item.completeStatus==1" class="status viewRanking" @click="toRanking(item.taskId,item.allWordCount)">
+							查看排行
 						</view>
 					</view>
 				</view>
 
-				<view class="taskBox" v-for='(item,index) in 20' :key='index'>
-					<!-- 左边 -->
-					<view class="taskLeft">
-						<view class="taskTitle">任务词汇量：<label class="taskNum">10</label></view>
-						<view class="taskTime">7-10 15:00</view>
-					</view>
-					<!-- 中间 -->
-					<view class="taskCenter" v-if="isDone">
-						<image src="../../../../static/images/Completed@2x.png" mode=""></image>
-					</view>
-					<!-- 右边 -->
-					<view class="taskRight">
-						<view class="status" :class="isDone==true?'viewRanking':'study'">
-							{{isDone==true?'查看排行':'去学习'}}
-						</view>
-					</view>
-				</view>
+
 			</view>
 		</view>
 	</view>
@@ -52,7 +39,8 @@
 	export default {
 		data() {
 			return {
-				isDone: true
+				isDone: true,
+				taskListList: []
 			}
 		},
 		methods: {
@@ -63,16 +51,40 @@
 				});
 			},
 			// 去学习跳转
-			toStudy() {
+			toStudy(wordId, taskId) {
+				console.log(taskId)
 				uni.navigateTo({
-					url: '../wordTasks/wordTaskLearning/study/index'
+					url: '../wordTasks/wordTaskLearning/study/index?wordId=' + wordId + "&taskId=" + taskId
 				})
 			},
+			// 查看排行跳转
+			toRanking(taskId,allWordCount) {
+				uni.navigateTo({
+					url: 'viewRanking/index?&taskId=' + taskId+"&allWordCount="+allWordCount
+				})
+			},
+			// 获取个人任务列表
+			taskList() {
+				this.$minApi.taskList({
+					page: 1,
+					pageSize: 99999999
+				}).then(data => {
+					console.log(data)
+					this.taskListList = data.data
+				})
+			}
+		},
+		created() {
+			this.taskList()
 		}
 	}
 </script>
 
 <style lang="scss">
+	page {
+		background: #FFFFFF !important;
+	}
+
 	.wordTasks {
 		.wordTasksConBox {
 			margin-top: 160rpx;

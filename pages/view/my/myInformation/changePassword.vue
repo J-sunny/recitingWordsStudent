@@ -50,7 +50,8 @@
 				isPassword2: true,
 				oldPwd: '',
 				newPwd: '',
-				studentPwd: ''
+				studentPwd: '',
+				userId:""
 			}
 		},
 		components: {
@@ -89,6 +90,7 @@
 			getUserInfo() {
 				this.$minApi.getUserInfo({}).then(data => {
 					this.studentPwd = data.data.studentPwd
+					this.userId = data.data.studentId
 					// console.log(data.data.studentPwd)
 				})
 			},
@@ -105,7 +107,15 @@
 					Toast('新密码格式不正确！')
 					return
 				} else {
-					Toast('密码正确！')
+					this.$minApi.updatePassword({
+						newPassWord: this.newPwd,
+						oldPassWord: this.oldPwd,
+						userId: this.userId,
+						userIdenty:"1"
+					}).then(data => {
+						console.log(data)
+						// Toast('修改成功！')
+					})
 				}
 			}
 		},

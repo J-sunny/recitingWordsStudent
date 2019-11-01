@@ -39,7 +39,7 @@
 		<van-popup :show="showGrade" position="bottom" style="height: 30%">
 			<van-picker show-toolbar title="请选择年级" :columns="columnsGrade" @cancel="onCancel('Grade')" @confirm="onConfirmGrade()" />
 		</van-popup>
-		<!-- 学校弹框 -->
+		<!-- 班级弹框 -->
 		<van-popup :show="showClass" position="bottom" style="height: 30%">
 			<van-picker show-toolbar title="请选择班级" :columns="columnsClass" @cancel="onCancel('Class')" @confirm="onConfirmClass()" />
 		</van-popup>
@@ -56,10 +56,11 @@
 				showGrade: false,
 				columnsGrade: ['XX年级', 'XX年级', 'XX年级', 'XX年级', 'XX年级', 'XX年级'],
 				showClass: false,
-				columnsClass: ['XX班级', 'XX班级', 'XX班级', 'XX班级', 'XX班级', 'XX班级'],
+				columnsClass: [],
 				selectSchool: '',
 				selectClass: '',
-				selectGrade: ''
+				selectGrade: '',
+				schoolId: ''
 			}
 		},
 		methods: {
@@ -69,15 +70,17 @@
 					delta: 1
 				});
 			},
-			// 学校弹框
+			// 弹框
 			showBox(val) {
 				if (val == 'School') {
+					this.getSchoolList()
 					this.showSchool = !this.showSchool
 				}
 				if (val == 'Grade') {
 					this.showGrade = !this.showGrade
 				}
 				if (val == 'Class') {
+					this.getClassList()
 					this.showClass = !this.showClass
 				} else {}
 			},
@@ -95,44 +98,49 @@
 			onConfirmSchool(e) {
 				this.showSchool = false
 				console.log(e)
-				this.selectSchool = e.detail.value
+				this.selectSchool = e.detail.value.schoolName
 			},
 			onConfirmGrade(e) {
 				this.showGrade = false
 				this.selectGrade = e.detail.value
 			},
 			onConfirmClass(e) {
+				console.log(e)
 				this.showClass = false
-				this.selectClass = e.detail.value
+				this.selectClass = e.detail.value.className
 			},
 			// 获取学校下拉列表
 			getSchoolList() {
 				this.$minApi.schoolList({}).then(data => {
-					console.log(data)
+					// console.log(data)
 					data.data.forEach(val => {
-						this.columnsSchool.push(val.schoolName)
+						val.text = val.schoolName
 					})
-					// this.columnsSchool = data.data.schoolName;
-
+					this.columnsSchool = data.data
 					console.log(this.columnsSchool)
 				})
 			},
 			// 获取班级下拉列表
 			getClassList() {
-				this.$minApi.classList({}).then(data => {
+				this.$minApi.classList({
+					schoolId: this.schoolId
+				}).then(data => {
 					console.log(data)
 					data.data.forEach(val => {
-						this.columnsClass.push(val.classlName)
+						console.log(val)
+						val.text = val.className
 					})
-					// this.columnsSchool = data.data.schoolName;
+					this.columnsClass = data.data
 					console.log(this.columnsClass)
 				})
 			},
 		},
-		created() {
-			this.getSchoolList()
-			this.getClassList()
-		}
+		onLoad() {
+			this.schoolId = getApp().globalData.schoolId
+		},
+		created() {}
+
+
 	}
 </script>
 

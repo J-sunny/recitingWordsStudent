@@ -3,7 +3,7 @@
 		<view class="headBox">
 			<!-- 顶部背景图 -->
 			<view class='site-img'>
-				
+
 			</view>
 			<!-- <image class='site-img' src="../../../../../static/images/BJ2.png" catchtap='navmap'></image> -->
 			<!-- 返回按钮 -->
@@ -13,11 +13,11 @@
 			<!-- 排行 -->
 			<view class="wordNum">
 				<view class="danCi lines">
-					<view class="danNum">30</view>
+					<view class="danNum">{{wordIdCount}}</view>
 					<view class="danText">单词数</view>
 				</view>
 				<view class="danCi">
-					<view class="danNum">200</view>
+					<view class="danNum">{{taskList.participantNum}}</view>
 					<view class="danText">参与人数</view>
 				</view>
 			</view>
@@ -27,79 +27,41 @@
 		<!-- 内容 -->
 		<view class="conBox">
 			<!-- 我的排名 -->
-			<view class="minePh">
+			<view class="minePh" v-if="taskList.rankList.length!=0">
 				<view class="mineleft f_float">
-					<label for="" class="myRanking">200</label>
-					<image class="myPic" src="../../../../../static/images/people@2.png" mode=""></image>
-					<label for="" class="myName">Fanny萱</label>
+					<label for="" class="myRanking">{{taskList.myself.rankNum}}</label>
+					<image class="myPic" :src="taskList.myself.studentAvatar" mode=""></image>
+					<label for="" class="myName">{{taskList.myself.studentRealname}}</label>
 				</view>
 				<view class="mineRight r_float">
 					<label for="" class="completionTime">完成时间</label>
-					<label for="times">00:20:36</label>
+					<label for="times">{{taskList.myself.completeTime==''?'暂无数据':taskList.myself.completeTime}}</label>
 				</view>
 			</view>
-
-
 
 			<!-- 其他排名 -->
 			<view style="margin-top: 24rpx;">
-				<view class="minePh">
-					<view class="mineleft f_float">
-						<label for="" class="myRanking" v-if="false">200</label>
-						<!-- 排行勋章 -->
-						<image v-if='true' class="xz" src="../../../../../static/images/xz1@2.png" mode=""></image>
-						<image v-if='false' class="xz" src="../../../../../static/images/xz2@2.png" mode=""></image>
-						<image v-if='false' class="xz" src="../../../../../static/images/xz3@2.png" mode=""></image>
-						<image class="myPic" src="../../../../../static/images/people@2.png" mode=""></image>
-						<label for="" class="myName">Fanny萱</label>
+				<view class="minePh " v-if="taskList.rankList.length!=0" v-for="item in taskList.rankList" :key='item.studentId'>
+					<view class="bot_line">
+						<view class="mineleft f_float">
+							<label for="" class="myRanking" v-if="false">200</label>
+							<!-- 排行勋章 -->
+							<label v-if="item.rankNum!=1&&item.rankNum!=2&&item.rankNum!=3" class="myRanking">{{item.rankNum}}</label>
+							<image v-if='item.rankNum==1' class="xz" src="../../../../../static/images/xz1@2.png" mode=""></image>
+							<image v-if='item.rankNum==2' class="xz" src="../../../../../static/images/xz2@2.png" mode=""></image>
+							<image v-if='item.rankNum==3' class="xz" src="../../../../../static/images/xz3@2.png" mode=""></image>
+							<image class="myPic" :src="item.studentAvatar" mode=""></image>
+							<label for="" class="myName">{{item.studentRealname}}</label>
+						</view>
+						<view class="mineRight r_float">
+							<label for="" class="completionTime">完成时间</label>
+							<label for="times">{{item.completeTime==''?'暂无数据':item.completeTime}}</label>
+						</view>
 					</view>
-					<view class="mineRight r_float">
-						<label for="" class="completionTime">完成时间</label>
-						<label for="times">00:20:36</label>
-					</view>
+
 				</view>
-
-				<view class="minePh">
-					<view class="mineleft f_float">
-						<!-- 排行勋章 -->
-						<image v-if='true' class="xz" src="../../../../../static/images/xz2@2.png" mode=""></image>
-						<image class="myPic" src="../../../../../static/images/people@2.png" mode=""></image>
-						<label class="myName">Fanny萱</label>
-					</view>
-					<view class="mineRight r_float">
-						<label for="" class="completionTime">完成时间</label>
-						<label for="times">00:20:36</label>
-					</view>
-				</view>
-
-
-				<view class="minePh">
-					<view class="mineleft f_float">
-						<!-- 排行勋章 -->
-						<image v-if="true" class="xz" src="../../../../../static/images/xz3@2.png" mode=""></image>
-						<image class="myPic" src="../../../../../static/images/people@2.png" mode=""></image>
-						<label class="myName">Fanny萱</label>
-					</view>
-					<view class="mineRight r_float">
-						<label for="" class="completionTime">完成时间</label>
-						<label for="times">00:20:36</label>
-					</view>
-				</view>
-
-				<view class="minePh" v-for="iten in 30" :key='iten'>
-					<view class="mineleft f_float">
-						<label for="" class="myRanking">200</label>
-						<image class="myPic" src="../../../../../static/images/people@2.png" mode=""></image>
-						<label for="" class="myName">Fanny萱</label>
-					</view>
-					<view class="mineRight r_float">
-						<label for="" class="completionTime">完成时间</label>
-						<label for="times">00:20:36</label>
-					</view>
-				</view>
-
 			</view>
-	
+
 		</view>
 	</view>
 </template>
@@ -108,7 +70,9 @@
 	export default {
 		data() {
 			return {
-				
+				taskId: '',
+				taskList: [],
+				wordIdCount: ""
 			}
 		},
 		methods: {
@@ -120,13 +84,25 @@
 					animationDuration: 200
 				});
 			},
-		
+			// 查看任务排名
+			taskRank(taskId) {
+				this.$minApi.taskRank({
+					taskId: taskId
+				}).then(data => {
+					console.log(data)
+					this.taskList = data.data
+				})
+			}
+
 		},
 		created() {
-			
+
 		},
 		onLoad(options) {
-			
+			console.log(options.taskId)
+			this.taskId = options.taskId
+			this.taskRank(options.taskId)
+			this.wordIdCount = getApp().globalData.wordIdCount || options.allWordCount
 		}
 
 	}
@@ -222,7 +198,8 @@
 			margin-top: 326rpx;
 
 
-			// 我的排名
+			// 排名
+
 			.minePh {
 				width: 100%;
 				height: 112rpx;
@@ -231,6 +208,12 @@
 				box-sizing: border-box;
 				line-height: 112rpx;
 				overflow: hidden;
+
+				.bot_line {
+					border-bottom: 2rpx solid #EFEFF1;
+					overflow: hidden;
+					height: 111rpx;
+				}
 
 				.mineleft {
 					float: left;
@@ -276,14 +259,15 @@
 
 					.times {
 						font-size: 28rpx;
+						font-family: PingFang SC;
 						font-weight: 500;
 						color: rgba(46, 53, 72, 1);
 					}
 				}
 
 			}
-		
-		
+
+
 		}
 	}
 </style>

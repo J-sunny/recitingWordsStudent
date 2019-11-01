@@ -2,7 +2,7 @@
 	<view class="wordTaskLearning">
 		<!-- 头部 -->
 		<view class="headBox">
-			<view class="headTitle">单词任务学习</view>
+			<view class="headTitle">单词任务测试</view>
 			<van-icon @tap='goBack()' class='headArrow' name="arrow-left" />
 		</view>
 		<!-- 内容 -->
@@ -11,17 +11,17 @@
 			<view class="progressBox">
 				<van-progress :show-pivot='false' color="#FD9023" :percentage="percentage" />
 				<view class="progressTxtBox">
-					<label class="progressTxt">{{index+1}}/{{wordIdList.length}}</label>
-					<van-icon @click='saveOrCancelCollectWords(questionList.wordId,questionList.collectionStatus)' :class="questionList.collectionStatus==1?'start':'start-o'"
-					 :name="questionList.collectionStatus==1?'star':'star-o'" />
+					<label class="count">{{doneCount+1}}/{{wordIdList.length}}</label>
+					<label class="times">{{time}}</label>
+					<label class="passed">已通过：<label class="skyColor">6</label></label>
 				</view>
 			</view>
 			<!-- 单词框 -->
 			<view class="wordsBox">
-				<view class="word">{{questionList.wordSpell}}</view>
+				<view class="word">component</view>
 				<view class="playWord" @click="playAudio">
 					<van-icon class='volume-o' name="volume-o" />
-					<label class="phonetic">{{questionList.phoneticSymbol}} </label>
+					<label class="phonetic">/kəm'ponənt/ </label>
 				</view>
 			</view>
 			<!-- 释义 -->
@@ -48,22 +48,6 @@
 				</view>
 			</view>
 		</view>
-		<!-- 完成学习弹框 -->
-		<view class="completeBox">
-			<van-popup :show="show" @close="onClose()">
-				<view class="completeConBox">
-					<view class="top">
-						<image class="coverPic" src="../../../../../../static/images/icon_test@2x.png"></image>
-						<view class="right">
-							<view class="taskNum">任务<label class="num">{{wordIdList.length}}</label>词</view>
-							<view class="complete">学习已完成</view>
-						</view>
-					</view>
-					<view class="startTask" @click="linkTo()">开始测试</view>
-				</view>
-			</van-popup>
-		</view>
-
 	</view>
 </template>
 
@@ -73,27 +57,29 @@
 			return {
 				percentage: '',
 				collection: false,
-				show: false,
-				wordIdList: [],
-				questionList: [],
 				example: [],
-				interpretation: [],
-				wordId: "",
 				index: 0,
+
+				interpretation: [],
+				questionList: [],
 				exampleArr: [],
-				state:""
+				wordId: "",
+				doneCount: "",
+				wordIdListStr: [],
+				time: '',
+				Hours: 0,
+				Minute: 0,
+				Second: 0,
+				wordIdList: []
 			}
 		},
+
 		methods: {
 			// 返回
 			goBack() {
 				uni.navigateBack({
 					delta: 1
 				});
-			},
-			// 收藏
-			collectionCli() {
-				this.collection = !this.collection
 			},
 			// 播放音频
 			playAudio() {
@@ -110,77 +96,85 @@
 			},
 			// 下一题
 			nextQuestion() {
-				// console.log(this.wordIdList[Math.floor(Math.random() * this.wordIdList.length)])
-				// console.log(this.index)
-				if (this.index < this.wordIdList.length - 1) {
-					this.index++
-					this.percentage = ((this.index + 1) / this.wordIdList.length) * 100
-					this.getWordInfo(this.wordIdList[this.index + 0])
+				console.log(this.doneCount)
+				console.log(this.wordIdList.length - 2)
+
+				if (this.doneCount <= this.wordIdList.length - 2) {
+					this.doneCount++
+					console.log("if")
+					uni.reLaunch({
+						url: "index?index=" + this.doneCount + "&wordIdList=" + this.wordIdList + "&time=" + this.time
+					})
 				} else {
-					this.showPopup()
+					console.log("else")
+					clearInterval(this.timer)
+					uni.reLaunch({
+						url: "passedTask?wordCount=" + this.wordIdList.length+ "&time=" + this.time+"&wordId="+this.wordId
+					})
 				}
 			},
-			// 完成学习弹框    关闭弹框
-			onClose() {
-				this.show = false
-			},
-			// 完成学习弹框    打开弹框
-			showPopup() {
-				this.show = true
-			},
-			// 跳转页面
-			linkTo() {
-				uni.navigateTo({
-					url: '../test/index?wordIdList=' + this.wordIdList
-				})
-			},
-			// 获取单词详情
+
+			// 获取题目
 			getWordInfo(wordId) {
 				this.exampleArr = []
 				this.$minApi.getWordInfo({
 					wordId: wordId
 				}).then(data => {
+					// console.log(data)
 					this.questionList = data.data
 					this.interpretation = data.data.interpretation.split("丶")
 					this.example = data.data.example.split("丶")
 					this.example.forEach(val => {
 						this.exampleArr.push(val.split("&"))
 					})
-					// console.log(this.interpretation)
-					// console.log(this.example)
-					// console.log(this.exampleArr)
 				})
 			},
-			// 学生保存或取消收藏单词
-			saveOrCancelCollectWords(wordId,collectionStatus) {
-				console.log(uni.getStorageSync('studentId'))
-				this.state=""
-				if(collectionStatus=="1"){
-					this.state='0'
-				}else{
-					this.state='1'
-				}
-				console.log(typeof(this.state))
-				this.$minApi.saveOrCancelCollectWords({
-					collectionStatus: this.state,
-					studentId: uni.getStorageSync('studentId'),
-					wordId: wordId
-				}).then(data => {
-					uni.showToast({
-						title:"操作成功！",
-						icon:"none"						
-					})
-					this.getWordInfo(this.wordIdList[this.index + 0])
-				})
-			}
+			// 计时器、
+			start() {
+				this.timer = setInterval(data => {
+					this.Second++;
+					if (this.Second > 59) {
+						this.Second = 0;
+						this.Minute++;
+						if (this.Minute > 59) {
+							this.Minute = 0;
+							this.Hours++;
+						}
+					}
+					if (this.Second < 10) {
+						this.Secondt = "0" + this.Second;
+					} else {
+						this.Secondt = this.Second;
+					}
+					if (this.Minute < 10) {
+						this.Minutet = "0" + this.Minute;
+					} else {
+						this.Minutet = this.Minute;
+					}
+					if (this.Hours < 10) {
+						this.Hourst = "0" + this.Hours;
+					} else {
+						this.Hourst = this.Hours;
+					}
+					this.time = this.Hourst + ":" + this.Minutet + ":" + this.Secondt
+				}, 1000)
+			},
+
 		},
 		onLoad(options) {
-			this.wordIdList = options.wordId.split(",")
-			getApp().globalData.taskId = options.taskId
-			getApp().globalData.wordIdCount = this.wordIdList.length
-			this.getWordInfo(this.wordIdList[0])
-			this.percentage = ((this.index + 1) / this.wordIdList.length) * 100
+			this.wordId = options.wordId
+			this.doneCount = parseInt(options.doneCount)
+			this.wordIdListStr = options.wordIdListStr
+			this.wordIdList = options.wordIdListStr.split(",")
+			this.time = options.time
+			this.getWordInfo(options.wordId)
+			this.Hours = parseInt(this.time.split(":")[0])
+			this.Minute = parseInt(this.time.split(":")[1])
+			this.Second = parseInt(this.time.split(":")[2])
+			this.start()
+			this.percentage = ((this.doneCount + 1) / this.wordIdList.length) * 100
 		}
+
 	}
 </script>
 
@@ -195,51 +189,41 @@
 
 		/* 内容 */
 		.TaskLearningBox {
-			margin-top: 248rpx;
+			margin-top: 128rpx;
 
-			// 进度条框
-			.progressBox {
-				position: fixed;
-				top: 128rpx;
-				left: 0;
-				background-color: #FFFFFF;
+
+			// 进度条
+			.progressTxtBox {
+				height: 74rpx;
 				width: 100%;
-				z-index: 100;
+				border-bottom: 2rpx solid #EFEFF1;
+				font-size: 28rpx;
+				font-family: PingFang SC;
+				font-weight: 500;
+				line-height: 74rpx;
+				color: rgba(92, 99, 113, 1);
+				opacity: 1;
+				position: relative;
 
-				.progressTxtBox {
-					height: 74rpx;
-					width: 100%;
-					border-bottom: 2rpx solid #EFEFF1;
-
-					.progressTxt {
-						float: left;
-						font-size: 28rpx;
-						font-family: PingFang SC;
-						font-weight: 500;
-						line-height: 74rpx;
-						color: rgba(92, 99, 113, 1);
-						opacity: 1;
-						margin-left: 40rpx;
-					}
-
-					.start-o {
-						float: right;
-						font-size: 40rpx;
-						margin-right: 40rpx;
-						color: #979DAB;
-						margin-top: 10rpx;
-					}
-
-					.start {
-						float: right;
-						font-size: 40rpx;
-						margin-right: 40rpx;
-						color: #0FC4B7;
-						margin-top: 10rpx;
-						// background-color: #0FC4B7;
-					}
+				.count {
+					position: absolute;
+					left: 40rpx;
 				}
 
+				.times {
+					display: inline-block;
+					width: 100%;
+					text-align: center;
+				}
+
+				.passed {
+					position: absolute;
+					right: 40rpx;
+
+					.skyColor {
+						color: #0FC4B7;
+					}
+				}
 			}
 
 			// 单词框
@@ -381,81 +365,6 @@
 
 		}
 
-		// 完成内容学习弹框
-		.completeBox {
-			overflow: hidden;
 
-			.van-popup {
-				border-radius: 20rpx;
-			}
-
-			.completeConBox {
-				width: 526rpx;
-				height: 410rpx;
-				background: rgba(255, 255, 255, 1);
-				opacity: 1;
-				border-radius: 20rpx;
-				padding: 70rpx 58rpx;
-				box-sizing: border-box;
-				overflow: hidden;
-
-				.top {
-					overflow: hidden;
-
-					.coverPic {
-						float: left;
-						display: inline-block;
-						width: 112rpx;
-						height: 146rpx;
-						background: rgba(255, 238, 220, 1);
-						opacity: 1;
-						border-radius: 18rpx;
-						margin-left: 40rpx;
-					}
-
-					.right {
-						float: left;
-						margin-left: 40rpx;
-
-						.taskNum {
-							font-size: 32rpx;
-							font-family: PingFang SC;
-							font-weight: bold;
-							color: rgba(253, 144, 35, 1);
-							opacity: 1;
-							// margin-top: 20rpx;
-
-							.num {
-								font-size: 48rpx;
-							}
-						}
-
-						.complete {
-							font-size: 32rpx;
-							font-family: PingFang SC;
-							font-weight: bold;
-							color: rgba(46, 53, 72, 1);
-							opacity: 1;
-							margin-top: 24rpx;
-						}
-					}
-				}
-
-				.startTask {
-					width: 100%;
-					height: 80rpx;
-					background: linear-gradient(90deg, rgba(15, 196, 183, 1) 0%, rgba(63, 210, 177, 1) 100%);
-					opacity: 1;
-					border-radius: 40rpx;
-					font-size: 30rpx;
-					font-family: PingFang SC;
-					font-weight: 400;
-					line-height: 80rpx;
-					color: rgba(255, 255, 255, 1);
-					text-align: center;
-					margin-top: 48rpx;
-				}
-			}
-		}
 	}
 </style>

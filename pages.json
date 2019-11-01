@@ -117,6 +117,16 @@
 			}
 		},
 		{
+			"path": "pages/view/home/wordTasks/wordTaskLearning/test/wordDetails",
+			"style": {
+				"navigationBarTitleText": "单词任务测试",
+				"usingComponents": {
+					"van-icon": "../../../wxcomponents/vant-weapp/dist/icon/index",
+					"van-progress": "../../../wxcomponents/vant-weapp/dist/progress/index"
+				}
+			}
+		},
+		{
 			"path": "pages/view/home/wordTasks/wordTaskLearning/study/index",
 			"style": {
 				"navigationBarTitleText": "单词任务学习",
@@ -185,10 +195,12 @@
 				}
 			}
 		}
-
-
-
 	],
+	"permission": {
+		"scope.userLocation": {
+			"desc": "你的位置信息将用于小程序位置接口的效果展示" // 高速公路行驶持续后台定位
+		}
+	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
@@ -196,6 +208,7 @@
 		"backgroundColor": "#F8F8F8",
 		"navigationStyle": "custom"
 	},
+	
 	"tabBar": {
 		"color": "#979DAB",
 		"selectedColor": "#03BFB7",

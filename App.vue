@@ -1,5 +1,9 @@
 <script>
+	import Toast from '@/wxcomponents/vant-weapp/dist/toast/toast';
 	export default {
+		globalData: {
+
+		},
 		onLaunch: function() {
 			// console.log('App Launch')
 		},
@@ -13,6 +17,7 @@
 </script>
 
 <style lang="scss">
+	// @import Toast from '/wxcomponents/vant-weapp/dist/toast/toast';
 	/*每个页面公共css */
 	page {
 		background: linear-gradient(0deg, rgba(235, 245, 244, 1) 0%, rgba(255, 255, 255, 1) 100%);
@@ -84,5 +89,14 @@
 			color: #EE5858;
 			border: 2rpx solid rgba(255, 122, 122, 1);
 		}
+	}
+
+	// 弹出框按钮样式
+	.van-picker__cancel{
+		color: #666666!important;
+	}
+	.van-picker__confirm {
+		color: #03BFB7!important;
+
 	}
 </style>

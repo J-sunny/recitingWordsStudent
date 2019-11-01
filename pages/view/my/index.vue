@@ -9,16 +9,16 @@
 				<image class="headPortrait" src="../../../static/images/people@2.png" mode=""></image>
 				<view class="logins">登录/注册</view>
 			</view>
-			<!-- 登录未加入班级状态 -->
 			<view class="loginedHeadBox">
 				<view class="infoBox" @click="toMyInformation()">
 					<image class="infoTx" src="../../../static/images/people@2.png" mode=""></image>
 					<label class="infoName">
-						<view class="name">Fanny萱</view>
-						<view class="classed">尚未加入班级</view>
+						<view class="name">{{userInfoList.studentRealname}}</view>
+						<view class="classed">{{userInfoList.studentClass==0?'尚未加入班级':userInfoList.studentClass}}</view>
 					</label>
 				</view>
-				<view class="jionClass" @click="jion()">加入班级</view>
+				<!-- 登录未加入班级状态 -->
+				<view class="jionClass" v-if="userInfoList.studentClass==0" @click="jion()">加入班级</view>
 			</view>
 		</view>
 		<!-- 内容 -->
@@ -39,25 +39,25 @@
 							<view class="dayTitle">
 								<image class="titleIcon" src="../../../static/images/today3.png"></image>今日学习
 							</view>
-							<view class="dayNum"><label class="bigFont">2</label>词</view>
+							<view class="dayNum"><label class="bigFont">{{learningToday}}</label>词</view>
 						</view>
 						<view class="toDay">
 							<view class="dayTitle">
-								<image class="titleIcon" src="../../../static/images/Cumulative.png"></image>累计学习
+								<image class="titleIcon" src="../../../static/images/Cumulative1.png"></image>累计学习
 							</view>
-							<view class="dayNum"><label class="bigFont">2</label>词</view>
+							<view class="dayNum"><label class="bigFont">{{cumulativeLearning}}</label>词</view>
 						</view>
 						<view class="toDay">
 							<view class="dayTitle">
-								<image class="titleIcon" src="../../../static/images/Duration.png"></image>今日学习时长
+								<image class="titleIcon" src="../../../static/images/todayTime.png"></image>今日学习时长
 							</view>
-							<view class="dayNum"><label class="bigFont">2</label>词</view>
+							<view class="dayNum"><label class="bigFont">{{learningHoursToday}}</label>分钟</view>
 						</view>
 						<view class="toDay">
 							<view class="dayTitle">
-								<image class="titleIcon" src="../../../static/images/Cumulativelength.png"></image>累计学习时长
+								<image class="titleIcon" src="../../../static/images/Cumulativelength3.png"></image>累计学习时长
 							</view>
-							<view class="dayNum"><label class="bigFont">2</label>词</view>
+						<view class="dayNum"><label class="bigFont">{{accumulatedLearningTime}}</label>分钟</view>
 						</view>
 					</view>
 				</view>
@@ -72,12 +72,14 @@
 							<label for="" class="allCollege">全部收藏：</label>
 						</view>
 						<view class="num">
-							<label class="bigFont" for="">0</label><label for="">词</label>
+							<label class="bigFont" for="">{{collectWordTotal}}</label><label for="">词</label>
 						</view>
 					</view>
 					<view class="conRight">
-						<label class="looAll" @click="toAllCollections()">查看全部</label>
-						<label class="specialReview">专项复习</label>
+						<label class="looAll" v-if="collectWordTotal==0" >查看全部</label>
+						<label class="looAll looAllBlueColor" v-if="collectWordTotal>0" @click="toAllCollections()">查看全部</label>
+						<label class="specialReview" v-if="collectWordTotal==0">专项复习</label>
+						<label class="specialReview specialBlueColor" v-if="collectWordTotal>0">专项复习</label>
 					</view>
 				</view>
 			</view>
@@ -86,7 +88,6 @@
 				退出登录
 			</view>
 		</view>
-
 		<!-- 退出登录弹框 -->
 		<view class="loginBigBox">
 			<van-popup :show="show">
@@ -94,7 +95,7 @@
 					<view class="title">是否确定退出登录？</view>
 					<view class="btnBox">
 						<label class="cancel" @click="show=false">取消</label>
-						<label class="confirm" @click="loginOut()">确认</label>
+						<label class="confirm" @click="loginOut()">确定</label>
 					</view>
 				</view>
 			</van-popup>
@@ -106,7 +107,18 @@
 	export default {
 		data() {
 			return {
-				show: false
+				show: false,
+				studentId: "",
+				collectWordTotal: "",
+				userInfoList: [],
+				learningToday: 0,
+				cumulativeLearning: 0,
+				learningHoursToday: 0,
+				accumulatedLearningTime: 0,
+				studentRecordList:[],
+				studentAvatar:"",
+				studentRealname:""
+				
 			}
 		},
 		methods: {
@@ -125,7 +137,7 @@
 			// 查看详情跳转
 			look() {
 				uni.navigateTo({
-					url: 'dataDetails/index'
+					url: 'dataDetails/index?studentId='+this.studentId+"&studentRealname="+this.studentRealname+"&studentAvatar="+this.studentAvatar
 				})
 			},
 			// 个人资料跳转
@@ -145,28 +157,69 @@
 				this.$minApi.loginOut({}).then(data => {
 					// Toast(data.msg);
 					console.log(data)
-					uni.removeStorageSync('token');
+					// uni.removeStorageSync('token');
+					uni.clearStorage();
 					uni.redirectTo({
 						url: '../my/login/index'
 					});
 				})
 				this.show = false
-			}
+			},
+			// 获取个人信息
+			getUserInfo() {
+				this.$minApi.getUserInfo({}).then(data => {
+					getApp().globalData.schoolId = data.data.belongSchoolId
+					getApp().globalData.studentId = data.data.studentId
+					 uni.setStorageSync('studentId', data.data.studentId);
+					this.studentId = data.data.studentId
+					this.studentRealname=data.data.studentRealname
+					this.studentAvatar=data.data.studentAvatar
+					this.userInfoList = data.data
+					// 获取收藏
+					this.$minApi.getCollectWordsList({
+						studentId: this.studentId
+					}).then(data => {
+						this.collectWordTotal = data.data.collectWordTotal
+					})
+					this.getStudentRecord(data.data.studentId)
+
+				})
+			},
+			// 获取用户学习情况(今日时长,今日单词,总时长,总单词)
+			getStudentRecord(studentId) {
+				this.$minApi.getStudentRecord({
+					studentId: studentId
+				}).then(data => {
+					this.studentRecordList = data.data
+					this.studentRecordList.forEach(val => {
+						if (val.dateType == "all") {
+							this.cumulativeLearning = val.exerciseCount
+							this.accumulatedLearningTime = val.lengthOfStudy
+						} else if (val.dateType == "today") {
+							this.learningToday = val.exerciseCount
+							this.learningHoursToday = val.lengthOfStudy
+						}
+					})
+				})
+			},
+
+
 		},
 		created() {
+			this.getUserInfo()
 			// 没有登录则跳转到登录页面
-			if (!uni.getStorageSync('token')) {
-				uni.redirectTo({
-					url: 'login/index'
-				});
-			}
-		}
+			// if (!uni.getStorageSync('token')) {
+			// 	uni.redirectTo({
+			// 		url: 'login/index'
+			// 	});
+			// }
+		},
 	}
 </script>
 
 <style lang="scss">
 	page {
-		background: #FFFFFF !important;
+		background: #F5F7F7 !important;
 	}
 
 	.myBox {
@@ -335,7 +388,7 @@
 					.stuList {
 						width: 686rpx;
 						height: 352rpx;
-						background: #F9F9F9;
+						background:#FFFFFF;
 						box-shadow: 0px 8rpx 36rpx rgba(201, 201, 201, 0.15);
 						opacity: 1;
 						border-radius: 16rpx;
@@ -396,7 +449,7 @@
 				.myCollectionConBox {
 					width: 100%;
 					height: 180rpx;
-					background: rgba(249, 249, 249, 1);
+					background: #FFFFFF;
 					opacity: 1;
 					border-radius: 20rpx;
 					overflow: hidden;
@@ -417,8 +470,9 @@
 								font-size: 24rpx;
 								font-family: PingFang SC;
 								font-weight: 400;
-								color: rgba(46, 53, 72, 1);
+								color: #5C6371;
 								opacity: 1;
+								margin-left: 16rpx;
 							}
 						}
 
@@ -461,6 +515,10 @@
 							text-align: center;
 							margin-right: 32rpx;
 						}
+						.looAllBlueColor{
+							border: 2rpx solid #03BFB7;
+							color: #03BFB7;
+						}
 
 						.specialReview {
 							display: inline-block;
@@ -477,6 +535,10 @@
 							opacity: 1;
 							text-align: center;
 						}
+						.specialBlueColor{
+							background:linear-gradient(180deg,rgba(3,191,183,1) 0%,rgba(31,217,181,1) 100%);
+							opacity:1;
+						}
 					}
 				}
 			}
@@ -485,7 +547,7 @@
 			.loginOut {
 				width: 100%;
 				height: 108rpx;
-				background: rgba(249, 249, 249, 1);
+				background: #FFFFFF;
 				opacity: 1;
 				border-radius: 20rpx;
 				font-size: 32rpx;
@@ -496,6 +558,7 @@
 				opacity: 1;
 				text-align: center;
 				margin-top: 40rpx;
+				margin-bottom: 12rpx;
 			}
 
 

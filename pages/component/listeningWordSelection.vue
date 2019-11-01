@@ -5,15 +5,42 @@
 		</view>
 		<!-- 选项 -->
 		<view class="optionBox">
-			<view class="option green">handle</view>
-			<view class="option red">hacker</view>
-			<view class="option">hairstyle</view>
-			<view class="option">high-tech</view>
+			<view class="option" :class="answer==index?'green':'red'" @click="check(index)" v-for="(item,index) in optionsList" :key="index">{{item}}</view>
 		</view>
 	</view>
 </template>
 
 <script>
+	export default {
+		props: ["questionList","index","time","allCount"],
+		data() {
+			return {
+				optionsList:[],
+				answer:''
+			}
+		},
+		methods: {
+			// 选择题目
+		check(index) {
+			console.log(index)
+			if(index==this.answer){
+				this.$emit('nextQuestion');
+			}
+			else{
+			console.log(this.questionList)
+				console.log(333)
+				uni.navigateTo({
+					url:"wordDetails?wordId="+this.questionList.word_id+"&doneCount="+this.index+"&allCount="+this.questionList.length+"&time="+this.time
+				})
+			}
+		}
+		},
+		created() {
+			this.optionsList=this.questionList.question_option.split("丶")
+			this.answer=this.questionList.question_answer
+			console.log(this.optionsList)
+		}
+	}
 </script>
 
 <style lang="scss">

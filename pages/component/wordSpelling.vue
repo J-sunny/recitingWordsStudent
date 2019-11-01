@@ -3,11 +3,10 @@
 	<view class="wordSpellingBox">
 		<view class="wordsBox">
 			<label class="wordSpeling">
-				<label class="letter">co</label>
-				<input maxlength='1' class="wordInput rightWord" type="text">
-				<label class="letter">po</label>
-				<input maxlength='1' class="wordInput falseWord" type="text">
-				<label class="letter">ent</label>
+				<label v-for="(item,index) in subject" :key="index">
+					<label class="letter" v-if="item!='&'">{{item}}</label>
+					<input v-if="item=='&'" maxlength='1' class="wordInput" type="text" v-model="answerValue['answer'+index]">
+				</label>
 			</label>
 			<view class="playWord">
 				<van-icon class='volume-o' name="volume-o" />
@@ -21,17 +20,19 @@
 		<!-- 下一个 -->
 		<view class="nextBtn">
 			<van-icon class='arrow' name="arrow" />
-			<label class="nextTxt">下一个</label>
+			<label class="nextTxt" @click="next()">下一个</label>
 		</view>
-
 	</view>
 </template>
 
 <script>
 	export default {
+		props: ["questionList", "index", "time","allCount"],
 		data() {
 			return {
-				percentage: '70',
+				subject: [],
+				title: '',
+				answerValue: []
 			}
 		},
 		methods: {
@@ -41,7 +42,41 @@
 					delta: 1
 				});
 			},
+			// 下一个
+			next() {
+				console.log(this.answerValue[0])
+				console.log(this.subject)
+				this.subject.forEach((data,index) => {
+					console.log(index)
+					let val='answer'+index
+					console.log(this.answerValue.val)
+					if(data=='&'){
+						this.subject.splice(index,1,this.answerValue.val)
+					}
+					else{
+						
+					}
+				})
+				console.log(this.subject)
+				if (this.answer) {
+					this.$emit('nextQuestion');
+				} else {
+				console.log(this.questionList)
+					console.log(333)
+					uni.navigateTo({
+						url:"wordDetails?wordId="+this.questionList.word_id+"&doneCount="+this.index+"&allCount="+this.questionList.length+"&time="+this.time
+					})
+				}
+				this.$emit('nextQuestion');
+			}
 
+		},
+		created() {
+			console.log(this.questionList)
+			this.title = this.questionList.question_stem.replace(/ /g, "&")
+			this.subject = this.title.split('')
+			this.answer = this.questionList.question_answer
+			
 		}
 	}
 </script>
@@ -156,4 +191,6 @@
 		}
 
 	}
+
+
 </style>

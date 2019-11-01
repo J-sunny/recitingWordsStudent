@@ -7,7 +7,10 @@ import MinRequest from './request/index'
 import minRequest from './request/api'
 Vue.use(MinRequest)
 
-import Toast from './wxcomponents/vant-weapp/dist/toast/toast';
+// 不能用
+// import Toast from '@/wxcomponents/vant-weapp/dist/toast/toast';
+// Vue.component('toast',Toast)
+
 
 
 
@@ -16,6 +19,7 @@ App.mpType = 'app'
 
 const app = new Vue({
 	...App,
-	minRequest
+	minRequest,
+	// Toast
 })
 app.$mount()

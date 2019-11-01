@@ -10,7 +10,7 @@
 			<!-- 头像 -->
 			<view class="touBox">
 				<view class="touXiang" @tap="show()">
-					<image src="../../../../static/images/touXiang@2x.png"></image>
+					<image :src="picSrc"></image>
 				</view>
 			</view>
 		</view>
@@ -21,13 +21,13 @@
 			</view>
 
 			<view class="conBox" @tap="show1()">
-				<label class="name">性别</label><label class="con cons">{{studentGender==0?'女':'男'}}</label><label class="arrowRight"></label>
+				<label class="name">性别</label><label class="con cons">{{studentGender==0?'男':'女'}}</label><label class="arrowRight"></label>
 			</view>
 			<view class="conBox" @tap="show2()">
 				<label class="name">生日</label><label class="con cons">{{studentBirth}}</label><label class="arrowRight"></label>
 			</view>
 			<view class="conBox">
-				<label class="name">学校</label><label class="con">{{getUserInfoList.belongSchoolId}}</label>
+				<label class="name">学校</label><label class="con">{{getUserInfoList.schoolName}}</label>
 			</view>
 			<view class="conBox">
 				<label class="name">年级</label><label class="con">{{getUserInfoList.studentGrade}}</label>
@@ -46,8 +46,8 @@
 			<van-popup :show="showTx" position="bottom">
 				<view class="popupBox">
 					<view class="selectBox">
-						<view class="opcition">拍照</view>
-						<view class="">从手机相册选择</view>
+						<view class="opcition" @click="selectPic('camera')">拍照</view>
+						<view class="" @click="selectPic('album')">从手机相册选择</view>
 					</view>
 					<view class="cancel" @tap="close()">取消</view>
 				</view>
@@ -71,8 +71,7 @@
 				 min-date=0 :formatter="formatter" :max-date="maxDate" />
 			</van-popup>
 		</view>
-
-
+		<!-- <p @click='d()'>点击真的</p> -->
 	</view>
 </template>
 
@@ -82,7 +81,7 @@
 	export default {
 		data() {
 			return {
-				columns: ['女', '男'],
+				columns: ['男', '女'],
 				maxDate: new Date().getTime(),
 				studentBirth: '',
 				studentGender: '',
@@ -99,7 +98,10 @@
 				getUserInfoList: [],
 				showSex: false,
 				showBir: false,
-				showTx: false
+				showTx: false,
+				picSrc: '',
+				Areaaddress: '', //当前位置
+				userId: ""
 			}
 		},
 		components: {
@@ -136,7 +138,28 @@
 					index
 				} = event.detail;
 				console.log(`当前值：${value}, 当前索引：${index}`);
-				this.studentGender = index
+				this.studentGender = value
+				this.$minApi.updatetUserInfo({
+					userIdenty: 0,
+					id: this.userId,
+					gender: index
+				}).then(data => {
+					if (data.code == 200) {
+						uni.showToast({
+							title: "修改成功！",
+							icon: "none"
+						})
+					} else {
+						uni.showToast({
+							title: data.msg,
+							icon: "none"
+						})
+					}
+					console.log(data)
+					this.getUserInfo()
+				})
+				console.log(data)
+				this.getUserInfo()
 			},
 
 			onCancel() {
@@ -163,6 +186,29 @@
 				console.log(this.teacherBirth)
 				// var a=time.formatTimeTwo(this.birthday)				
 				this.close2()
+				
+				
+				this.$minApi.updatetUserInfo({
+					userIdenty: 0,
+					id: this.userId,
+					birthday: this.studentBirth
+				}).then(data => {
+					if (data.code == 200) {
+						uni.showToast({
+							title: "修改成功！",
+							icon: "none"
+						})
+					} else {
+						uni.showToast({
+							title: data.msg,
+							icon: "none"
+						})
+					}
+					console.log(data)
+					// this.getUserInfo()
+				})
+				
+				
 			},
 			birCancel() {
 				this.close2()
@@ -170,12 +216,67 @@
 			// 获取用户信息
 			getUserInfo() {
 				this.$minApi.getUserInfo({}).then(data => {
-					console.log(data)
+					// console.log(data)
 					this.getUserInfoList = data.data
 					this.studentBirth = data.data.studentBirth
 					this.studentGender = data.data.studentGender
+					this.userId = data.data.studentId
 				})
 			},
+			// 从本地相册选择图片或使用相机拍照。
+			selectPic(type) {
+			let this_ = this
+			uni.chooseImage({
+				count: 1,
+				sourceType: [type],
+				success: (res) => {
+					console.log(res)
+					this_.close('headPic')
+					this_.picSrc = res.tempFilePaths[0]
+			
+					const tempFilePaths = res.tempFilePaths;
+					const token = uni.getStorageSync('token');
+					uni.uploadFile({
+						url: 'http://148.70.55.201:8089/backwordSystem/uploadFile',
+						filePath: tempFilePaths[0],
+						fileType: "image",
+						name: 'file',
+						header: {
+							'content-type': 'multipart/form-data',
+							'X-Token': token,
+						},
+						formData: {
+							userId: this.userId,
+							userIdenty: "0"
+						},
+						success: (uploadFileRes) => {
+							console.log(uploadFileRes);
+							console.log(uploadFileRes.data.filePath);
+							if (uploadFileRes.statusCode == 200) {
+								this.userImg = "http://148.70.55.201:8089/backwordSystem" + uploadFileRes.data.filePath
+								this.$minApi.updatetUserInfo({
+									userIdenty: "0",
+									id: this.userId,
+									avatarPath: this.userImg
+								}).then(data => {
+									console.log(data)
+									// this.getUserInfo()
+								})
+							} else {
+								console.log("ddd")
+								uni.showToast({
+									title: "上修改失败，请稍后再试！",
+									icon: "none"
+								})
+							}
+			
+						}
+					});
+				},
+			
+			})
+						
+			}
 		},
 		created() {
 			this.birthday = time.formatTime(new Date(this.birthday), 'Y-M-D')
@@ -242,6 +343,8 @@
 					width: 108rpx;
 					height: 108rpx;
 					margin: 0 auto;
+					background-color: #F1F1F1;
+					border-radius: 50%;
 				}
 			}
 		}

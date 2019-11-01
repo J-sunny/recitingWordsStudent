@@ -13,36 +13,22 @@
 				<!-- 内容 -->
 				<view class="TasksConBox">
 					<view class="taskVocabularyBox">
-						<view class="taskBox">
+						<view class="taskBox" v-for="item in taskListList" :key="item.taskId">
 							<!-- 左边 -->
 							<view class="taskLeft">
-								<view class="taskTitle">任务词汇量：<label class="taskNum">10</label></view>
-								<view class="taskTime">7-10 15:00</view>
+								<view class="taskTitle">任务词汇量：<label class="taskNum">{{item.allWordCount}}</label></view>
+								<view class="taskTime">{{item.taskTime}}</view>
 							</view>
 							<!-- 中间 -->
-							<view class="taskCenter" v-if="false">
+							<view class="taskCenter" v-if="item.completeStatus==1">
 								<image src="../../../static/images/Completed@2x.png" mode=""></image>
 							</view>
 							<!-- 右边 -->
 							<view class="taskRight">
-								<view class="status study" @click="toStudy()">
+								<view class="status study" @click="toStudy(item.wordId,item.taskId)" v-if="item.completeStatus==0">
 									去学习
 								</view>
-							</view>
-						</view>
-						<view class="taskBox">
-							<!-- 左边 -->
-							<view class="taskLeft">
-								<view class="taskTitle">任务词汇量：<label class="taskNum">10</label></view>
-								<view class="taskTime">7-10 15:00</view>
-							</view>
-							<!-- 中间 -->
-							<view class="taskCenter">
-								<image src="../../../static/images/Completed@2x.png" mode=""></image>
-							</view>
-							<!-- 右边 -->
-							<view class="taskRight">
-								<view @tap="viewRanking()" class="status viewRanking">
+								<view @tap="viewRanking(item.taskId,item.allWordCount)" class="status viewRanking" v-if="item.completeStatus==1">
 									查看排行
 								</view>
 							</view>
@@ -66,8 +52,8 @@
 						<label class="verticalLine"></label>每日一练
 					</view>
 					<view class="right" @click="toSignIn()">
-						<label class="explain" v-if="!isSing" >完成当日学习即可签到</label>
-						<label class="explain" v-if="isSing">今日已签到</label>
+						<label class="explain" v-if="dailyPracticeList.checkInStatus==0">完成当日学习即可签到</label>
+						<label class="explain" v-if="dailyPracticeList.checkInStatus==1">今日已签到</label>
 						<label class="sing">
 							<!-- <van-icon name="sign" /> -->
 							<image class="iconPic" src="../../../static/images/Path8@2x.png" mode=""></image>
@@ -101,8 +87,8 @@
 					</view>
 					<!-- 复习 开始学习按钮 -->
 					<view class="btnBox">
-						<label class="review">复习({{dailyPracticeList.reviewCount}})</label>
-						<label class="startBtn">开始学习({{dailyPracticeList.studyCount}})</label>
+						<label class="review" @click="review">复习({{dailyPracticeList.reviewCount}})</label>
+						<label class="startBtn" @click="study">开始学习({{dailyPracticeList.studyCount}})</label>
 					</view>
 				</view>
 			</view>
@@ -116,14 +102,17 @@
 			return {
 				isSing: false,
 				dailyPracticeList: [],
-				progress: ''
+				taskListList: [],
+				progress: '',
+				planCount: '',
+				checkInStatus: ''
 			}
 		},
 		methods: {
 			// 查看排行跳转
-			viewRanking() {
+			viewRanking(taskId, allWordCount) {
 				uni.navigateTo({
-					url: 'wordTasks/viewRanking/index'
+					url: 'wordTasks/viewRanking/index?&taskId=' + taskId + "&allWordCount=" + allWordCount
 				})
 			},
 			// 查看全部任务跳转
@@ -139,28 +128,88 @@
 				})
 			},
 			// 去学习跳转
-			toStudy() {
+			toStudy(wordId, taskId) {
 				uni.navigateTo({
-					url: 'wordTasks/wordTaskLearning/study/index'
+					url: 'wordTasks/wordTaskLearning/study/index?wordId=' + wordId + "&taskId=" + taskId
+				})
+			},
+			// 查看排行跳转
+			toRanking(taskId) {
+				console.log(taskId, 99)
+				uni.navigateTo({
+					url: 'viewRanking/index?&taskId=' + taskId
 				})
 			},
 			// 签到页面跳转
 			toSignIn() {
 				uni.navigateTo({
-					url: 'cardCalendar/index'
+					url: 'cardCalendar/index?checkInStatus=' + this.checkInStatus
 				})
 			},
 			// 获取每日一练数据
 			dailyPractice() {
 				this.$minApi.dailyPractice({}).then(data => {
+					console.log(data)
 					this.dailyPracticeList = data.data
 					this.progress = data.data.completeCount / data.data.thesaurusCount * 100
+					this.planCount = data.data.planCount
+					this.reviewCount = data.data.reviewCount
+					this.checkInStatus = data.data.checkInStatus
 					console.log(this.progress)
+				})
+			},
+			// 每日一练----开始学习
+			study() {
+				if (this.planCount <= 0) {
+					uni.showToast({
+						title: '当前无学习计划单词数',
+						icon: 'none'
+					})
+				} else {
+					this.$minApi.study({
+						wordCount: this.planCount
+					}).then(data => {
+						console.log(data)
+						uni.navigateTo({
+							url: 'wordTasks/wordTaskLearning/study/index?wordId=' + data.data[0].wordId
+						})
+					})
+				}
+
+			},
+			// 每日一练----复习
+			review() {
+				if (this.reviewCount <= 0) {
+					uni.showToast({
+						title: '当前无复习计划单词数',
+						icon: 'none'
+					})
+				} else {
+					this.$minApi.review({
+						wordCount: this.reviewCount
+					}).then(data => {
+						console.log(data)
+						uni.navigateTo({
+							url: 'wordTasks/wordTaskLearning/study/index?wordId=' + data.data[0].wordId
+						})
+					})
+				}
+
+			},
+			// 获取个人任务列表
+			taskList() {
+				this.$minApi.taskList({
+					page: 1,
+					pageSize: 2
+				}).then(data => {
+					console.log(data)
+					this.taskListList = data.data
 				})
 			}
 		},
-		created() {
+		onShow() {
 			this.dailyPractice()
+			this.taskList()
 		}
 	}
 </script>
@@ -443,11 +492,13 @@
 								.learnedBox {
 									overflow: hidden;
 									float: left;
+									overflow: hidden;
 
 									.play {
 										color: rgba(62, 213, 147, 1);
 										opacity: 1;
 										font-size: 30rpx;
+										float: left;
 									}
 
 									.learnedNum {
@@ -458,6 +509,7 @@
 										font-weight: 400;
 										color: rgba(92, 99, 113, 1);
 										opacity: 1;
+										float: left;
 									}
 								}
 

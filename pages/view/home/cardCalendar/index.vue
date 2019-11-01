@@ -8,18 +8,19 @@
 		<view class="signInBox">
 			<!-- 累计签到 -->
 			<view class="cumulativeCheckBox">
-				<view class="days">1050</view>
+				<view class="days">{{signInInList.signInInfoCount}}</view>
 				<view class="datText">累计签到(天)</view>
 			</view>
 			<!-- 签到 -->
 			<view class="CheckInStatusBox">
 				<view class="left">
-					<view class="status" v-if="!isSing">今日尚未签到</view>
-					<view class="status" v-if="isSing">今日已签到</view>
+					<view class="status" v-if="checkInStatus==0">今日尚未签到</view>
+					<view class="status" v-if="checkInStatus==1">今日已签到</view>
 					<view class="text">完成当日学习即可签到</view>
 				</view>
 				<view class="right">
-					<label for="" class="siginInBtn" :class="isSing==true?'siginIned':'notSiginIned'" @click="siginIn()">{{isSing==true?'已签到':'签到'}}</label>
+					<label v-if="checkInStatus==0" class="siginInBtn notSiginIned" @click="siginIn()">签到</label>
+					<label v-if="checkInStatus==1" class="siginInBtn siginIned"  >已签到</label>
 				</view>
 			</view>
 		</view>
@@ -41,26 +42,13 @@
 		},
 		data() {
 			return {
-				selected: [{
-						date: '2019-09-05'
-					},
-					{
-						date: '2019-09-01'
-					},
-					{
-						date: '2019-09-08'
-					},
-					{
-						date: '2019-09-22'
-					},
-					{
-						date: '2019-09-26'
-					},
-					{
-						date: '2019-09-16'
-					},
-				],
-				isSing: false
+				selected: [],
+				signInInList:[],
+				year: '',
+				month: '',
+				day: '',
+				checkInStatus:""
+
 			}
 		},
 
@@ -73,29 +61,64 @@
 			},
 			// 日历
 			change(e) {
-				// console.log(e)
+				console.log(e)
+			},
+			// 获取当日时间
+			getDate() {
+				var now = new Date();
+				this.year = now.getFullYear();
+				this.month = now.getMonth() + 1;
+				this.day = now.getDate();
+				if (this.month < 10) {
+					this.month = '0' + this.month;
+				};
+				if (this.day < 10) {
+					this.day = '0' + this.day;
+				};
+				this.getSignInList(this.year, this.month)
 			},
 			// 签到
 			siginIn() {
-				var now = new Date();
-				var year = now.getFullYear();
-				var month = now.getMonth() + 1;
-				var day = now.getDate();
-				if (month < 10) {
-					month = '0' + month;
-				};
-				if (day < 10) {
-					day = '0' + day;
-				};
-				let systemDate = year + '-' + month + '-' + day;
-				// console.log(systemDate)
-				this.selected.push({
-					date: systemDate
+				let systemDate = this.year + '-' + this.month + '-' + this.day;
+				this.$minApi.signIn({
+					signInDate: systemDate,
+					signInMonth: this.month,
+					signInYear: this.year,
+					studentId: uni.getStorageSync('studentId')
+				}).then(data => {
+					this.selected.push({
+						date: systemDate
+					})
+					this.checkInStatus=1
+				})				
+				console.log(this.selected)
+			},
+
+			//获取已签到日期列表
+			getSignInList(signInYear, signInMonth) {
+				this.$minApi.getSignInList({
+					signInMonth: signInMonth,
+					signInYear: signInYear,
+					studentId: uni.getStorageSync('studentId')
+				}).then(data => {
+					console.log(data)
+					this.signInInList=data.data
+					data.data.signInInfoList.forEach(val => {
+						this.selected.push({
+							date: val.signInDate
+						})
+						console.log(this.selected)
+					})
 				})
-				this.isSing=true
-				// console.log(this.selected)
 			}
+			
+			
+
 		},
+		onLoad(options) {
+			this.checkInStatus=options.checkInStatus
+			this.getDate()
+		}
 	};
 </script>
 

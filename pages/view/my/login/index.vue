@@ -32,7 +32,7 @@
 </template>
 
 <script>
-	import Toast from '../../../../wxcomponents/vant-weapp/dist/toast/toast';
+	import Toast from '@/wxcomponents/vant-weapp/dist/toast/toast';
 	export default {
 		data() {
 			return {
@@ -56,11 +56,11 @@
 					userIdenty: '0'
 				}).then(data => {
 					if (data.code == 200) {
-						Toast(data.msg);
 						uni.setStorageSync('token', data.data.token),
 							uni.switchTab({
-								url: '../../home/index'
+								url: '../../my/index'
 							})
+							Toast(data.msg);
 					} else {
 						Toast(data.msg);
 					}
