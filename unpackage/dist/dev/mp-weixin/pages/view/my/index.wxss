@@ -50,7 +50,7 @@ page {
 .myBox .mHeadBox .headPortraitBox .headPortrait {
     width: 96rpx;
     height: 96rpx;
-    background: #c9c9c9;
+    background: #F9F9F9;
     opacity: 1;
     border-radius: 50%;
     position: absolute;

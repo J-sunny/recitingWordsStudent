@@ -23,12 +23,13 @@
 			<!-- 登录按钮 -->
 			<view class="loginBtn" @click="loginByAccount()" v-if='isLogin'>登录</view>
 			<!-- 注册 -->
-			<view class="loginBtn" v-if='!isLogin'>注册</view>
+			<view class="loginBtn" v-if='!isLogin' @click="registerUserInfo()">注册</view>
 			<!-- 注册 -->
 			<view class="register" @click="isLogin=!isLogin">{{isLogin==true?'没有账号？注册':'已有账号？登录'}}</view>
 		</view>
 		<van-toast id="van-toast" />
 	</view>
+
 </template>
 
 <script>
@@ -60,13 +61,50 @@
 							uni.switchTab({
 								url: '../../my/index'
 							})
-							Toast(data.msg);
+						Toast(data.msg);
 					} else {
 						Toast(data.msg);
 					}
 
 				})
 			},
+			// 注册
+			registerUserInfo() {
+				if (this.username.trim() == '' || this.password.trim() == '' || this.againPwd.trim() == '') {
+					uni.showToast({
+						title: '用户名或密码不能为空！',
+						icon: 'none'
+					})
+				} else {
+					if (this.password == this.againPwd) {
+						this.$minApi.registerUserInfo({
+							username: this.username,
+							password: this.againPwd,
+							userIdenty: 0,
+						}).then(data => {
+							if (data.code == 200) {
+								uni.navigateTo({
+									url: '../jionClass/index?studentId=' + data.data
+								})
+							} else {
+								uni.showToast({
+									title: data.msg,
+									icon: 'none'
+								})
+							}
+
+						})
+					}
+					else{
+						uni.showToast({
+							title: '两次密码不一致！',
+							icon: 'none'
+						})
+					}
+
+				}
+
+			}
 		},
 		created() {
 

@@ -28,7 +28,7 @@
 				<image class="s_arrow" src="../../../../static/images/arrow@2x.png" mode=""></image>
 			</view>
 			<!-- 确认按钮 -->
-			<view class="makeSure">确 认</view>
+			<view class="makeSure" @click="jionClass()">确 认</view>
 		</view>
 
 		<!-- 学校弹框 -->
@@ -54,13 +54,16 @@
 				showSchool: false,
 				columnsSchool: [],
 				showGrade: false,
-				columnsGrade: ['XX年级', 'XX年级', 'XX年级', 'XX年级', 'XX年级', 'XX年级'],
+				columnsGrade: ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018',  '2019', '2020', '2021',
+					'2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030'
+				],
 				showClass: false,
 				columnsClass: [],
 				selectSchool: '',
 				selectClass: '',
 				selectGrade: '',
-				schoolId: ''
+				schoolId: '',
+				classId: ''
 			}
 		},
 		methods: {
@@ -99,6 +102,7 @@
 				this.showSchool = false
 				console.log(e)
 				this.selectSchool = e.detail.value.schoolName
+				this.schoolId = e.detail.value.schoolId
 			},
 			onConfirmGrade(e) {
 				this.showGrade = false
@@ -108,6 +112,7 @@
 				console.log(e)
 				this.showClass = false
 				this.selectClass = e.detail.value.className
+				this.classId = e.detail.value.classId
 			},
 			// 获取学校下拉列表
 			getSchoolList() {
@@ -127,16 +132,28 @@
 				}).then(data => {
 					console.log(data)
 					data.data.forEach(val => {
-						console.log(val)
+						// console.log(val)
 						val.text = val.className
 					})
 					this.columnsClass = data.data
 					console.log(this.columnsClass)
 				})
 			},
+			// 确认加入班级
+			jionClass() {
+				this.$minApi.setStudentInfo({
+					belongSchoolId: this.schoolId,
+					grade: this.selectGrade,
+					studentClass: this.classId,
+					userId: this.studentId
+				}).then(data => {
+					console.log(data)
+				})
+			}
 		},
-		onLoad() {
-			this.schoolId = getApp().globalData.schoolId
+		onLoad(options) {
+			this.studentId = options.studentId
+			console.log(options)
 		},
 		created() {}
 

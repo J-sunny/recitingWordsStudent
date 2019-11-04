@@ -225,7 +225,7 @@ var _default =
     return {
       show: false,
       studentId: "",
-      collectWordTotal: "",
+      collectWordTotal: "0",
       userInfoList: [],
       learningToday: 0,
       cumulativeLearning: 0,
@@ -234,7 +234,6 @@ var _default =
       studentRecordList: [],
       studentAvatar: "",
       studentRealname: "" };
-
 
   },
   methods: {
@@ -248,6 +247,12 @@ var _default =
     jion: function jion() {
       uni.navigateTo({
         url: 'jionClass/index' });
+
+    },
+    // 登录或注册
+    linkTodz: function linkTodz() {
+      uni.navigateTo({
+        url: 'login/index' });
 
     },
     // 查看详情跳转

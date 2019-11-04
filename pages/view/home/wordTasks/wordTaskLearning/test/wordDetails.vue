@@ -161,6 +161,9 @@
 			},
 
 		},
+		created(){
+		console.log(getCurrentPages())
+		},
 		onLoad(options) {
 			this.wordId = options.wordId
 			this.doneCount = parseInt(options.doneCount)

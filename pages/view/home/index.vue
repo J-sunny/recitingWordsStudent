@@ -210,6 +210,7 @@
 		onShow() {
 			this.dailyPractice()
 			this.taskList()
+			
 		}
 	}
 </script>

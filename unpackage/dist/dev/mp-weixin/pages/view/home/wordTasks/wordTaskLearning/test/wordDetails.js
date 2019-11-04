@@ -268,6 +268,9 @@ var _default =
     } },
 
 
+  created: function created() {
+    console.log(getCurrentPages());
+  },
   onLoad: function onLoad(options) {
     this.wordId = options.wordId;
     this.doneCount = parseInt(options.doneCount);

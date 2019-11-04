@@ -22,8 +22,9 @@
 				<view class="wordsBox">
 					<label class="wordSpeling">
 						<label v-for="(item,index) in subject" :key="index">
-							<label class="letter" v-if="item!='&'">{{item}}</label>
-							<input :class="answerList[index-index].answer+index==answerValue.answer+index?'rightWord':'falseWord'" v-if="item=='&'" maxlength='1' class="wordInput" type="text" v-model="answerValue['answer'+index]">
+							<label class="letter" v-if="item.value!='&'">{{item.value}}</label>
+							<input :class="isClick?item.state?'rightWord':'falseWord':''" v-if="item.value=='&'" maxlength='1' class="wordInput"
+							 type="text" v-model="answerValue['answer'+index]">
 						</label>
 					</label>
 					<view class="playWord">
@@ -38,7 +39,7 @@
 				<!-- 下一个 -->
 				<view class="nextBtn" @click="nextSpell()">
 					<van-icon class='arrow' name="arrow" />
-					<label class="nextTxt" >下一个</label>
+					<label class="nextTxt">下一个</label>
 				</view>
 			</view>
 			<!-- <word-spelling @nextQuestion='nextQuestion' v-if="questionList.questionType==2" :allCount="wordIdList.length" :questionList="questionList" :index="index" :time="time"></word-spelling> -->
@@ -50,8 +51,8 @@
 				</view>
 				<!-- 选项 -->
 				<view class="optionBox">
-					<view class="option" @click="check(index)" :class="answer==index?'green':'red'" v-for="(item,index) in optionsList"
-					 :key="index">{{item}}</view>
+					<view @click="check(index)" :class="item.write==true?answer==index?'green':'red':''" class="option" v-for="(item,index) in optionsArr"
+					 :key="index">{{item.options}}</view>
 				</view>
 			</view>
 			<!-- <chinese-word-selection @nextQuestion='nextQuestion' v-if="questionList.questionType==0" :allCount="wordIdList.length" :questionList="questionList" :index="index" :time="time"></chinese-word-selection> -->
@@ -63,8 +64,8 @@
 				</view>
 				<!-- 选项 -->
 				<view class="optionBox">
-					<view class="option" :class="answer==index?'green':'red'" @click="check(index)" v-for="(item,index) in optionsList"
-					 :key="index">{{item}}</view>
+					<view @click="check(index)" :class="item.write==true?answer==index?'green':'red':''" class="option" v-for="(item,index) in optionsArr"
+					 :key="index">{{item.options}}</view>
 				</view>
 			</view>
 			<!-- <listening-word-selection @nextQuestion='nextQuestion' v-if="questionList.questionType==3" :allCount="wordIdList.length" :questionList="questionList" :index="index" :time="time"></listening-word-selection> -->
@@ -80,8 +81,8 @@
 				</view>
 				<!-- 选项 -->
 				<view class="optionBox">
-					<view @click="check(index)" :class="answer==index?'green':'red'" class="option" v-for="(item,index) in optionsList"
-					 :key="index">{{item}}</view>
+					<view @click="check(index)" :class="item.write==true?answer==index?'green':'red':''" class="option" v-for="(item,index) in optionsArr"
+					 :key="index">{{item.options}}</view>
 				</view>
 			</view>
 			<!-- <english-selection @nextQuestion='nextQuestion' v-if="questionList.questionType==1" :allCount="wordIdList.length" :questionList="questionList" :index="index" :time="time"></english-selection> -->
@@ -116,9 +117,10 @@
 				cIndex: '',
 				answerValue: {},
 				answerList: [],
-
+				optionsArr: [],
 				sucess: false,
-				error: false
+				error: false,
+				isClick: false
 
 			}
 		},
@@ -134,9 +136,12 @@
 		methods: {
 			// 返回
 			goBack() {
+				// uni.navigateBack({
+				// 	delta: 1
+				// });
 				uni.navigateBack({
 					delta: 1
-				});
+				})
 			},
 			// 获取题目
 			getQuestion(wordId) {
@@ -147,19 +152,34 @@
 					this.questionList = data.data
 					if (data.data.questionType == 2) {
 						let title = this.questionList.question_stem.replace(/ /g, "&")
-						this.subject = title.split('')
+						var list = title.split('')
+						list.forEach(item => {
+							this.subject.push({
+								value: item,
+								state: false
+							})
+						})
 						this.answer = this.questionList.question_answer
 					} else {
 						this.optionsList = this.questionList.question_option.split("丶")
 						this.answer = this.questionList.question_answer
-						// console.log(this.questionList)
+						console.log(this.optionsList)
+						this.optionsList.forEach(val => {
+							this.optionsArr.push({
+								options: val,
+								write: false
+							})
+						})
+						console.log(this.optionsArr)
 					}
-
 				})
 			},
 
 			// 下一题
 			nextQuestion() {
+				this.optionsList=[]
+				this.subject=[]
+				this.optionsArr=[]
 				if (this.index <= this.wordIdList.length - 2) {
 					this.index++
 					this.percentage = ((this.index + 1) / this.wordIdList.length) * 100
@@ -172,40 +192,50 @@
 				}
 			},
 			// 单词拼写下一题
-			nextSpell() {
-				console.log(this.answer)
-				let stringValue = this.questionList.question_stem.replace(/ /g, "&")
-				var positions = new Array();
-				var pos = stringValue.indexOf("&");
-				this.answerList = []
-				while (pos > -1) {
-					positions.push(pos);
-					pos = stringValue.indexOf("&", pos + 1);
+			nextSpell() {				
+				let flag = false
+				this.isClick = true;
+				// console.log(this.answerValue)
+				var answerIndex = []
+				for (var item in this.answerValue) {
+					answerIndex.push(item[item.length - 1])
 				}
-				positions.forEach(data => {
-					console.log(data)
-					this.answerList.push({
-						["answer" + data]: this.answer.substr(data, 1)
-					})
+				answerIndex.forEach(item => {
+					if (this.answer[item] == this.answerValue['answer' + item]) {
+						this.subject[item].state = true;
+					}
+					let answer = this.questionList.question_stem.replace(' ', this.answerValue['answer' + item])
+					this.questionList.question_stem = answer
 				})
-				console.log(this.answerList[0].answer3)
-				console.log(this.answerList.answer3)
-				console.log(this.answerValue)
-				console.log(this.answerValue.answer3)
+
+				if (this.questionList.question_stem == this.answer) {
+					setTimeout(() => {
+						this.nextQuestion();
+						this.subject=[]
+						this.optionsArr=[]
+					}, 1000)
+				} else {
+					setTimeout(() => {
+						uni.navigateTo({
+							url: "wordDetails?wordId=" + this.questionList.word_id + "&doneCount=" + this.index + "&wordIdListStr=" +
+								this.wordIdListStr +
+								"&time=" + this.time
+						})
+						this.subject=[]
+						this.optionsArr=[]
+					}, 1000)
+				}
 			},
 			// 选择选项
 			check(index) {
 				this.cIndex = index
-				console.log(this.cIndex)
-				console.log(index)
-				console.log(this.answer)
+				this.optionsArr[index].write = true
+				console.log(this.optionsArr)
 				if (index == this.answer) {
-					console.log("r")
 					setTimeout(() => {
 						this.nextQuestion();
 					}, 1000)
 				} else {
-					console.log("f")
 					setTimeout(() => {
 						uni.navigateTo({
 							url: "wordDetails?wordId=" + this.questionList.word_id + "&doneCount=" + this.index + "&wordIdListStr=" +
@@ -275,7 +305,6 @@
 				this.Second = parseInt(this.time.split(":")[2])
 			}
 			this.getQuestion(this.wordIdList[this.index])
-			console.log(getCurrentPages())
 		}
 	}
 </script>

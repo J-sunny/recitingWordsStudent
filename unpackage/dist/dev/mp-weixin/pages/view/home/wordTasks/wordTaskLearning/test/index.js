@@ -199,8 +199,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 var _listeningWordSelection = _interopRequireDefault(__webpack_require__(/*! ../../../../../component/listeningWordSelection.vue */ 111));
-var _englishSelection = _interopRequireDefault(__webpack_require__(/*! ../../../../../component/englishSelection.vue */ 118));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}function _defineProperty(obj, key, value) {if (key in obj) {Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true });} else {obj[key] = value;}return obj;}var WordSpelling = function WordSpelling() {return __webpack_require__.e(/*! import() | pages/component/wordSpelling */ "pages/component/wordSpelling").then(__webpack_require__.bind(null, /*! ../../../../../component/wordSpelling.vue */ 177));};var ChineseWordSelection = function ChineseWordSelection() {return __webpack_require__.e(/*! import() | pages/component/chineseWordSelection */ "pages/component/chineseWordSelection").then(__webpack_require__.bind(null, /*! ../../../../../component/chineseWordSelection.vue */ 184));};var _default =
+var _englishSelection = _interopRequireDefault(__webpack_require__(/*! ../../../../../component/englishSelection.vue */ 118));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}var WordSpelling = function WordSpelling() {return __webpack_require__.e(/*! import() | pages/component/wordSpelling */ "pages/component/wordSpelling").then(__webpack_require__.bind(null, /*! ../../../../../component/wordSpelling.vue */ 177));};var ChineseWordSelection = function ChineseWordSelection() {return __webpack_require__.e(/*! import() | pages/component/chineseWordSelection */ "pages/component/chineseWordSelection").then(__webpack_require__.bind(null, /*! ../../../../../component/chineseWordSelection.vue */ 184));};var _default =
 {
   data: function data() {
     return {
@@ -223,9 +224,10 @@ var _englishSelection = _interopRequireDefault(__webpack_require__(/*! ../../../
       cIndex: '',
       answerValue: {},
       answerList: [],
-
+      optionsArr: [],
       sucess: false,
-      error: false };
+      error: false,
+      isClick: false };
 
 
   },
@@ -241,6 +243,9 @@ var _englishSelection = _interopRequireDefault(__webpack_require__(/*! ../../../
   methods: {
     // 返回
     goBack: function goBack() {
+      // uni.navigateBack({
+      // 	delta: 1
+      // });
       uni.navigateBack({
         delta: 1 });
 
@@ -254,19 +259,34 @@ var _englishSelection = _interopRequireDefault(__webpack_require__(/*! ../../../
         _this.questionList = data.data;
         if (data.data.questionType == 2) {
           var title = _this.questionList.question_stem.replace(/ /g, "&");
-          _this.subject = title.split('');
+          var list = title.split('');
+          list.forEach(function (item) {
+            _this.subject.push({
+              value: item,
+              state: false });
+
+          });
           _this.answer = _this.questionList.question_answer;
         } else {
           _this.optionsList = _this.questionList.question_option.split("丶");
           _this.answer = _this.questionList.question_answer;
-          // console.log(this.questionList)
-        }
+          console.log(_this.optionsList);
+          _this.optionsList.forEach(function (val) {
+            _this.optionsArr.push({
+              options: val,
+              write: false });
 
+          });
+          console.log(_this.optionsArr);
+        }
       });
     },
 
     // 下一题
     nextQuestion: function nextQuestion() {
+      this.optionsList = [];
+      this.subject = [];
+      this.optionsArr = [];
       if (this.index <= this.wordIdList.length - 2) {
         this.index++;
         this.percentage = (this.index + 1) / this.wordIdList.length * 100;
@@ -280,39 +300,49 @@ var _englishSelection = _interopRequireDefault(__webpack_require__(/*! ../../../
     },
     // 单词拼写下一题
     nextSpell: function nextSpell() {var _this2 = this;
-      console.log(this.answer);
-      var stringValue = this.questionList.question_stem.replace(/ /g, "&");
-      var positions = new Array();
-      var pos = stringValue.indexOf("&");
-      this.answerList = [];
-      while (pos > -1) {
-        positions.push(pos);
-        pos = stringValue.indexOf("&", pos + 1);
+      var flag = false;
+      this.isClick = true;
+      // console.log(this.answerValue)
+      var answerIndex = [];
+      for (var item in this.answerValue) {
+        answerIndex.push(item[item.length - 1]);
       }
-      positions.forEach(function (data) {
-        console.log(data);
-        _this2.answerList.push(_defineProperty({},
-        "answer" + data, _this2.answer.substr(data, 1)));
-
+      answerIndex.forEach(function (item) {
+        if (_this2.answer[item] == _this2.answerValue['answer' + item]) {
+          _this2.subject[item].state = true;
+        }
+        var answer = _this2.questionList.question_stem.replace(' ', _this2.answerValue['answer' + item]);
+        _this2.questionList.question_stem = answer;
       });
-      console.log(this.answerList[0].answer3);
-      console.log(this.answerList.answer3);
-      console.log(this.answerValue);
-      console.log(this.answerValue.answer3);
+
+      if (this.questionList.question_stem == this.answer) {
+        setTimeout(function () {
+          _this2.nextQuestion();
+          _this2.subject = [];
+          _this2.optionsArr = [];
+        }, 1000);
+      } else {
+        setTimeout(function () {
+          uni.navigateTo({
+            url: "wordDetails?wordId=" + _this2.questionList.word_id + "&doneCount=" + _this2.index + "&wordIdListStr=" +
+            _this2.wordIdListStr +
+            "&time=" + _this2.time });
+
+          _this2.subject = [];
+          _this2.optionsArr = [];
+        }, 1000);
+      }
     },
     // 选择选项
     check: function check(index) {var _this3 = this;
       this.cIndex = index;
-      console.log(this.cIndex);
-      console.log(index);
-      console.log(this.answer);
+      this.optionsArr[index].write = true;
+      console.log(this.optionsArr);
       if (index == this.answer) {
-        console.log("r");
         setTimeout(function () {
           _this3.nextQuestion();
         }, 1000);
       } else {
-        console.log("f");
         setTimeout(function () {
           uni.navigateTo({
             url: "wordDetails?wordId=" + _this3.questionList.word_id + "&doneCount=" + _this3.index + "&wordIdListStr=" +
@@ -382,7 +412,6 @@ var _englishSelection = _interopRequireDefault(__webpack_require__(/*! ../../../
       this.Second = parseInt(this.time.split(":")[2]);
     }
     this.getQuestion(this.wordIdList[this.index]);
-    console.log(getCurrentPages());
   } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 

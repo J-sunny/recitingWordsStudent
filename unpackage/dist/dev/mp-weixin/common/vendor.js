@@ -1809,11 +1809,12 @@ minRequest.interceptors.request(function (request) {
   var token = uni.getStorageSync('token');
   if (token) {
     request.header["X-Token"] = token;
-  } else {
-    uni.redirectTo({
-      url: '/pages/view/my/login/index' });
-
   }
+  // else {
+  // 	uni.redirectTo({
+  // 		url: '/pages/view/my/login/index'
+  // 	});
+  // }
   return request;
 });
 
@@ -1826,8 +1827,8 @@ minRequest.interceptors.response(function (response) {
   }
   if (response.data.code == 500) {
     uni.redirectTo({
-      // url: '/pages/view/my/login/index'
-    });
+      url: '/pages/view/my/login/index' });
+
   }
   return response.data;
 });
@@ -1954,6 +1955,14 @@ minRequest.setConfig(function (config) {
 
   data) {
     return minRequest.post('/uploadFile', data);
+  }), _defineProperty(_apis, "registerUserInfo", function registerUserInfo(
+
+  data) {
+    return minRequest.post('/registerUserInfo', data);
+  }), _defineProperty(_apis, "setStudentInfo", function setStudentInfo(
+
+  data) {
+    return minRequest.get('/setStudentInfo', data);
   }), _apis) };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 

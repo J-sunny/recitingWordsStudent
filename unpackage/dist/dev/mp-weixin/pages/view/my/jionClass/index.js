@@ -161,13 +161,16 @@ var _default =
       showSchool: false,
       columnsSchool: [],
       showGrade: false,
-      columnsGrade: ['XX年级', 'XX年级', 'XX年级', 'XX年级', 'XX年级', 'XX年级'],
+      columnsGrade: ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021',
+      '2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030'],
+
       showClass: false,
       columnsClass: [],
       selectSchool: '',
       selectClass: '',
       selectGrade: '',
-      schoolId: '' };
+      schoolId: '',
+      classId: '' };
 
   },
   methods: {
@@ -206,6 +209,7 @@ var _default =
       this.showSchool = false;
       console.log(e);
       this.selectSchool = e.detail.value.schoolName;
+      this.schoolId = e.detail.value.schoolId;
     },
     onConfirmGrade: function onConfirmGrade(e) {
       this.showGrade = false;
@@ -215,6 +219,7 @@ var _default =
       console.log(e);
       this.showClass = false;
       this.selectClass = e.detail.value.className;
+      this.classId = e.detail.value.classId;
     },
     // 获取学校下拉列表
     getSchoolList: function getSchoolList() {var _this = this;
@@ -234,16 +239,28 @@ var _default =
       then(function (data) {
         console.log(data);
         data.data.forEach(function (val) {
-          console.log(val);
+          // console.log(val)
           val.text = val.className;
         });
         _this2.columnsClass = data.data;
         console.log(_this2.columnsClass);
       });
+    },
+    // 确认加入班级
+    jionClass: function jionClass() {
+      this.$minApi.setStudentInfo({
+        belongSchoolId: this.schoolId,
+        grade: this.selectGrade,
+        studentClass: this.classId,
+        userId: this.studentId }).
+      then(function (data) {
+        console.log(data);
+      });
     } },
 
-  onLoad: function onLoad() {
-    this.schoolId = getApp().globalData.schoolId;
+  onLoad: function onLoad(options) {
+    this.studentId = options.studentId;
+    console.log(options);
   },
   created: function created() {} };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))

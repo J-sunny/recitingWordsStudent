@@ -8,11 +8,12 @@ minRequest.interceptors.request((request) => {
 	const token = uni.getStorageSync('token');
 	if (token) {
 		request.header["X-Token"] = token;
-	} else {
-		uni.redirectTo({
-			url: '/pages/view/my/login/index'
-		});
 	}
+	// else {
+	// 	uni.redirectTo({
+	// 		url: '/pages/view/my/login/index'
+	// 	});
+	// }
 	return request
 })
 
@@ -25,7 +26,7 @@ minRequest.interceptors.response((response) => {
 	}
 	if (response.data.code == 500) {
 		uni.redirectTo({
-			// url: '/pages/view/my/login/index'
+			url: '/pages/view/my/login/index'
 		});
 	}
 	return response.data
@@ -153,6 +154,14 @@ export default {
 		// 上传用户头像图片
 		uploadFile(data) {
 			return minRequest.post('/uploadFile', data)
+		},
+		// 注册用户信息
+		registerUserInfo(data) {
+			return minRequest.post('/registerUserInfo', data)
+		},
+		// 设置学生信息
+		setStudentInfo(data) {
+			return minRequest.get('/setStudentInfo', data)
 		},
 
 	}

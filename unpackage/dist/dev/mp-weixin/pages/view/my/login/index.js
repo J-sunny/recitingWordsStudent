@@ -144,6 +144,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 var _toast = _interopRequireDefault(__webpack_require__(/*! @/wxcomponents/vant-weapp/dist/toast/toast */ 8));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };} //
 //
 //
@@ -177,8 +178,45 @@ var _toast = _interopRequireDefault(__webpack_require__(/*! @/wxcomponents/vant-
 //
 //
 //
+//
 var _default = { data: function data() {return { isLogin: true, username: '', password: '', againPwd: '' };}, methods: { // 登录
-    loginByAccount: function loginByAccount() {if (this.username == '' || this.password == '') {(0, _toast.default)('请输入用户名或者密码');return;}this.$minApi.loginByAccount({ password: this.password, username: this.username, userSchoolId: '1', userIdenty: '0' }).then(function (data) {if (data.code == 200) {uni.setStorageSync('token', data.data.token), uni.switchTab({ url: '../../my/index' });(0, _toast.default)(data.msg);} else {(0, _toast.default)(data.msg);}});} },
+    loginByAccount: function loginByAccount() {if (this.username == '' || this.password == '') {(0, _toast.default)('请输入用户名或者密码');return;}this.$minApi.loginByAccount({ password: this.password, username: this.username, userSchoolId: '1', userIdenty: '0' }).then(function (data) {if (data.code == 200) {uni.setStorageSync('token', data.data.token), uni.switchTab({ url: '../../my/index' });(0, _toast.default)(data.msg);} else {(0, _toast.default)(data.msg);}});}, // 注册
+    registerUserInfo: function registerUserInfo() {
+      if (this.username.trim() == '' || this.password.trim() == '' || this.againPwd.trim() == '') {
+        uni.showToast({
+          title: '用户名或密码不能为空！',
+          icon: 'none' });
+
+      } else {
+        if (this.password == this.againPwd) {
+          this.$minApi.registerUserInfo({
+            username: this.username,
+            password: this.againPwd,
+            userIdenty: 0 }).
+          then(function (data) {
+            if (data.code == 200) {
+              uni.navigateTo({
+                url: '../jionClass/index?studentId=' + data.data });
+
+            } else {
+              uni.showToast({
+                title: data.msg,
+                icon: 'none' });
+
+            }
+
+          });
+        } else
+        {
+          uni.showToast({
+            title: '两次密码不一致！',
+            icon: 'none' });
+
+        }
+
+      }
+
+    } },
 
   created: function created() {
 

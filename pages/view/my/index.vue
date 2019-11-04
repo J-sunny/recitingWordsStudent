@@ -6,8 +6,8 @@
 			<view class="title">我的</view>
 			<!-- 未登录状态 -->
 			<view class="headPortraitBox" v-if="false">
-				<image class="headPortrait" src="../../../static/images/people@2.png" mode=""></image>
-				<view class="logins">登录/注册</view>
+				<image class="headPortrait" src="" mode=""></image>
+				<view class="logins" @click="linkTodz()">登录/注册</view>
 			</view>
 			<view class="loginedHeadBox">
 				<view class="infoBox" @click="toMyInformation()">
@@ -109,7 +109,7 @@
 			return {
 				show: false,
 				studentId: "",
-				collectWordTotal: "",
+				collectWordTotal: "0",
 				userInfoList: [],
 				learningToday: 0,
 				cumulativeLearning: 0,
@@ -118,7 +118,6 @@
 				studentRecordList:[],
 				studentAvatar:"",
 				studentRealname:""
-				
 			}
 		},
 		methods: {
@@ -132,6 +131,12 @@
 			jion() {
 				uni.navigateTo({
 					url: 'jionClass/index'
+				})
+			},
+			// 登录或注册
+			linkTodz(){
+				uni.navigateTo({
+					url:'login/index'
 				})
 			},
 			// 查看详情跳转
@@ -253,7 +258,7 @@
 				.headPortrait {
 					width: 96rpx;
 					height: 96rpx;
-					background: rgba(201, 201, 201, 1);
+					background: #F9F9F9;
 					opacity: 1;
 					border-radius: 50%;
 					position: absolute;
