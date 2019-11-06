@@ -352,7 +352,7 @@ var _toast = _interopRequireDefault(__webpack_require__(/*! @/wxcomponents/vant-
 //
 //
 //
-var _default = { data: function data() {return { isSing: true, showSelectWord: false, showSelectBook: false, showClearBox: false, columns: ['10', '20', '30', '40', '50', '60', '70'], wordsNum: '', thesaurusArr: [], dailyPracticeList: [] };}, methods: { // 返回
+var _default = { data: function data() {return { isSing: true, showSelectWord: false, showSelectBook: false, showClearBox: false, columns: ['10', '20', '30', '40', '50', '60', '70'], wordsNum: 0, thesaurusArr: [], dailyPracticeList: [] };}, methods: { // 返回
     goBack: function goBack() {uni.navigateBack({ delta: 1 });}, //选择每日学习词数弹出框 打开弹出层
     showPopupWord: function showPopupWord() {this.showSelectWord = true;}, // 选择每日学习词数弹出框 关闭弹出层
     onCloseWord: function onCloseWord() {this.showSelectWord = false;}, //选择每日学习词数弹出框   picker选择器取消事件

@@ -9,7 +9,7 @@
 		<view class="passedConBox">
 			<view class="passedWords"><label for="" class="orangeColor">{{wordCount}}</label><label for="" class="word">单词</label></view>
 			<view class="passedTask">当前任务已通过测试</view>
-			<view class="useTime">用时：00:10:20</view>
+			<view class="useTime">用时：{{time}}</view>
 			<!-- 查看排行 -->
 			<view class="viewRanking" @click="viewRanking()">查看排行</view>
 			<!-- 返回任务列表 -->
@@ -47,7 +47,8 @@
 				})
 			},
 			// 个人任务答题
-			completeTask(time,wordId) {
+
+			completeTask(time, wordId) {
 				this.$minApi.completeTask({
 					completeTime: time,
 					taskId: getApp().globalData.taskId,
@@ -55,14 +56,65 @@
 				}).then(data => {
 					console.log(data)
 				})
-			}
+			},
+			// 保存用户学习记录
+			save(taskType, studyType, lengthOfStudy) {
+				console.log(taskType)
+				console.log(studyType)
+				console.log(lengthOfStudy)
+				console.log(uni.getStorageSync('wordIdStr').split(",").length)
+				console.log(uni.getStorageSync('wordIdStr'))
+				// 单词任务--学习
+				if (taskType == 0 && studyType == -1) {
+					this.$minApi.save({
+						exerciseCount: uni.getStorageSync('wordIdStr').split(",").length,
+						lengthOfStudy: lengthOfStudy,
+						taskId: getApp().globalData.taskId,
+						wordId: uni.getStorageSync('wordIdStr')
+					}).then(data => {
+						console.log(data)
+					})
+				}
+				// 每日一练----复习
+				else if (taskType == 1 && studyType == 0) {
+					this.$minApi.save({
+						backwordPlanId: getApp().globalData.backwordPlanId,
+						lengthOfStudy: lengthOfStudy,
+						reviewCount: uni.getStorageSync('wordIdStr').split(",").length,
+						wordId: uni.getStorageSync('wordIdStr')
+					}).then(data => {
+						console.log(data)
+					})
+				}
+				// 每日一练----开始学习
+				else if (taskType == 1 && studyType == 1) {
+					this.$minApi.save({
+						backwordPlanId: getApp().globalData.backwordPlanId,
+						lengthOfStudy: lengthOfStudy,
+						exerciseCount: uni.getStorageSync('wordIdStr').split(",").length,
+						wordId: uni.getStorageSync('wordIdStr')
+					}).then(data => {
+						console.log(data)
+					})
+				}
+			},
 
+		},
+		onHide() {
+			console.log('hidd')
+			uni.removeStorageSync('taskType');
+			uni.removeStorageSync('studyType');
+			uni.removeStorageSync('lengthOfStudy');
+			uni.removeStorageSync('wordIdStr');
 		},
 		onLoad(options) {
 			this.wordCount = options.wordCount
 			this.time = options.time
 			this.wordId = options.wordId
-			this.completeTask(options.time,options.wordId)
+			if (uni.getStorageSync('taskType') == 0) {
+				this.completeTask(options.time, options.wordId)
+			}
+			this.save(uni.getStorageSync('taskType'), uni.getStorageSync('studyType'), uni.getStorageSync('lengthOfStudy'))
 		}
 	}
 </script>

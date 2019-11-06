@@ -200,6 +200,8 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+
 var _listeningWordSelection = _interopRequireDefault(__webpack_require__(/*! ../../../../../component/listeningWordSelection.vue */ 111));
 var _englishSelection = _interopRequireDefault(__webpack_require__(/*! ../../../../../component/englishSelection.vue */ 118));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}var WordSpelling = function WordSpelling() {return __webpack_require__.e(/*! import() | pages/component/wordSpelling */ "pages/component/wordSpelling").then(__webpack_require__.bind(null, /*! ../../../../../component/wordSpelling.vue */ 177));};var ChineseWordSelection = function ChineseWordSelection() {return __webpack_require__.e(/*! import() | pages/component/chineseWordSelection */ "pages/component/chineseWordSelection").then(__webpack_require__.bind(null, /*! ../../../../../component/chineseWordSelection.vue */ 184));};var _default =
 {
@@ -227,7 +229,9 @@ var _englishSelection = _interopRequireDefault(__webpack_require__(/*! ../../../
       optionsArr: [],
       sucess: false,
       error: false,
-      isClick: false };
+      isClick: false,
+      rightNum: 0,
+      allWordCount: 0 };
 
 
   },
@@ -238,68 +242,96 @@ var _englishSelection = _interopRequireDefault(__webpack_require__(/*! ../../../
     EnglishSelection: _englishSelection.default },
 
   computed: {},
-
-
+  onHide: function onHide() {
+    // console.log('App Hide')
+    clearInterval(this.timer);
+  },
   methods: {
     // 返回
     goBack: function goBack() {
       // uni.navigateBack({
       // 	delta: 1
       // });
-      uni.navigateBack({
-        delta: 1 });
+      var _this = this;
+      uni.showModal({
+        // title: '提示',
+        content: '是否确认退出答题？',
+        cancelColor: '#CCCCCC',
+        confirmColor: '#03BFB7',
+        success: function success(res) {
+          if (res.confirm) {
+            uni.switchTab({
+              url: '../../../index' });
+
+            // _this.stop()
+            clearInterval(_this.timer);
+            // console.log('用户点击确定');
+          } else if (res.cancel) {
+            // uni.navigateBack({
+            // 	delta: 1
+            // })
+            // console.log('用户点击取消');
+          }
+        } });
+
 
     },
     // 获取题目
-    getQuestion: function getQuestion(wordId) {var _this = this;
+    getQuestion: function getQuestion(wordId) {var _this2 = this;
       // console.log(wordId)
       this.$minApi.getQuestion({
         wordId: wordId }).
       then(function (data) {
-        _this.questionList = data.data;
+        _this2.questionList = data.data;
         if (data.data.questionType == 2) {
-          var title = _this.questionList.question_stem.replace(/ /g, "&");
+          var title = _this2.questionList.question_stem.replace(/ /g, "&");
           var list = title.split('');
           list.forEach(function (item) {
-            _this.subject.push({
+            _this2.subject.push({
               value: item,
               state: false });
 
           });
-          _this.answer = _this.questionList.question_answer;
+          _this2.answer = _this2.questionList.question_answer;
         } else {
-          _this.optionsList = _this.questionList.question_option.split("丶");
-          _this.answer = _this.questionList.question_answer;
-          console.log(_this.optionsList);
-          _this.optionsList.forEach(function (val) {
-            _this.optionsArr.push({
+          _this2.optionsList = _this2.questionList.question_option.split("丶");
+          _this2.answer = _this2.questionList.question_answer;
+          // console.log(this.optionsList)
+          _this2.optionsList.forEach(function (val) {
+            _this2.optionsArr.push({
               options: val,
               write: false });
 
           });
-          console.log(_this.optionsArr);
+          // console.log(this.optionsArr)
         }
       });
     },
 
     // 下一题
-    nextQuestion: function nextQuestion() {
+    nextQuestion: function nextQuestion() {var _this3 = this;
       this.optionsList = [];
       this.subject = [];
       this.optionsArr = [];
-      if (this.index <= this.wordIdList.length - 2) {
+      console.log(this.rightNum, 333);
+      console.log(this.allWordCount, 444);
+      if (this.rightNum < this.allWordCount - 1) {
+        this.rightNum++;
         this.index++;
-        this.percentage = (this.index + 1) / this.wordIdList.length * 100;
+        this.percentage = this.rightNum / this.allWordCount * 100;
         this.getQuestion(this.wordIdList[this.index]);
       } else {
         clearInterval(this.timer);
-        uni.navigateTo({
-          url: "passedTask?wordCount=" + this.wordIdList.length + "&time=" + this.time + "&wordId=" + this.questionList.word_id });
+        setTimeout(function () {
+          uni.navigateTo({
+            url: "passedTask?wordCount=" + _this3.allWordCount + "&time=" + _this3.time + "&wordId=" + _this3.questionList.word_id });
+
+        }, 1000);
 
       }
     },
     // 单词拼写下一题
-    nextSpell: function nextSpell() {var _this2 = this;
+    nextSpell: function nextSpell() {var _this4 = this;
       var flag = false;
       this.isClick = true;
       // console.log(this.answerValue)
@@ -308,86 +340,109 @@ var _englishSelection = _interopRequireDefault(__webpack_require__(/*! ../../../
         answerIndex.push(item[item.length - 1]);
       }
       answerIndex.forEach(function (item) {
-        if (_this2.answer[item] == _this2.answerValue['answer' + item]) {
-          _this2.subject[item].state = true;
+        if (_this4.answer[item] == _this4.answerValue['answer' + item]) {
+          _this4.subject[item].state = true;
         }
-        var answer = _this2.questionList.question_stem.replace(' ', _this2.answerValue['answer' + item]);
-        _this2.questionList.question_stem = answer;
+        var answer = _this4.questionList.question_stem.replace(' ', _this4.answerValue['answer' + item]);
+        _this4.questionList.question_stem = answer;
       });
-
       if (this.questionList.question_stem == this.answer) {
+        // this.rightNum++
         setTimeout(function () {
-          _this2.nextQuestion();
-          _this2.subject = [];
-          _this2.optionsArr = [];
+          _this4.nextQuestion();
+          // this.subject = []
+          // this.optionsArr = []
         }, 1000);
       } else {
+        this.wordIdListStr = this.wordIdListStr + ',' + this.questionList.word_id;
         setTimeout(function () {
           uni.navigateTo({
-            url: "wordDetails?wordId=" + _this2.questionList.word_id + "&doneCount=" + _this2.index + "&wordIdListStr=" +
-            _this2.wordIdListStr +
-            "&time=" + _this2.time });
+            url: "wordDetails?wordId=" + _this4.questionList.word_id + "&doneCount=" + _this4.index + "&wordIdListStr=" +
+            _this4.wordIdListStr + "&time=" + _this4.time + '&rightNum=' + _this4.rightNum + '&allWordCount=' + _this4.allWordCount });
 
-          _this2.subject = [];
-          _this2.optionsArr = [];
         }, 1000);
+        // this.subject = []
+        // this.optionsArr = []
       }
+      setTimeout(function () {
+        _this4.answerValue = {};
+        _this4.isClick = false;
+      }, 1000);
+      // 个人任务答题
+      // uni.getStorageSync('studyType')
+      if (uni.getStorageSync('taskType') == 0) {
+        this.$minApi.completeTask({
+          taskId: getApp().globalData.taskId,
+          wordId: this.questionList.word_id }).
+        then(function (data) {
+          console.log(data);
+          setTimeout(function () {
+            _this4.answerValue = {};
+            _this4.isClick = false;
+          }, 500);
+        });
+      }
+
+
     },
     // 选择选项
-    check: function check(index) {var _this3 = this;
+    check: function check(index) {var _this5 = this;
       this.cIndex = index;
       this.optionsArr[index].write = true;
-      console.log(this.optionsArr);
+      // console.log(this.optionsArr)
       if (index == this.answer) {
         setTimeout(function () {
-          _this3.nextQuestion();
+          _this5.nextQuestion();
         }, 1000);
       } else {
+        this.wordIdListStr = this.wordIdListStr + ',' + this.questionList.word_id;
+        console.log(this.wordIdListStr);
         setTimeout(function () {
           uni.navigateTo({
-            url: "wordDetails?wordId=" + _this3.questionList.word_id + "&doneCount=" + _this3.index + "&wordIdListStr=" +
-            _this3.wordIdListStr +
-            "&time=" + _this3.time });
+            url: "wordDetails?wordId=" + _this5.questionList.word_id + "&doneCount=" + _this5.index + "&wordIdListStr=" +
+            _this5.wordIdListStr + "&time=" + _this5.time + '&rightNum=' + _this5.rightNum + '&allWordCount=' + _this5.allWordCount });
 
         }, 1000);
       }
       // 个人任务答题
-      this.$minApi.completeTask({
-        taskId: getApp().globalData.taskId,
-        wordId: this.questionList.word_id }).
-      then(function (data) {
-        console.log(data);
-      });
+      if (uni.getStorageSync('taskType') == 0) {
+        this.$minApi.completeTask({
+          taskId: getApp().globalData.taskId,
+          wordId: this.questionList.word_id }).
+        then(function (data) {
+          // console.log(data)
+        });
+      }
     },
 
     // 计时器、
-    start: function start() {var _this4 = this;
+    start: function start() {var _this6 = this;
       this.timer = setInterval(function (data) {
-        _this4.Second++;
-        if (_this4.Second > 59) {
-          _this4.Second = 0;
-          _this4.Minute++;
-          if (_this4.Minute > 59) {
-            _this4.Minute = 0;
-            _this4.Hours++;
+        _this6.Second++;
+        if (_this6.Second > 59) {
+          _this6.Second = 0;
+          _this6.Minute++;
+          if (_this6.Minute > 59) {
+            _this6.Minute = 0;
+            _this6.Hours++;
           }
         }
-        if (_this4.Second < 10) {
-          _this4.Secondt = "0" + _this4.Second;
+        if (_this6.Second < 10) {
+          _this6.Secondt = "0" + _this6.Second;
         } else {
-          _this4.Secondt = _this4.Second;
+          _this6.Secondt = _this6.Second;
         }
-        if (_this4.Minute < 10) {
-          _this4.Minutet = "0" + _this4.Minute;
+        if (_this6.Minute < 10) {
+          _this6.Minutet = "0" + _this6.Minute;
         } else {
-          _this4.Minutet = _this4.Minute;
+          _this6.Minutet = _this6.Minute;
         }
-        if (_this4.Hours < 10) {
-          _this4.Hourst = "0" + _this4.Hours;
+        if (_this6.Hours < 10) {
+          _this6.Hourst = "0" + _this6.Hours;
         } else {
-          _this4.Hourst = _this4.Hours;
+          _this6.Hourst = _this6.Hours;
         }
-        _this4.time = _this4.Hourst + ":" + _this4.Minutet + ":" + _this4.Secondt;
+        _this6.time = _this6.Hourst + ":" + _this6.Minutet + ":" + _this6.Secondt;
       }, 1000);
     },
 
@@ -397,13 +452,17 @@ var _englishSelection = _interopRequireDefault(__webpack_require__(/*! ../../../
     } },
 
   onLoad: function onLoad(options) {
-    this.wordIdListStr = options.wordIdList;
-    this.wordIdList = options.wordIdList.split(",");
-    this.percentage = (this.index + 1) / this.wordIdList.length * 100;
+    clearInterval(this.timer);
     this.start();
+    this.wordIdListStr = options.wordIdList;
+    this.allWordCount = getApp().globalData.wordIdCount;
+    console.log(options.wordIdList);
+    // console.log(this.allWordCount)
+    this.wordIdList = this.wordIdListStr.split(",");
+    // this.start()
     if (options.index) {
       this.index = parseInt(options.index);
-      this.percentage = (this.index + 1) / this.wordIdList.length * 100;
+      // this.percentage = ((this.index + 1) / this.wordIdList.length) * 100
     }
     if (options.time) {
       this.time = options.time;
@@ -411,7 +470,13 @@ var _englishSelection = _interopRequireDefault(__webpack_require__(/*! ../../../
       this.Minute = parseInt(this.time.split(":")[1]);
       this.Second = parseInt(this.time.split(":")[2]);
     }
+    // console.log(options)
+    // console.log(options.rightNum)
+    if (options.rightNum) {
+      this.rightNum = options.rightNum;
+    }
     this.getQuestion(this.wordIdList[this.index]);
+    this.percentage = this.rightNum / this.allWordCount * 100;
   } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 

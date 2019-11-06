@@ -131,7 +131,7 @@
 				showSelectBook: false,
 				showClearBox: false,
 				columns: ['10', '20', '30', '40', '50', '60', '70'],
-				wordsNum: '',
+				wordsNum: 0,
 				thesaurusArr: [],
 				dailyPracticeList: []
 			}

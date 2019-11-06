@@ -188,14 +188,42 @@ var _default =
       wordId: "",
       index: 0,
       exampleArr: [],
-      state: "" };
+      state: "",
+      lengthOfStudy: 0,
+      timer: null,
+      studyType: -1,
+      taskType: -1,
+      taskId: '',
+      backwordPlanId: '',
+      wordIdStr: '',
+      allWordCount: 0 };
+
 
   },
   methods: {
     // 返回
     goBack: function goBack() {
-      uni.navigateBack({
-        delta: 1 });
+      var _this = this;
+      uni.showModal({
+        // title: '',
+        content: '是否确认退出答题？',
+        cancelColor: '#CCCCCC',
+        confirmColor: '#03BFB7',
+        success: function success(res) {
+          if (res.confirm) {
+            uni.switchTab({
+              url: '../../../index' });
+
+            // clearInterval(this.timer)
+            clearInterval(_this.timer);
+            // console.log('用户点击确定');
+          } else if (res.cancel) {
+            // uni.navigateBack({
+            // 	delta: 1
+            // })
+            // console.log('用户点击取消');
+          }
+        } });
 
     },
     // 收藏
@@ -217,16 +245,27 @@ var _default =
     },
     // 下一题
     nextQuestion: function nextQuestion() {
+      // console.log(this.lengthOfStudy)
       // console.log(this.wordIdList[Math.floor(Math.random() * this.wordIdList.length)])
       // console.log(this.index)
       if (this.index < this.wordIdList.length - 1) {
         this.index++;
         this.percentage = (this.index + 1) / this.wordIdList.length * 100;
-        this.getWordInfo(this.wordIdList[this.index + 0]);
+        this.getWordInfo(this.wordIdList[this.index]);
       } else {
         this.showPopup();
+        clearInterval(this.timer);
+        // console.log(this.lengthOfStudy,888)
+        // this.save(this.taskType, this.studyType, this.lengthOfStudy)
+        uni.setStorageSync('taskType', this.taskType);
+        uni.setStorageSync('studyType', this.studyType);
+        uni.setStorageSync('lengthOfStudy', this.lengthOfStudy);
+        uni.setStorageSync('wordIdStr', this.wordIdStr);
+        uni.setStorageSync('lengthOfStudy', this.lengthOfStudy);
       }
+      // this.lengthOfStudy = 0
     },
+
     // 完成学习弹框    关闭弹框
     onClose: function onClose() {
       this.show = false;
@@ -238,29 +277,26 @@ var _default =
     // 跳转页面
     linkTo: function linkTo() {
       uni.navigateTo({
-        url: '../test/index?wordIdList=' + this.wordIdList });
+        url: '../test/index?wordIdList=' + this.wordIdList + '&studyType=' + this.studyType + '&taskType=' + this.taskType + '&lengthOfStudy=' + this.lengthOfStudy });
 
     },
     // 获取单词详情
-    getWordInfo: function getWordInfo(wordId) {var _this = this;
+    getWordInfo: function getWordInfo(wordId) {var _this2 = this;
       this.exampleArr = [];
       this.$minApi.getWordInfo({
         wordId: wordId }).
       then(function (data) {
-        _this.questionList = data.data;
-        _this.interpretation = data.data.interpretation.split("丶");
-        _this.example = data.data.example.split("丶");
-        _this.example.forEach(function (val) {
-          _this.exampleArr.push(val.split("&"));
+        _this2.questionList = data.data;
+        _this2.interpretation = data.data.interpretation.split("丶");
+        _this2.example = data.data.example.split("丶");
+        _this2.example.forEach(function (val) {
+          _this2.exampleArr.push(val.split("&"));
         });
-        // console.log(this.interpretation)
-        // console.log(this.example)
-        // console.log(this.exampleArr)
+        // 开始计时
       });
     },
     // 学生保存或取消收藏单词
-    saveOrCancelCollectWords: function saveOrCancelCollectWords(wordId, collectionStatus) {var _this2 = this;
-      console.log(uni.getStorageSync('studentId'));
+    saveOrCancelCollectWords: function saveOrCancelCollectWords(wordId, collectionStatus) {var _this3 = this;
       this.state = "";
       if (collectionStatus == "1") {
         this.state = '0';
@@ -277,16 +313,44 @@ var _default =
           title: "操作成功！",
           icon: "none" });
 
-        _this2.getWordInfo(_this2.wordIdList[_this2.index + 0]);
+        _this3.getWordInfo(_this3.wordIdList[_this3.index + 0]);
       });
+    },
+    // 计时器
+    getTime: function getTime() {var _this4 = this;
+      this.timer = setInterval(function () {
+        _this4.lengthOfStudy++;
+      }, 1000);
     } },
 
+
   onLoad: function onLoad(options) {
+    console.log(options);
+    this.wordIdStr = options.wordId;
     this.wordIdList = options.wordId.split(",");
     getApp().globalData.taskId = options.taskId;
+    this.taskId = options.taskId;
+    this.backwordPlanId = options.backwordPlanId;
+    getApp().globalData.backwordPlanId = options.backwordPlanId;
     getApp().globalData.wordIdCount = this.wordIdList.length;
     this.getWordInfo(this.wordIdList[0]);
     this.percentage = (this.index + 1) / this.wordIdList.length * 100;
+    this.allWordCount = options.allWordCount;
+    // console.log(this.allWordCount)
+
+    // 接收参数，用于判断 每日一练学习、复习的类型
+    if (options.studyType) {
+      this.studyType = options.studyType;
+      console.log(this.studyType);
+    }
+    // 接收参数，用于判断 个人任务、每日一练类型
+    if (options.taskType) {
+      this.taskType = options.taskType;
+      // console.log(this.taskType)
+    }
+  },
+  created: function created() {
+    this.getTime();
   } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 

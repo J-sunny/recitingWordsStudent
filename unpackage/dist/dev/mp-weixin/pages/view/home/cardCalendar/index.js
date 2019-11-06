@@ -154,8 +154,8 @@ __webpack_require__.r(__webpack_exports__);
       year: '',
       month: '',
       day: '',
-      checkInStatus: "" };
-
+      checkInStatus: "",
+      completedOfToday: '' };
 
   },
 
@@ -186,18 +186,30 @@ __webpack_require__.r(__webpack_exports__);
     },
     // 签到
     siginIn: function siginIn() {var _this = this;
-      var systemDate = this.year + '-' + this.month + '-' + this.day;
-      this.$minApi.signIn({
-        signInDate: systemDate,
-        signInMonth: this.month,
-        signInYear: this.year,
-        studentId: uni.getStorageSync('studentId') }).
-      then(function (data) {
-        _this.selected.push({
-          date: systemDate });
+      if (this.completedOfToday == 0) {
+        uni.showToast({
+          title: '请先完成每日一练的计划单词数！',
+          icon: 'none' });
 
-        _this.checkInStatus = 1;
-      });
+      } else {
+        this.$minApi.signIn({
+          signInDate: systemDate,
+          signInMonth: this.month,
+          signInYear: this.year,
+          studentId: uni.getStorageSync('studentId') }).
+        then(function (data) {
+          _this.selected.push({
+            date: systemDate });
+
+          _this.checkInStatus = 1;
+          uni.showToast({
+            title: '签到成功！',
+            icon: 'none' });
+
+        });
+      }
+      var systemDate = this.year + '-' + this.month + '-' + this.day;
+
       console.log(this.selected);
     },
 
@@ -225,6 +237,7 @@ __webpack_require__.r(__webpack_exports__);
   onLoad: function onLoad(options) {
     this.checkInStatus = options.checkInStatus;
     this.getDate();
+    this.completedOfToday = options.completedOfToday;
   } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 

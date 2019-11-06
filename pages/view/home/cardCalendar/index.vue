@@ -20,7 +20,7 @@
 				</view>
 				<view class="right">
 					<label v-if="checkInStatus==0" class="siginInBtn notSiginIned" @click="siginIn()">签到</label>
-					<label v-if="checkInStatus==1" class="siginInBtn siginIned"  >已签到</label>
+					<label v-if="checkInStatus==1" class="siginInBtn siginIned">已签到</label>
 				</view>
 			</view>
 		</view>
@@ -43,12 +43,12 @@
 		data() {
 			return {
 				selected: [],
-				signInInList:[],
+				signInInList: [],
 				year: '',
 				month: '',
 				day: '',
-				checkInStatus:""
-
+				checkInStatus: "",
+				completedOfToday: ''
 			}
 		},
 
@@ -79,18 +79,30 @@
 			},
 			// 签到
 			siginIn() {
-				let systemDate = this.year + '-' + this.month + '-' + this.day;
-				this.$minApi.signIn({
-					signInDate: systemDate,
-					signInMonth: this.month,
-					signInYear: this.year,
-					studentId: uni.getStorageSync('studentId')
-				}).then(data => {
-					this.selected.push({
-						date: systemDate
+				if (this.completedOfToday == 0) {
+					uni.showToast({
+						title: '请先完成每日一练的计划单词数！',
+						icon:'none'
 					})
-					this.checkInStatus=1
-				})				
+				} else {
+					this.$minApi.signIn({
+						signInDate: systemDate,
+						signInMonth: this.month,
+						signInYear: this.year,
+						studentId: uni.getStorageSync('studentId')
+					}).then(data => {
+						this.selected.push({
+							date: systemDate
+						})
+						this.checkInStatus = 1
+						uni.showToast({
+							title: '签到成功！',
+							icon:'none'
+						})
+					})
+				}
+				let systemDate = this.year + '-' + this.month + '-' + this.day;
+
 				console.log(this.selected)
 			},
 
@@ -102,7 +114,7 @@
 					studentId: uni.getStorageSync('studentId')
 				}).then(data => {
 					console.log(data)
-					this.signInInList=data.data
+					this.signInInList = data.data
 					data.data.signInInfoList.forEach(val => {
 						this.selected.push({
 							date: val.signInDate
@@ -111,13 +123,14 @@
 					})
 				})
 			}
-			
-			
+
+
 
 		},
 		onLoad(options) {
-			this.checkInStatus=options.checkInStatus
+			this.checkInStatus = options.checkInStatus
 			this.getDate()
+			this.completedOfToday = options.completedOfToday
 		}
 	};
 </script>

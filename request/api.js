@@ -25,6 +25,10 @@ minRequest.interceptors.response((response) => {
 		});
 	}
 	if (response.data.code == 500) {
+		uni.showToast({
+			title:'登录失效，请重新登录！',
+			icon:'none'
+		})
 		uni.redirectTo({
 			url: '/pages/view/my/login/index'
 		});
@@ -162,6 +166,10 @@ export default {
 		// 设置学生信息
 		setStudentInfo(data) {
 			return minRequest.get('/setStudentInfo', data)
+		},
+		// 保存用户学习记录
+		save(data) {
+			return minRequest.post('/student/behaviorRecord/save', data)
 		},
 
 	}

@@ -11,9 +11,9 @@
 			<view class="progressBox">
 				<van-progress :show-pivot='false' color="#FD9023" :percentage="percentage" />
 				<view class="progressTxtBox">
-					<label class="count">{{index+1}}/{{wordIdList.length}}</label>
+					<label class="count">总题数:{{allWordCount}}</label>
 					<label class="times">{{time}}</label>
-					<label class="passed">已通过：<label class="skyColor">6</label></label>
+					<label class="passed">已通过：<label class="skyColor">{{rightNum}}</label></label>
 				</view>
 			</view>
 			<!-- 题目 -->
@@ -23,7 +23,7 @@
 					<label class="wordSpeling">
 						<label v-for="(item,index) in subject" :key="index">
 							<label class="letter" v-if="item.value!='&'">{{item.value}}</label>
-							<input :class="isClick?item.state?'rightWord':'falseWord':''" v-if="item.value=='&'" maxlength='1' class="wordInput"
+							<input focus :class="isClick?item.state?'rightWord':'falseWord':''" v-if="item.value=='&'" maxlength='1' class="wordInput"
 							 type="text" v-model="answerValue['answer'+index]">
 						</label>
 					</label>
@@ -87,6 +87,8 @@
 			</view>
 			<!-- <english-selection @nextQuestion='nextQuestion' v-if="questionList.questionType==1" :allCount="wordIdList.length" :questionList="questionList" :index="index" :time="time"></english-selection> -->
 		</view>
+		<!-- 返回弹框 -->
+
 	</view>
 </template>
 
@@ -120,7 +122,9 @@
 				optionsArr: [],
 				sucess: false,
 				error: false,
-				isClick: false
+				isClick: false,
+				rightNum: 0,
+				allWordCount: 0
 
 			}
 		},
@@ -130,8 +134,10 @@
 			ListeningWordSelection,
 			EnglishSelection
 		},
-		computed: {
-
+		computed: {},
+		onHide: function() {
+			// console.log('App Hide')
+			clearInterval(this.timer)
 		},
 		methods: {
 			// 返回
@@ -139,9 +145,29 @@
 				// uni.navigateBack({
 				// 	delta: 1
 				// });
-				uni.navigateBack({
-					delta: 1
-				})
+				var _this = this
+				uni.showModal({
+					// title: '提示',
+					content: '是否确认退出答题？',
+					cancelColor: '#CCCCCC',
+					confirmColor: '#03BFB7',
+					success: function(res) {
+						if (res.confirm) {
+							uni.switchTab({
+								url: '../../../index'
+							})
+							// _this.stop()
+							clearInterval(_this.timer)
+							// console.log('用户点击确定');
+						} else if (res.cancel) {
+							// uni.navigateBack({
+							// 	delta: 1
+							// })
+							// console.log('用户点击取消');
+						}
+					}
+				});
+
 			},
 			// 获取题目
 			getQuestion(wordId) {
@@ -163,38 +189,44 @@
 					} else {
 						this.optionsList = this.questionList.question_option.split("丶")
 						this.answer = this.questionList.question_answer
-						console.log(this.optionsList)
+						// console.log(this.optionsList)
 						this.optionsList.forEach(val => {
 							this.optionsArr.push({
 								options: val,
 								write: false
 							})
 						})
-						console.log(this.optionsArr)
+						// console.log(this.optionsArr)
 					}
 				})
 			},
 
 			// 下一题
 			nextQuestion() {
-				this.optionsList=[]
-				this.subject=[]
-				this.optionsArr=[]
-				if (this.index <= this.wordIdList.length - 2) {
+				this.optionsList = []
+				this.subject = []
+				this.optionsArr = []
+				console.log(this.rightNum, 333)
+				console.log(this.allWordCount, 444)
+				if (this.rightNum < this.allWordCount - 1) {
+					this.rightNum++
 					this.index++
-					this.percentage = ((this.index + 1) / this.wordIdList.length) * 100
+					this.percentage = ((this.rightNum) / this.allWordCount) * 100
 					this.getQuestion(this.wordIdList[this.index])
 				} else {
 					clearInterval(this.timer)
-					uni.navigateTo({
-						url: "passedTask?wordCount=" + this.wordIdList.length + "&time=" + this.time + "&wordId=" + this.questionList.word_id
-					})
+					setTimeout(() => {
+						uni.navigateTo({
+							url: "passedTask?wordCount=" + this.allWordCount + "&time=" + this.time + "&wordId=" + this.questionList.word_id
+						})
+					}, 1000)
+
 				}
 			},
 			// 单词拼写下一题
-			nextSpell() {				
+			nextSpell() {
 				let flag = false
-				this.isClick = true;
+				this.isClick = true
 				// console.log(this.answerValue)
 				var answerIndex = []
 				for (var item in this.answerValue) {
@@ -207,50 +239,73 @@
 					let answer = this.questionList.question_stem.replace(' ', this.answerValue['answer' + item])
 					this.questionList.question_stem = answer
 				})
-
 				if (this.questionList.question_stem == this.answer) {
+					// this.rightNum++
 					setTimeout(() => {
 						this.nextQuestion();
-						this.subject=[]
-						this.optionsArr=[]
+						// this.subject = []
+						// this.optionsArr = []
 					}, 1000)
 				} else {
+					this.wordIdListStr = this.wordIdListStr + ',' + this.questionList.word_id
 					setTimeout(() => {
 						uni.navigateTo({
 							url: "wordDetails?wordId=" + this.questionList.word_id + "&doneCount=" + this.index + "&wordIdListStr=" +
-								this.wordIdListStr +
-								"&time=" + this.time
+								this.wordIdListStr + "&time=" + this.time + '&rightNum=' + this.rightNum + '&allWordCount=' + this.allWordCount
 						})
-						this.subject=[]
-						this.optionsArr=[]
-					}, 1000)
+					}, 1000)					
+					// this.subject = []
+					// this.optionsArr = []
 				}
+				setTimeout(() => {
+					this.answerValue = {}
+					this.isClick = false;
+				}, 1000)
+				// 个人任务答题
+				// uni.getStorageSync('studyType')
+				if (uni.getStorageSync('taskType') == 0) {
+					this.$minApi.completeTask({
+						taskId: getApp().globalData.taskId,
+						wordId: this.questionList.word_id
+					}).then(data => {
+						console.log(data)
+						setTimeout(() => {
+							this.answerValue = {}
+							this.isClick = false;
+						}, 500)
+					})
+				}
+
+
 			},
 			// 选择选项
 			check(index) {
 				this.cIndex = index
 				this.optionsArr[index].write = true
-				console.log(this.optionsArr)
+				// console.log(this.optionsArr)
 				if (index == this.answer) {
 					setTimeout(() => {
 						this.nextQuestion();
 					}, 1000)
 				} else {
+					this.wordIdListStr = this.wordIdListStr + ',' + this.questionList.word_id
+					console.log(this.wordIdListStr)
 					setTimeout(() => {
 						uni.navigateTo({
 							url: "wordDetails?wordId=" + this.questionList.word_id + "&doneCount=" + this.index + "&wordIdListStr=" +
-								this.wordIdListStr +
-								"&time=" + this.time
+								this.wordIdListStr + "&time=" + this.time + '&rightNum=' + this.rightNum + '&allWordCount=' + this.allWordCount
 						})
 					}, 1000)
 				}
 				// 个人任务答题
-				this.$minApi.completeTask({
-					taskId: getApp().globalData.taskId,
-					wordId: this.questionList.word_id
-				}).then(data => {
-					console.log(data)
-				})
+				if (uni.getStorageSync('taskType') == 0) {
+					this.$minApi.completeTask({
+						taskId: getApp().globalData.taskId,
+						wordId: this.questionList.word_id
+					}).then(data => {
+						// console.log(data)
+					})
+				}
 			},
 
 			// 计时器、
@@ -290,13 +345,17 @@
 			}
 		},
 		onLoad(options) {
-			this.wordIdListStr = options.wordIdList
-			this.wordIdList = options.wordIdList.split(",")
-			this.percentage = ((this.index + 1) / this.wordIdList.length) * 100
+			clearInterval(this.timer)
 			this.start()
+			this.wordIdListStr = options.wordIdList
+			this.allWordCount = getApp().globalData.wordIdCount
+			console.log(options.wordIdList)
+			// console.log(this.allWordCount)
+			this.wordIdList = this.wordIdListStr.split(",")
+			// this.start()
 			if (options.index) {
 				this.index = parseInt(options.index)
-				this.percentage = ((this.index + 1) / this.wordIdList.length) * 100
+				// this.percentage = ((this.index + 1) / this.wordIdList.length) * 100
 			}
 			if (options.time) {
 				this.time = options.time
@@ -304,8 +363,15 @@
 				this.Minute = parseInt(this.time.split(":")[1])
 				this.Second = parseInt(this.time.split(":")[2])
 			}
+			// console.log(options)
+			// console.log(options.rightNum)
+			if (options.rightNum) {
+				this.rightNum = options.rightNum
+			}
 			this.getQuestion(this.wordIdList[this.index])
+			this.percentage = ((this.rightNum) / this.allWordCount) * 100
 		}
+
 	}
 </script>
 

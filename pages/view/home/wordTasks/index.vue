@@ -20,7 +20,7 @@
 					</view>
 					<!-- 右边 -->
 					<view class="taskRight">
-						<view class="status study" v-if="item.completeStatus==0" @click="toStudy(item.wordId,item.taskId)">
+						<view class="status study" v-if="item.completeStatus==0" @click="toStudy(item.wordId,item.taskId,item.allWordCount)">
 							去学习
 						</view>
 						<view v-if="item.completeStatus==1" class="status viewRanking" @click="toRanking(item.taskId,item.allWordCount)">
@@ -46,15 +46,15 @@
 		methods: {
 			// 返回
 			goBack() {
-				uni.navigateBack({
-					delta: 1
-				});
+				uni.reLaunch({
+					url: '../index'
+				})
 			},
 			// 去学习跳转
-			toStudy(wordId, taskId) {
+			toStudy(wordId, taskId,allWordCount) {
 				console.log(taskId)
 				uni.navigateTo({
-					url: '../wordTasks/wordTaskLearning/study/index?wordId=' + wordId + "&taskId=" + taskId
+					url: '../wordTasks/wordTaskLearning/study/index?wordId=' + wordId + "&taskId=" + taskId+'&taskType=0'+'&allWordCount='+allWordCount
 				})
 			},
 			// 查看排行跳转

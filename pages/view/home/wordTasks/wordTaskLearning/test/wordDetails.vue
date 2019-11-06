@@ -11,9 +11,9 @@
 			<view class="progressBox">
 				<van-progress :show-pivot='false' color="#FD9023" :percentage="percentage" />
 				<view class="progressTxtBox">
-					<label class="count">{{doneCount+1}}/{{wordIdList.length}}</label>
+					<label class="count">总题数:{{allWordCount}}</label>
 					<label class="times">{{time}}</label>
-					<label class="passed">已通过：<label class="skyColor">6</label></label>
+					<label class="passed">已通过：<label class="skyColor">{{rightNum}}</label></label>
 				</view>
 			</view>
 			<!-- 单词框 -->
@@ -70,15 +70,37 @@
 				Hours: 0,
 				Minute: 0,
 				Second: 0,
-				wordIdList: []
+				wordIdList: [],
+				rightNum: 0,
+				allWordCount:0
 			}
 		},
-
+		// 页面卸载
+		onHide: function() {
+			console.log('App Hide')
+			clearInterval(this.timer)
+		},
 		methods: {
 			// 返回
 			goBack() {
-				uni.navigateBack({
-					delta: 1
+				uni.showModal({
+					title: ' ',
+					content: '是否确认退出答题？',
+					cancelColor: '#CCCCCC',
+					confirmColor: '#03BFB7',
+					success: function(res) {
+						if (res.confirm) {
+							uni.navigateTo({
+								url: '../../../wordTasks/index'
+							})
+							// console.log('用户点击确定');
+						} else if (res.cancel) {
+							// uni.navigateBack({
+							// 	delta: 1
+							// })
+							// console.log('用户点击取消');
+						}
+					}
 				});
 			},
 			// 播放音频
@@ -96,20 +118,21 @@
 			},
 			// 下一题
 			nextQuestion() {
-				console.log(this.doneCount)
-				console.log(this.wordIdList.length - 2)
-
-				if (this.doneCount <= this.wordIdList.length - 2) {
+				clearInterval(this.timer)
+				// console.log(this.rightNum)
+				// console.log(this.allWordCount)
+				if (this.rightNum < this.allWordCount) {
 					this.doneCount++
-					console.log("if")
+					// console.log("if")
 					uni.reLaunch({
-						url: "index?index=" + this.doneCount + "&wordIdList=" + this.wordIdList + "&time=" + this.time
+						url: "index?index=" + this.doneCount + "&wordIdList=" + this.wordIdList + "&time=" + this.time + '&rightNum=' +
+							this.rightNum
 					})
 				} else {
-					console.log("else")
+					// console.log("else")
 					clearInterval(this.timer)
 					uni.reLaunch({
-						url: "passedTask?wordCount=" + this.wordIdList.length+ "&time=" + this.time+"&wordId="+this.wordId
+						url: "passedTask?wordCount=" + this.wordIdList.length + "&time=" + this.time + "&wordId=" + this.wordId
 					})
 				}
 			},
@@ -161,10 +184,10 @@
 			},
 
 		},
-		created(){
-		console.log(getCurrentPages())
-		},
+
 		onLoad(options) {
+			
+			clearInterval(this.timer)
 			this.wordId = options.wordId
 			this.doneCount = parseInt(options.doneCount)
 			this.wordIdListStr = options.wordIdListStr
@@ -175,7 +198,10 @@
 			this.Minute = parseInt(this.time.split(":")[1])
 			this.Second = parseInt(this.time.split(":")[2])
 			this.start()
-			this.percentage = ((this.doneCount + 1) / this.wordIdList.length) * 100
+			this.rightNum = options.rightNum
+			this.allWordCount=getApp().globalData.wordIdCount
+			// console.log(getApp().globalData.wordIdCount)
+			this.percentage = ((this.rightNum) / this.allWordCount) * 100
 		}
 
 	}

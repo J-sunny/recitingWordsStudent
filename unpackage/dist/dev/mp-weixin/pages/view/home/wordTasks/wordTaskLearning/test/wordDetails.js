@@ -177,15 +177,37 @@ var _default =
       Hours: 0,
       Minute: 0,
       Second: 0,
-      wordIdList: [] };
+      wordIdList: [],
+      rightNum: 0,
+      allWordCount: 0 };
 
   },
-
+  // 页面卸载
+  onHide: function onHide() {
+    console.log('App Hide');
+    clearInterval(this.timer);
+  },
   methods: {
     // 返回
     goBack: function goBack() {
-      uni.navigateBack({
-        delta: 1 });
+      uni.showModal({
+        title: ' ',
+        content: '是否确认退出答题？',
+        cancelColor: '#CCCCCC',
+        confirmColor: '#03BFB7',
+        success: function success(res) {
+          if (res.confirm) {
+            uni.navigateTo({
+              url: '../../../wordTasks/index' });
+
+            // console.log('用户点击确定');
+          } else if (res.cancel) {
+            // uni.navigateBack({
+            // 	delta: 1
+            // })
+            // console.log('用户点击取消');
+          }
+        } });
 
     },
     // 播放音频
@@ -203,17 +225,18 @@ var _default =
     },
     // 下一题
     nextQuestion: function nextQuestion() {
-      console.log(this.doneCount);
-      console.log(this.wordIdList.length - 2);
-
-      if (this.doneCount <= this.wordIdList.length - 2) {
+      clearInterval(this.timer);
+      // console.log(this.rightNum)
+      // console.log(this.allWordCount)
+      if (this.rightNum < this.allWordCount) {
         this.doneCount++;
-        console.log("if");
+        // console.log("if")
         uni.reLaunch({
-          url: "index?index=" + this.doneCount + "&wordIdList=" + this.wordIdList + "&time=" + this.time });
+          url: "index?index=" + this.doneCount + "&wordIdList=" + this.wordIdList + "&time=" + this.time + '&rightNum=' +
+          this.rightNum });
 
       } else {
-        console.log("else");
+        // console.log("else")
         clearInterval(this.timer);
         uni.reLaunch({
           url: "passedTask?wordCount=" + this.wordIdList.length + "&time=" + this.time + "&wordId=" + this.wordId });
@@ -268,10 +291,10 @@ var _default =
     } },
 
 
-  created: function created() {
-    console.log(getCurrentPages());
-  },
+
   onLoad: function onLoad(options) {
+
+    clearInterval(this.timer);
     this.wordId = options.wordId;
     this.doneCount = parseInt(options.doneCount);
     this.wordIdListStr = options.wordIdListStr;
@@ -282,7 +305,10 @@ var _default =
     this.Minute = parseInt(this.time.split(":")[1]);
     this.Second = parseInt(this.time.split(":")[2]);
     this.start();
-    this.percentage = (this.doneCount + 1) / this.wordIdList.length * 100;
+    this.rightNum = options.rightNum;
+    this.allWordCount = getApp().globalData.wordIdCount;
+    // console.log(getApp().globalData.wordIdCount)
+    this.percentage = this.rightNum / this.allWordCount * 100;
   } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 

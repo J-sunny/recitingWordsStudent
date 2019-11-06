@@ -96,6 +96,7 @@ var _default =
 
     },
     // 个人任务答题
+
     completeTask: function completeTask(time, wordId) {
       this.$minApi.completeTask({
         completeTime: time,
@@ -104,14 +105,65 @@ var _default =
       then(function (data) {
         console.log(data);
       });
+    },
+    // 保存用户学习记录
+    save: function save(taskType, studyType, lengthOfStudy) {
+      console.log(taskType);
+      console.log(studyType);
+      console.log(lengthOfStudy);
+      console.log(uni.getStorageSync('wordIdStr').split(",").length);
+      console.log(uni.getStorageSync('wordIdStr'));
+      // 单词任务--学习
+      if (taskType == 0 && studyType == -1) {
+        this.$minApi.save({
+          exerciseCount: uni.getStorageSync('wordIdStr').split(",").length,
+          lengthOfStudy: lengthOfStudy,
+          taskId: getApp().globalData.taskId,
+          wordId: uni.getStorageSync('wordIdStr') }).
+        then(function (data) {
+          console.log(data);
+        });
+      }
+      // 每日一练----复习
+      else if (taskType == 1 && studyType == 0) {
+          this.$minApi.save({
+            backwordPlanId: getApp().globalData.backwordPlanId,
+            lengthOfStudy: lengthOfStudy,
+            reviewCount: uni.getStorageSync('wordIdStr').split(",").length,
+            wordId: uni.getStorageSync('wordIdStr') }).
+          then(function (data) {
+            console.log(data);
+          });
+        }
+        // 每日一练----开始学习
+        else if (taskType == 1 && studyType == 1) {
+            this.$minApi.save({
+              backwordPlanId: getApp().globalData.backwordPlanId,
+              lengthOfStudy: lengthOfStudy,
+              exerciseCount: uni.getStorageSync('wordIdStr').split(",").length,
+              wordId: uni.getStorageSync('wordIdStr') }).
+            then(function (data) {
+              console.log(data);
+            });
+          }
     } },
 
 
+  onHide: function onHide() {
+    console.log('hidd');
+    uni.removeStorageSync('taskType');
+    uni.removeStorageSync('studyType');
+    uni.removeStorageSync('lengthOfStudy');
+    uni.removeStorageSync('wordIdStr');
+  },
   onLoad: function onLoad(options) {
     this.wordCount = options.wordCount;
     this.time = options.time;
     this.wordId = options.wordId;
-    this.completeTask(options.time, options.wordId);
+    if (uni.getStorageSync('taskType') == 0) {
+      this.completeTask(options.time, options.wordId);
+    }
+    this.save(uni.getStorageSync('taskType'), uni.getStorageSync('studyType'), uni.getStorageSync('lengthOfStudy'));
   } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 

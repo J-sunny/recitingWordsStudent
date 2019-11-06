@@ -25,7 +25,7 @@
 							</view>
 							<!-- 右边 -->
 							<view class="taskRight">
-								<view class="status study" @click="toStudy(item.wordId,item.taskId)" v-if="item.completeStatus==0">
+								<view class="status study" @click="toStudy(item.wordId,item.taskId,item.allWordCount)" v-if="item.completeStatus==0">
 									去学习
 								</view>
 								<view @tap="viewRanking(item.taskId,item.allWordCount)" class="status viewRanking" v-if="item.completeStatus==1">
@@ -104,8 +104,10 @@
 				dailyPracticeList: [],
 				taskListList: [],
 				progress: '',
-				planCount: '',
-				checkInStatus: ''
+				studyCount: '',
+				checkInStatus: '',
+				backwordPlanId:'',
+				completedOfToday:''
 			}
 		},
 		methods: {
@@ -128,9 +130,9 @@
 				})
 			},
 			// 去学习跳转
-			toStudy(wordId, taskId) {
+			toStudy(wordId, taskId,allWordCount) {
 				uni.navigateTo({
-					url: 'wordTasks/wordTaskLearning/study/index?wordId=' + wordId + "&taskId=" + taskId
+					url: 'wordTasks/wordTaskLearning/study/index?wordId=' + wordId + "&taskId=" + taskId+'&taskType=0'+'&allWordCount='+allWordCount
 				})
 			},
 			// 查看排行跳转
@@ -143,7 +145,7 @@
 			// 签到页面跳转
 			toSignIn() {
 				uni.navigateTo({
-					url: 'cardCalendar/index?checkInStatus=' + this.checkInStatus
+					url: 'cardCalendar/index?checkInStatus=' + this.checkInStatus+'&completedOfToday='+this.completedOfToday
 				})
 			},
 			// 获取每日一练数据
@@ -152,26 +154,29 @@
 					console.log(data)
 					this.dailyPracticeList = data.data
 					this.progress = data.data.completeCount / data.data.thesaurusCount * 100
-					this.planCount = data.data.planCount
+					this.studyCount = data.data.studyCount
 					this.reviewCount = data.data.reviewCount
 					this.checkInStatus = data.data.checkInStatus
-					console.log(this.progress)
+					this.backwordPlanId=data.data.backwordPlanId
+					this.completedOfToday=data.data.completedOfToday
+					// console.log(this.progress)
 				})
 			},
 			// 每日一练----开始学习
 			study() {
-				if (this.planCount <= 0) {
+				console.log(this.studyCount)
+				if (this.studyCount <= 0) {
 					uni.showToast({
 						title: '当前无学习计划单词数',
 						icon: 'none'
 					})
 				} else {
 					this.$minApi.study({
-						wordCount: this.planCount
+						wordCount: this.studyCount
 					}).then(data => {
 						console.log(data)
 						uni.navigateTo({
-							url: 'wordTasks/wordTaskLearning/study/index?wordId=' + data.data[0].wordId
+							url: 'wordTasks/wordTaskLearning/study/index?wordId=' + data.data[0].wordId+'&taskType=1'+'&studyType=1'+'&backwordPlanId='+this.backwordPlanId+'&allWordCount='+this.dailyPracticeList.studyCount
 						})
 					})
 				}
@@ -190,7 +195,7 @@
 					}).then(data => {
 						console.log(data)
 						uni.navigateTo({
-							url: 'wordTasks/wordTaskLearning/study/index?wordId=' + data.data[0].wordId
+							url: 'wordTasks/wordTaskLearning/study/index?wordId=' + data.data[0].wordId+'&taskType=1'+'&studyType=0'+'&backwordPlanId='+this.backwordPlanId+'&allWordCount='+this.dailyPracticeList.reviewCount
 						})
 					})
 				}

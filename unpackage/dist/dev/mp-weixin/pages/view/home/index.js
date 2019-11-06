@@ -222,8 +222,10 @@ var _default =
       dailyPracticeList: [],
       taskListList: [],
       progress: '',
-      planCount: '',
-      checkInStatus: '' };
+      studyCount: '',
+      checkInStatus: '',
+      backwordPlanId: '',
+      completedOfToday: '' };
 
   },
   methods: {
@@ -246,9 +248,9 @@ var _default =
 
     },
     // 去学习跳转
-    toStudy: function toStudy(wordId, taskId) {
+    toStudy: function toStudy(wordId, taskId, allWordCount) {
       uni.navigateTo({
-        url: 'wordTasks/wordTaskLearning/study/index?wordId=' + wordId + "&taskId=" + taskId });
+        url: 'wordTasks/wordTaskLearning/study/index?wordId=' + wordId + "&taskId=" + taskId + '&taskType=0' + '&allWordCount=' + allWordCount });
 
     },
     // 查看排行跳转
@@ -261,7 +263,7 @@ var _default =
     // 签到页面跳转
     toSignIn: function toSignIn() {
       uni.navigateTo({
-        url: 'cardCalendar/index?checkInStatus=' + this.checkInStatus });
+        url: 'cardCalendar/index?checkInStatus=' + this.checkInStatus + '&completedOfToday=' + this.completedOfToday });
 
     },
     // 获取每日一练数据
@@ -270,33 +272,36 @@ var _default =
         console.log(data);
         _this.dailyPracticeList = data.data;
         _this.progress = data.data.completeCount / data.data.thesaurusCount * 100;
-        _this.planCount = data.data.planCount;
+        _this.studyCount = data.data.studyCount;
         _this.reviewCount = data.data.reviewCount;
         _this.checkInStatus = data.data.checkInStatus;
-        console.log(_this.progress);
+        _this.backwordPlanId = data.data.backwordPlanId;
+        _this.completedOfToday = data.data.completedOfToday;
+        // console.log(this.progress)
       });
     },
     // 每日一练----开始学习
-    study: function study() {
-      if (this.planCount <= 0) {
+    study: function study() {var _this2 = this;
+      console.log(this.studyCount);
+      if (this.studyCount <= 0) {
         uni.showToast({
           title: '当前无学习计划单词数',
           icon: 'none' });
 
       } else {
         this.$minApi.study({
-          wordCount: this.planCount }).
+          wordCount: this.studyCount }).
         then(function (data) {
           console.log(data);
           uni.navigateTo({
-            url: 'wordTasks/wordTaskLearning/study/index?wordId=' + data.data[0].wordId });
+            url: 'wordTasks/wordTaskLearning/study/index?wordId=' + data.data[0].wordId + '&taskType=1' + '&studyType=1' + '&backwordPlanId=' + _this2.backwordPlanId + '&allWordCount=' + _this2.dailyPracticeList.studyCount });
 
         });
       }
 
     },
     // 每日一练----复习
-    review: function review() {
+    review: function review() {var _this3 = this;
       if (this.reviewCount <= 0) {
         uni.showToast({
           title: '当前无复习计划单词数',
@@ -308,20 +313,20 @@ var _default =
         then(function (data) {
           console.log(data);
           uni.navigateTo({
-            url: 'wordTasks/wordTaskLearning/study/index?wordId=' + data.data[0].wordId });
+            url: 'wordTasks/wordTaskLearning/study/index?wordId=' + data.data[0].wordId + '&taskType=1' + '&studyType=0' + '&backwordPlanId=' + _this3.backwordPlanId + '&allWordCount=' + _this3.dailyPracticeList.reviewCount });
 
         });
       }
 
     },
     // 获取个人任务列表
-    taskList: function taskList() {var _this2 = this;
+    taskList: function taskList() {var _this4 = this;
       this.$minApi.taskList({
         page: 1,
         pageSize: 2 }).
       then(function (data) {
         console.log(data);
-        _this2.taskListList = data.data;
+        _this4.taskListList = data.data;
       });
     } },
 

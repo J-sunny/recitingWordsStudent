@@ -153,15 +153,15 @@ var _default =
   methods: {
     // 返回
     goBack: function goBack() {
-      uni.navigateBack({
-        delta: 1 });
+      uni.reLaunch({
+        url: '../index' });
 
     },
     // 去学习跳转
-    toStudy: function toStudy(wordId, taskId) {
+    toStudy: function toStudy(wordId, taskId, allWordCount) {
       console.log(taskId);
       uni.navigateTo({
-        url: '../wordTasks/wordTaskLearning/study/index?wordId=' + wordId + "&taskId=" + taskId });
+        url: '../wordTasks/wordTaskLearning/study/index?wordId=' + wordId + "&taskId=" + taskId + '&taskType=0' + '&allWordCount=' + allWordCount });
 
     },
     // 查看排行跳转
