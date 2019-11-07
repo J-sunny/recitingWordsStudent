@@ -73,6 +73,9 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
+  var g0 = (_vm.learningHoursToday / 60).toFixed(2)
+  var g1 = (_vm.accumulatedLearningTime / 60).toFixed(2)
+
   if (!_vm._isMounted) {
     _vm.e0 = function($event) {
       _vm.show = !_vm.show
@@ -82,6 +85,16 @@ var render = function() {
       _vm.show = false
     }
   }
+
+  _vm.$mp.data = Object.assign(
+    {},
+    {
+      $root: {
+        g0: g0,
+        g1: g1
+      }
+    }
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -233,7 +246,8 @@ var _default =
       accumulatedLearningTime: 0,
       studentRecordList: [],
       studentAvatar: "",
-      studentRealname: "" };
+      studentRealname: "",
+      studentNum: '' };
 
   },
   methods: {
@@ -258,7 +272,7 @@ var _default =
     // 查看详情跳转
     look: function look() {
       uni.navigateTo({
-        url: 'dataDetails/index?studentId=' + this.studentId + "&studentRealname=" + this.studentRealname + "&studentAvatar=" + this.studentAvatar });
+        url: 'dataDetails/index?studentId=' + this.studentId + "&studentRealname=" + this.studentRealname + "&studentAvatar=" + this.studentAvatar + '&studentNum=' + this.studentNum });
 
     },
     // 个人资料跳转
@@ -296,6 +310,7 @@ var _default =
         _this.studentRealname = data.data.studentRealname;
         _this.studentAvatar = data.data.studentAvatar;
         _this.userInfoList = data.data;
+        _this.studentNum = data.data.studentNum;
         // 获取收藏
         _this.$minApi.getCollectWordsList({
           studentId: _this.studentId }).
@@ -303,7 +318,6 @@ var _default =
           _this.collectWordTotal = data.data.collectWordTotal;
         });
         _this.getStudentRecord(data.data.studentId);
-
       });
     },
     // 获取用户学习情况(今日时长,今日单词,总时长,总单词)

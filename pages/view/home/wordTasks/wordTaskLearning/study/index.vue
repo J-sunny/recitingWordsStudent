@@ -29,7 +29,6 @@
 				<view class="title">释义</view>
 				<view class="nadjBox" v-for="item in interpretation" :key="item">
 					<label class="noun">{{item}}</label>
-					<label class="" v-if="false">组成部分；成分；组件，元件</label>
 				</view>
 			</view>
 			<!-- 例句 -->
@@ -68,6 +67,9 @@
 </template>
 
 <script>
+	const innerAudioContext = uni.createInnerAudioContext();
+	innerAudioContext.autoplay = true;
+	const p = 1;
 	export default {
 		data() {
 			return {
@@ -88,15 +90,14 @@
 				taskType: -1,
 				taskId: '',
 				backwordPlanId: '',
-				wordIdStr:'',
-				allWordCount:0
-
+				wordIdStr: '',
+				allWordCount: 0,
 			}
 		},
 		methods: {
 			// 返回
 			goBack() {
-				var _this=this
+				var _this = this
 				uni.showModal({
 					// title: '',
 					content: '是否确认退出答题？',
@@ -124,9 +125,7 @@
 				this.collection = !this.collection
 			},
 			// 播放音频
-			playAudio() {
-				const innerAudioContext = uni.createInnerAudioContext();
-				innerAudioContext.autoplay = true;
+			playAudio() {				
 				innerAudioContext.src = 'https://img-cdn-qiniu.dcloud.net.cn/uniapp/audio/music.mp3';
 				innerAudioContext.onPlay(() => {
 					console.log('开始播放');
@@ -136,12 +135,20 @@
 					console.log(res.errCode);
 				});
 			},
+			// 停止播放
+			stopAudio() {
+				console.log(innerAudioContext)
+				innerAudioContext.stop(() => {
+					console.log('停止播放');
+				});
+			},
 			// 下一题
 			nextQuestion() {
+				this.stopAudio()
 				// console.log(this.lengthOfStudy)
 				// console.log(this.wordIdList[Math.floor(Math.random() * this.wordIdList.length)])
 				// console.log(this.index)
-				if (this.index < this.wordIdList.length - 1) {				
+				if (this.index < this.wordIdList.length - 1) {
 					this.index++
 					this.percentage = ((this.index + 1) / this.wordIdList.length) * 100
 					this.getWordInfo(this.wordIdList[this.index])
@@ -158,7 +165,7 @@
 				}
 				// this.lengthOfStudy = 0
 			},
-	
+
 			// 完成学习弹框    关闭弹框
 			onClose() {
 				this.show = false
@@ -170,7 +177,8 @@
 			// 跳转页面
 			linkTo() {
 				uni.navigateTo({
-					url: '../test/index?wordIdList=' + this.wordIdList+'&studyType='+this.studyType+'&taskType='+this.taskType+'&lengthOfStudy='+this.lengthOfStudy
+					url: '../test/index?wordIdList=' + this.wordIdList + '&studyType=' + this.studyType + '&taskType=' + this.taskType +
+						'&lengthOfStudy=' + this.lengthOfStudy
 				})
 			},
 			// 获取单词详情
@@ -185,7 +193,6 @@
 					this.example.forEach(val => {
 						this.exampleArr.push(val.split("&"))
 					})
-					// 开始计时
 				})
 			},
 			// 学生保存或取消收藏单词
@@ -219,7 +226,7 @@
 		},
 		onLoad(options) {
 			console.log(options)
-			this.wordIdStr=options.wordId
+			this.wordIdStr = options.wordId
 			this.wordIdList = options.wordId.split(",")
 			getApp().globalData.taskId = options.taskId
 			this.taskId = options.taskId
@@ -228,9 +235,9 @@
 			getApp().globalData.wordIdCount = this.wordIdList.length
 			this.getWordInfo(this.wordIdList[0])
 			this.percentage = ((this.index + 1) / this.wordIdList.length) * 100
-			this.allWordCount=options.allWordCount
+			this.allWordCount = options.allWordCount
 			// console.log(this.allWordCount)
-			
+
 			// 接收参数，用于判断 每日一练学习、复习的类型
 			if (options.studyType) {
 				this.studyType = options.studyType

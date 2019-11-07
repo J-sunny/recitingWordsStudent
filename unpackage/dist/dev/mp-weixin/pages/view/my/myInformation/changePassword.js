@@ -218,10 +218,10 @@ var _default = { data: function data() {return { pwdType1: 'password', pwdType2:
           newPassWord: this.newPwd,
           oldPassWord: this.oldPwd,
           userId: this.userId,
-          userIdenty: "1" }).
+          userIdenty: "0" }).
         then(function (data) {
           console.log(data);
-          // Toast('修改成功！')
+          (0, _toast.default)(data.msg);
         });
       }
     } },

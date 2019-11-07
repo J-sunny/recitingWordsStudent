@@ -11,7 +11,7 @@
 			<view class="touXiang">
 				<image :src="studentAvatar"></image>
 			</view>
-			<view class="touName">{{studentRealname}}·20190112</view>
+			<view class="touName">{{studentRealname}}·{{studentNum}}</view>
 		</view>
 		<!-- 主体内容 -->
 		<view class="conBox">
@@ -35,13 +35,13 @@
 						<view class="dayTitle">
 							<image class="titleIcon" src="../../../../static/images/todayTime.png"></image>今日学习时长
 						</view>
-						<view class="dayNum"><label class="bigFont">{{learningHoursToday}}</label>分钟</view>
+						<view class="dayNum"><label class="bigFont">{{(learningHoursToday/60).toFixed(2)}}</label>分钟</view>
 					</view>
 					<view class="toDay">
 						<view class="dayTitle">
 							<image class="titleIcon" src="../../../../static/images/Cumulativelength3.png"></image>累计学习时长
 						</view>
-						<view class="dayNum"><label class="bigFont">{{accumulatedLearningTime}}</label>分钟</view>
+						<view class="dayNum"><label class="bigFont">{{(accumulatedLearningTime/60).toFixed(2)}}</label>分钟</view>
 					</view>
 				</view>
 			</view>
@@ -109,21 +109,16 @@
 				</view>
 				<!-- 当日学习 -->
 				<view class="todayStudyBox" v-if="timesActive=='week'?true:''">
-					<label class="study">当日学习：<label class="grayColor">{{timeChartList.studentStudyInfoVOList.length==0?'0':timeChartList.lengthOfStudy}}分钟</label></label>
-					<label class="review">总时长：<label class="grayColor">{{timeChartList.studentStudyInfoVOList.length==0?'0':timeChartList.lengthOfStudyCount}}分钟</label></label>
+					<label class="study">当日学习：<label class="grayColor">{{timeChartList.studentStudyInfoVOList.length==0?'0':(timeChartList.lengthOfStudy/60).toFixed(2)}}分钟</label></label>
+					<label class="review">总时长：<label class="grayColor">{{timeChartList.studentStudyInfoVOList.length==0?'0':(timeChartList.lengthOfStudyCount/60).toFixed(2)}}分钟</label></label>
 				</view>
 				<!-- 当月学习 -->
 				<view class="todayStudyBox" v-if="timesActive=='month'?true:''">
-					<label class="study">当月学习：<label class="grayColor">{{timeChartList.studentStudyInfoVOList.length==0?'0':timeChartList.lengthOfStudy}}分钟</label></label>
-					<label class="review">总时长：<label class="grayColor">{{timeChartList.studentStudyInfoVOList.length==0?'0':timeChartList.lengthOfStudyCount}}分钟</label></label>
+					<label class="study">当月学习：<label class="grayColor">{{timeChartList.studentStudyInfoVOList.length==0?'0':(timeChartList.lengthOfStudy/60).toFixed(2)}}分钟</label></label>
+					<label class="review">总时长：<label class="grayColor">{{timeChartList.studentStudyInfoVOList.length==0?'0':(timeChartList.lengthOfStudyCount/60).toFixed(2)}}分钟</label></label>
 				</view>
 			</view>
-
-
-
 		</view>
-
-
 	</view>
 </template>
 
@@ -152,7 +147,8 @@
 				learningHoursToday: 0,
 				accumulatedLearningTime: 0,
 				studentRealname: "",
-				studentAvatar: ""
+				studentAvatar: "",
+				studentNum:''
 
 			}
 		},
@@ -170,9 +166,9 @@
 					studentId: this.studentId
 				}).then(data => {
 					this.studentRecordList = data.data
-					console.log(this.studentRecordList, 99)
+					// console.log(this.studentRecordList, 99)
 					this.studentRecordList.forEach(data => {
-						console.log(data.dateType, 66)
+						// console.log(data.dateType, 66)
 						if (data.dateType == "all") {
 							this.cumulativeLearning = data.exerciseCount
 							this.accumulatedLearningTime = data.lengthOfStudy
@@ -200,7 +196,7 @@
 						studentId: this.studentId,
 						type: "week"
 					}).then(data => {
-						console.log("dara")
+						// console.log("dara")
 						let arrX = []
 						let arrY = []
 						this.timeChartList = data.data
@@ -217,7 +213,7 @@
 									if (data == val.recordTime.slice(5)) {
 										arrX.indexOf(data)
 										// console.log(arrX.indexOf(data))
-										arrY[arrX.indexOf(data)] = val.lengthOfStudy
+										arrY[arrX.indexOf(data)] = (val.lengthOfStudy/60).toFixed(2)
 									}
 								})
 							})
@@ -252,7 +248,7 @@
 									if (data == val.recordTime.slice(5, 7)) {
 										arrX.indexOf(data)
 										// console.log(arrX.indexOf(data))
-										arrY[arrX.indexOf(data)] = val.lengthOfStudy
+										arrY[arrX.indexOf(data)] = (val.lengthOfStudy/60).toFixed(2)
 									}
 								})
 							})
@@ -303,10 +299,10 @@
 						if (this.worfChartList.studentStudyInfoVOList.length != 0) {
 							arrX.forEach(data => {
 								this.worfChartList.studentStudyInfoVOList.forEach(val => {
-									console.log(val.recordTime.slice(5))
+									// console.log(val.recordTime.slice(5))
 									if (data == val.recordTime.slice(5)) {
 										arrX.indexOf(data)
-										console.log(arrX.indexOf(data))
+										// console.log(arrX.indexOf(data))
 										arrStudy[arrX.indexOf(data)] = val.exerciseCount
 										arrReview[arrX.indexOf(data)] = val.reviewCount
 									}
@@ -477,6 +473,8 @@
 			this.studentId = options.studentId
 			this.studentRealname = options.studentRealname
 			this.studentAvatar = options.studentAvatar
+			this.studentNum=options.studentNum
+			console.log(this.studentNum)
 			this.getStudentRecord()
 			this.getTimeChart("week")
 			this.getWordChart("week")

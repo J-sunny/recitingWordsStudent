@@ -202,8 +202,10 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
 var _listeningWordSelection = _interopRequireDefault(__webpack_require__(/*! ../../../../../component/listeningWordSelection.vue */ 111));
-var _englishSelection = _interopRequireDefault(__webpack_require__(/*! ../../../../../component/englishSelection.vue */ 118));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}var WordSpelling = function WordSpelling() {return __webpack_require__.e(/*! import() | pages/component/wordSpelling */ "pages/component/wordSpelling").then(__webpack_require__.bind(null, /*! ../../../../../component/wordSpelling.vue */ 177));};var ChineseWordSelection = function ChineseWordSelection() {return __webpack_require__.e(/*! import() | pages/component/chineseWordSelection */ "pages/component/chineseWordSelection").then(__webpack_require__.bind(null, /*! ../../../../../component/chineseWordSelection.vue */ 184));};var _default =
+var _englishSelection = _interopRequireDefault(__webpack_require__(/*! ../../../../../component/englishSelection.vue */ 118));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}var WordSpelling = function WordSpelling() {return __webpack_require__.e(/*! import() | pages/component/wordSpelling */ "pages/component/wordSpelling").then(__webpack_require__.bind(null, /*! ../../../../../component/wordSpelling.vue */ 177));};var ChineseWordSelection = function ChineseWordSelection() {return __webpack_require__.e(/*! import() | pages/component/chineseWordSelection */ "pages/component/chineseWordSelection").then(__webpack_require__.bind(null, /*! ../../../../../component/chineseWordSelection.vue */ 184));};
+var innerAudioContext = uni.createInnerAudioContext();var _default =
 {
   data: function data() {
     return {
@@ -232,7 +234,6 @@ var _englishSelection = _interopRequireDefault(__webpack_require__(/*! ../../../
       isClick: false,
       rightNum: 0,
       allWordCount: 0 };
-
 
   },
   components: {
@@ -303,13 +304,32 @@ var _englishSelection = _interopRequireDefault(__webpack_require__(/*! ../../../
               write: false });
 
           });
-          // console.log(this.optionsArr)
         }
+      });
+    },
+    // 播放音频
+    playAudio: function playAudio() {
+      innerAudioContext.autoplay = true;
+      innerAudioContext.src = 'https://img-cdn-qiniu.dcloud.net.cn/uniapp/audio/music.mp3';
+      innerAudioContext.onPlay(function () {
+        console.log('开始播放');
+      });
+      innerAudioContext.onError(function (res) {
+        console.log(res.errMsg);
+        console.log(res.errCode);
+      });
+    },
+    // 停止播放
+    stopAudio: function stopAudio() {
+      console.log(innerAudioContext);
+      innerAudioContext.stop(function () {
+        console.log('停止播放');
       });
     },
 
     // 下一题
     nextQuestion: function nextQuestion() {var _this3 = this;
+      this.stopAudio();
       this.optionsList = [];
       this.subject = [];
       this.optionsArr = [];
@@ -332,6 +352,7 @@ var _englishSelection = _interopRequireDefault(__webpack_require__(/*! ../../../
     },
     // 单词拼写下一题
     nextSpell: function nextSpell() {var _this4 = this;
+      this.stopAudio();
       var flag = false;
       this.isClick = true;
       // console.log(this.answerValue)

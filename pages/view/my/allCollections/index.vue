@@ -29,7 +29,7 @@
 			</view>
 		</view>
 		<!-- 专项复习 -->
-		<view class="specialReviewBox">
+		<view class="specialReviewBox" v-if="false">
 			<image class="specialReviewPic" src="../../../../static/images/SpecialreviewTB@2x.png" mode=""></image>
 			<view class="text">专项复习</view>
 		</view>

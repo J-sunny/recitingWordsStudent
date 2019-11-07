@@ -27,7 +27,7 @@
 							 type="text" v-model="answerValue['answer'+index]">
 						</label>
 					</label>
-					<view class="playWord">
+					<view class="playWord" @click="playAudio()">
 						<van-icon class='volume-o' name="volume-o" />
 						<label class="phonetic">{{questionList.word_spell}} </label>
 					</view>
@@ -59,8 +59,9 @@
 
 			<!-- 听力选词 -->
 			<view class="listeningWordSelectionBox" v-if="questionList.questionType==3">
-				<view class="voiceBox">
+				<view class="voiceBox" @click="playAudio()">
 					<van-icon class='voice' name="volume-o" />
+
 				</view>
 				<!-- 选项 -->
 				<view class="optionBox">
@@ -74,7 +75,7 @@
 			<view class="englishSelectionBox" v-if="questionList.questionType==1">
 				<view class="wordBox">
 					<view class="word">support</view>
-					<view class="playWord">
+					<view class="playWord" @click="playAudio()">
 						<van-icon class='volume-o' name="volume-o" />
 						<label class="phonetic">{{questionList.question_stem}} </label>
 					</view>
@@ -97,6 +98,7 @@
 	import ChineseWordSelection from '../../../../../component/chineseWordSelection.vue'
 	import ListeningWordSelection from '../../../../../component/listeningWordSelection.vue'
 	import EnglishSelection from '../../../../../component/englishSelection.vue'
+	const innerAudioContext = uni.createInnerAudioContext();
 	export default {
 		data() {
 			return {
@@ -124,8 +126,7 @@
 				error: false,
 				isClick: false,
 				rightNum: 0,
-				allWordCount: 0
-
+				allWordCount: 0,
 			}
 		},
 		components: {
@@ -139,7 +140,7 @@
 			// console.log('App Hide')
 			clearInterval(this.timer)
 		},
-		methods: {
+		methods: {			
 			// 返回
 			goBack() {
 				// uni.navigateBack({
@@ -196,13 +197,32 @@
 								write: false
 							})
 						})
-						// console.log(this.optionsArr)
 					}
 				})
+			},
+			// 播放音频
+			playAudio() {
+				innerAudioContext.autoplay = true;
+				innerAudioContext.src = 'https://img-cdn-qiniu.dcloud.net.cn/uniapp/audio/music.mp3';
+				innerAudioContext.onPlay(() => {
+					console.log('开始播放');
+				});
+				innerAudioContext.onError((res) => {
+					console.log(res.errMsg);
+					console.log(res.errCode);
+				});
+			},
+			// 停止播放
+			stopAudio() {
+				console.log(innerAudioContext)
+				innerAudioContext.stop(() => {
+					console.log('停止播放');
+				});
 			},
 
 			// 下一题
 			nextQuestion() {
+				this.stopAudio()
 				this.optionsList = []
 				this.subject = []
 				this.optionsArr = []
@@ -225,6 +245,7 @@
 			},
 			// 单词拼写下一题
 			nextSpell() {
+				this.stopAudio()
 				let flag = false
 				this.isClick = true
 				// console.log(this.answerValue)
@@ -253,7 +274,7 @@
 							url: "wordDetails?wordId=" + this.questionList.word_id + "&doneCount=" + this.index + "&wordIdListStr=" +
 								this.wordIdListStr + "&time=" + this.time + '&rightNum=' + this.rightNum + '&allWordCount=' + this.allWordCount
 						})
-					}, 1000)					
+					}, 1000)
 					// this.subject = []
 					// this.optionsArr = []
 				}

@@ -73,6 +73,29 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
+  var m0 = parseInt(_vm.studentStudyRank.myself.lengthOfStudy / 60)
+  var m1 = parseInt(_vm.studentStudyRank.myself.onlineDuration / 60)
+
+  var l0 = _vm.__map(_vm.studentStudyRank.rankList, function(item, __i0__) {
+    var m2 = parseInt(item.lengthOfStudy / 60)
+    var m3 = parseInt(item.onlineDuration / 60)
+    return {
+      $orig: _vm.__get_orig(item),
+      m2: m2,
+      m3: m3
+    }
+  })
+
+  _vm.$mp.data = Object.assign(
+    {},
+    {
+      $root: {
+        m0: m0,
+        m1: m1,
+        l0: l0
+      }
+    }
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -178,6 +201,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 var _default =
 {
   data: function data() {
@@ -201,7 +229,8 @@ var _default =
       sortCondition: 'wordNum',
       dateType: 'currentDate',
       rankType: 'classList',
-      studentStudyRank: [] };
+      studentStudyRank: [],
+      flag: false };
 
 
   },
@@ -242,6 +271,7 @@ var _default =
     // 改变单词数，学习时长，在线时长
     changeNav: function changeNav(val) {
       this.sortCondition = val;
+      console.log(this.sortCondition);
     },
     // 改变 日榜，周榜，月榜
     change: function change(val) {
@@ -249,7 +279,6 @@ var _default =
     },
     // 获取学生学习信息排行
     getstudentStudyRank: function getstudentStudyRank() {var _this = this;
-      console.log(getApp().globalData.studentId);
       this.$minApi.getstudentStudyRank({
         dateType: this.dateType,
         rankType: this.rankType,
@@ -259,15 +288,17 @@ var _default =
         if (data.code == 200) {
           console.log(data);
           _this.studentStudyRank = data.data;
-          console.log(_this.studentStudyRank);
+          _this.flag = true;
+          // console.log(this.studentStudyRank)
         }
       });
     },
     // 跳转
-    linkTo: function linkTo(studentId, studentRealname, studentAvatar) {
+    linkTo: function linkTo(studentId, studentRealname, studentAvatar, studentNum) {
       console.log(studentRealname);
       uni.navigateTo({
-        url: "learningDetails?studentId=" + studentId + "&studentRealname=" + studentRealname + "&studentAvatar=" + studentAvatar });
+        url: "learningDetails?studentId=" + studentId + "&studentRealname=" + studentRealname + "&studentAvatar=" +
+        studentAvatar + '&studentNum=' + studentNum });
 
     } },
 

@@ -158,7 +158,8 @@
 					console.log(data)
 					this.getUserInfo()
 				})
-				console.log(data)
+				// console.log(data)
+				
 				this.getUserInfo()
 			},
 
@@ -265,7 +266,7 @@
 							} else {
 								console.log("ddd")
 								uni.showToast({
-									title: "上修改失败，请稍后再试！",
+									title: "修改失败，请稍后再试！",
 									icon: "none"
 								})
 							}

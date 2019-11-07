@@ -1,6 +1,12 @@
 <script>
 	import Toast from '@/wxcomponents/vant-weapp/dist/toast/toast';
 	export default {
+		data() {
+			return {
+				time: 0,
+				timer: null
+			}
+		},
 		globalData: {
 
 		},
@@ -9,9 +15,34 @@
 		},
 		onShow: function() {
 			// console.log('App Show')
+			this.getTime()
 		},
 		onHide: function() {
-			// console.log('App Hide')
+			console.log('App Hide')
+			clearInterval(this.timer)
+			console.log(this.time)
+			if (uni.getStorageSync('token')) {
+				this.saveOnlineDuration()
+			}
+			this.time = 0
+
+		},
+		methods: {
+			getTime() {
+				this.timer = setInterval(() => {
+					this.time++
+					// uni.setStorageSync('onlineDuration', time);
+					// console.log(this.time)
+				}, 1000)
+			},
+			saveOnlineDuration() {
+				this.$minApi.saveOnlineDuration({
+					onlineDuration: this.time,
+					studentId: uni.getStorageSync('studentId')
+				}).then(data => {
+					console.log(data)
+				})
+			}
 		}
 	}
 </script>
@@ -92,11 +123,12 @@
 	}
 
 	// 弹出框按钮样式
-	.van-picker__cancel{
-		color: #666666!important;
+	.van-picker__cancel {
+		color: #666666 !important;
 	}
+
 	.van-picker__confirm {
-		color: #03BFB7!important;
+		color: #03BFB7 !important;
 
 	}
 </style>

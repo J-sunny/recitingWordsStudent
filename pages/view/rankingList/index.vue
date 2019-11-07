@@ -1,5 +1,5 @@
 <template>
-	<view class="rankingBox">
+	<view class="rankingBox" v-if="flag">
 		<!-- 头部 -->
 		<view class="rheadBigBox">
 			<view class="rheadBox">
@@ -16,7 +16,7 @@
 					<view class="navs" @click="changeNav('sttudyLength')" :class="sortCondition=='sttudyLength'?'sortCondition':''">学习时长
 						<image v-if="sortCondition=='sttudyLength'" class="arrows" src="../../../static/images/Polygon 3@2x.png" mode=""></image>
 					</view>
-					<view v-if="false" class="navs" @click="changeNav('onLineTime')" :class="sortCondition=='onLineTime'?'sortCondition':''">在线时长
+					<view class="navs" @click="changeNav('onLineTime')" :class="sortCondition=='onLineTime'?'sortCondition':''">在线时长
 						<image v-if="sortCondition=='onLineTime'" class="arrows" src="../../../static/images/Polygon 3@2x.png" mode=""></image>
 					</view>
 				</view>
@@ -25,22 +25,24 @@
 		<!-- 内容 -->
 		<view class="rankingConBox">
 			<!-- 我的排名 -->
-			<view class="minePh" v-if="studentStudyRank.rankList.length!=0" @click="linkTo(studentStudyRank.myself.studentId,studentStudyRank.myself.studentRealname,studentStudyRank.myself.studentAvatar)">
+			<view class="minePh" v-if="studentStudyRank.rankList.length!=0" @click="linkTo(studentStudyRank.myself.studentId,studentStudyRank.myself.studentRealname,studentStudyRank.myself.studentAvatar,studentStudyRank.mydelf.studentNum)">
 				<view class="mineleft f_float">
 					<label for="" class="myRanking">{{studentStudyRank.myself.rankNum}}</label>
-					<image class="myPic" :src="studentStudyRank.myself.studentAvatar" ></image>
+					<image class="myPic" :src="studentStudyRank.myself.studentAvatar"></image>
 					<label for="" class="myName">{{studentStudyRank.myself.studentRealname}}</label>
 				</view>
 				<view class="mineRight r_float">
-					<label for="" class="wordNum">{{sortCondition=='wordNum'?studentStudyRank.myself.exerciseCount:studentStudyRank.myself.lengthOfStudy}}</label>
-					<label for="" class="ge">{{sortCondition=='wordNum'?'个':'分钟'}}</label>
+					<label v-if="sortCondition=='wordNum'" class="wordNum">{{studentStudyRank.myself.exerciseCount}}</label>
+					<label v-if="sortCondition=='sttudyLength'" for="" class="wordNum">{{parseInt(studentStudyRank.myself.lengthOfStudy/60)}}分{{(studentStudyRank.myself.lengthOfStudy%60)}}秒</label>
+					<label v-if="sortCondition=='onLineTime'" for="" class="wordNum">{{parseInt(studentStudyRank.myself.onlineDuration/60)+"分"+(studentStudyRank.myself.onlineDuration%60)+'秒'}}</label>
+					<label for="" class="ge">{{sortCondition=='wordNum'?'个':''}}</label>
 				</view>
 			</view>
 			<!-- 其他排名 -->
 			<view style="margin-top: 24rpx;" v-if="studentStudyRank.rankList.length!=0">
-				<view class="minePh" v-for="item in studentStudyRank.rankList" :key="item.studentId"  @click="linkTo(item.studentId,item.studentRealname,item.studentAvatar)">
+				<view class="minePh" v-for="item in studentStudyRank.rankList" :key="item.studentId" @click="linkTo(item.studentId,item.studentRealname,item.studentAvatar,item.studentNum)">
 					<view class="mineleft f_float">
-						<label for="" class="myRanking" v-if="item.rankNum!=1&&item.rankNum!=2&&item.rankNum!=3">200</label>
+						<label for="" class="myRanking" v-if="item.rankNum!=1&&item.rankNum!=2&&item.rankNum!=3">{{item.rankNum}}</label>
 						<!-- 排行勋章 -->
 						<image v-if='item.rankNum==1' class="xz" src="../../../static/images/xz1@2.png" mode=""></image>
 						<image v-if='item.rankNum==2' class="xz" src="../../../static/images/xz2@2.png" mode=""></image>
@@ -49,8 +51,10 @@
 						<label for="" class="myName">{{item.studentRealname}}</label>
 					</view>
 					<view class="mineRight r_float">
-						<label for="" class="wordNum">{{sortCondition=='wordNum'?item.exerciseCount:item.lengthOfStudy}}</label>
-						<label for="" class="ge">{{sortCondition=='wordNum'?'个':'分钟'}}</label>
+						<label v-if="sortCondition=='wordNum'" class="wordNum">{{item.exerciseCount}}</label>
+						<label v-if="sortCondition=='sttudyLength'" for="" class="wordNum">{{(parseInt(item.lengthOfStudy/60)+"分"+(item.lengthOfStudy%60))+'秒'}}</label>
+						<label v-if="sortCondition=='onLineTime'" for="" class="wordNum">{{(parseInt(item.onlineDuration/60)+"分"+(item.onlineDuration%60))+'秒'}}</label>
+						<label for="" class="ge">{{sortCondition=='wordNum'?'个':''}}</label>
 					</view>
 				</view>
 			</view>
@@ -69,6 +73,7 @@
 			<van-picker show-toolbar title="选择榜单" :columns="columns" @cancel="onCancel()" @confirm="onConfirm()" />
 		</van-popup>
 	</view>
+
 </template>
 
 <script>
@@ -90,22 +95,23 @@
 					}
 
 				],
-				rankTypeText:"班级榜",
+				rankTypeText: "班级榜",
 				sortCondition: 'wordNum',
 				dateType: 'currentDate',
 				rankType: 'classList',
-				studentStudyRank:[]
+				studentStudyRank: [],
+				flag: false
 
 			}
 		},
-		watch:{
-			dateType(){
+		watch: {
+			dateType() {
 				this.getstudentStudyRank()
 			},
-			rankType(){
+			rankType() {
 				this.getstudentStudyRank()
 			},
-			sortCondition(){
+			sortCondition() {
 				this.getstudentStudyRank()
 			}
 		},
@@ -122,8 +128,8 @@
 			onConfirm(event) {
 				console.log(event)
 				this.show = false;
-				this.rankType=event.detail.value.textEng
-				this.rankTypeText=event.detail.value.text
+				this.rankType = event.detail.value.textEng
+				this.rankTypeText = event.detail.value.text
 			},
 			onCancel() {
 				this.show = false;
@@ -135,6 +141,7 @@
 			// 改变单词数，学习时长，在线时长
 			changeNav(val) {
 				this.sortCondition = val
+				console.log(this.sortCondition)
 			},
 			// 改变 日榜，周榜，月榜
 			change(val) {
@@ -142,25 +149,26 @@
 			},
 			// 获取学生学习信息排行
 			getstudentStudyRank() {
-				console.log(getApp().globalData.studentId)
 				this.$minApi.getstudentStudyRank({
 					dateType: this.dateType,
 					rankType: this.rankType,
 					sortCondition: this.sortCondition,
 					studentId: uni.getStorageSync("studentId")
 				}).then(data => {
-					if(data.code==200){
+					if (data.code == 200) {
 						console.log(data)
 						this.studentStudyRank = data.data
-						console.log(this.studentStudyRank)
+						this.flag = true
+						// console.log(this.studentStudyRank)
 					}
 				})
 			},
 			// 跳转
-			linkTo(studentId,studentRealname,studentAvatar){
+			linkTo(studentId, studentRealname, studentAvatar, studentNum) {
 				console.log(studentRealname)
 				uni.navigateTo({
-					url:"learningDetails?studentId="+studentId+"&studentRealname="+studentRealname+"&studentAvatar="+studentAvatar
+					url: "learningDetails?studentId=" + studentId + "&studentRealname=" + studentRealname + "&studentAvatar=" +
+						studentAvatar + '&studentNum=' + studentNum
 				})
 			}
 		},
@@ -224,8 +232,8 @@
 					color: rgba(255, 255, 255, 1);
 
 					.navs {
-						width: 375rpx;
-						// width: 250rpx;
+						// width: 375rpx;
+						width: 250rpx;
 						float: left;
 						position: relative;
 

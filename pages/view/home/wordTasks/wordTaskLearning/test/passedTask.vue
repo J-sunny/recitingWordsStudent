@@ -11,9 +11,11 @@
 			<view class="passedTask">当前任务已通过测试</view>
 			<view class="useTime">用时：{{time}}</view>
 			<!-- 查看排行 -->
-			<view class="viewRanking" @click="viewRanking()">查看排行</view>
+			<view v-if="taskType==0" class="viewRanking" @click="viewRanking()">查看排行</view>
 			<!-- 返回任务列表 -->
-			<view class="back" @click="back()">返回任务列表</view>
+			<view v-if="taskType==0" class="back" @click="back()">返回任务列表</view>
+			<!-- 查看排行榜 -->
+			<view v-if="taskType==1" class="viewRanking" @click="rankingList()">查看排行榜</view>
 		</view>
 	</view>
 </template>
@@ -24,30 +26,52 @@
 			return {
 				wordCount: '',
 				time: '',
-				wordId: ''
+				wordId: '',
+				taskType:-1
 			}
 		},
 		methods: {
 			// 返回
 			goBack() {
+				uni.removeStorageSync('taskType');
+				uni.removeStorageSync('studyType');
+				uni.removeStorageSync('lengthOfStudy');
+				uni.removeStorageSync('wordIdStr');
 				uni.reLaunch({
 					url: '../../../index'
 				});
 			},
 			// 查看排行跳转
 			viewRanking() {
+				uni.removeStorageSync('taskType');
+				uni.removeStorageSync('studyType');
+				uni.removeStorageSync('lengthOfStudy');
+				uni.removeStorageSync('wordIdStr');
 				uni.navigateTo({
 					url: '../../viewRanking/index?&taskId=' + getApp().globalData.taskId
 				})
 			},
 			// 返回任务列表跳转
 			back() {
+				uni.removeStorageSync('taskType');
+				uni.removeStorageSync('studyType');
+				uni.removeStorageSync('lengthOfStudy');
+				uni.removeStorageSync('wordIdStr');
 				uni.navigateTo({
 					url: '../../../wordTasks/index'
 				})
 			},
+			// 查看排行榜
+			rankingList(){
+				uni.removeStorageSync('taskType');
+				uni.removeStorageSync('studyType');
+				uni.removeStorageSync('lengthOfStudy');
+				uni.removeStorageSync('wordIdStr');
+				uni.switchTab({
+					url:'../../../../rankingList/index'
+				})
+			},
 			// 个人任务答题
-
 			completeTask(time, wordId) {
 				this.$minApi.completeTask({
 					completeTime: time,
@@ -59,11 +83,11 @@
 			},
 			// 保存用户学习记录
 			save(taskType, studyType, lengthOfStudy) {
-				console.log(taskType)
-				console.log(studyType)
-				console.log(lengthOfStudy)
-				console.log(uni.getStorageSync('wordIdStr').split(",").length)
-				console.log(uni.getStorageSync('wordIdStr'))
+				// console.log(taskType)
+				// console.log(studyType)
+				// console.log(lengthOfStudy)
+				// console.log(uni.getStorageSync('wordIdStr').split(",").length)
+				// console.log(uni.getStorageSync('wordIdStr'))
 				// 单词任务--学习
 				if (taskType == 0 && studyType == -1) {
 					this.$minApi.save({
@@ -111,6 +135,8 @@
 			this.wordCount = options.wordCount
 			this.time = options.time
 			this.wordId = options.wordId
+			this.taskType=uni.getStorageSync('taskType')
+			console.log(this.taskType)
 			if (uni.getStorageSync('taskType') == 0) {
 				this.completeTask(options.time, options.wordId)
 			}

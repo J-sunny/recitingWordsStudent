@@ -171,6 +171,14 @@ export default {
 		save(data) {
 			return minRequest.post('/student/behaviorRecord/save', data)
 		},
+		// 修改用户密码
+		updatePassword(data) {
+			return minRequest.post('/updatePassword', data)
+		},
+		// 保存用户在线时长
+		saveOnlineDuration(data) {
+			return minRequest.get('/student/behaviorRecord/saveOnlineDuration', data)
+		},
 
 	}
 }

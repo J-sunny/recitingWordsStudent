@@ -65,9 +65,15 @@ __webpack_require__.r(__webpack_exports__);
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
+/* WEBPACK VAR INJECTION */(function(uni) {Object.defineProperty(exports, "__esModule", { value: true });exports.default = void 0;
 var _toast = _interopRequireDefault(__webpack_require__(/*! @/wxcomponents/vant-weapp/dist/toast/toast */ 8));function _interopRequireDefault(obj) {return obj && obj.__esModule ? obj : { default: obj };}var _default =
 {
+  data: function data() {
+    return {
+      time: 0,
+      timer: null };
+
+  },
   globalData: {},
 
 
@@ -76,10 +82,35 @@ var _toast = _interopRequireDefault(__webpack_require__(/*! @/wxcomponents/vant-
   },
   onShow: function onShow() {
     // console.log('App Show')
+    this.getTime();
   },
   onHide: function onHide() {
-    // console.log('App Hide')
-  } };exports.default = _default;
+    console.log('App Hide');
+    clearInterval(this.timer);
+    console.log(this.time);
+    if (uni.getStorageSync('token')) {
+      this.saveOnlineDuration();
+    }
+    this.time = 0;
+
+  },
+  methods: {
+    getTime: function getTime() {var _this = this;
+      this.timer = setInterval(function () {
+        _this.time++;
+        // uni.setStorageSync('onlineDuration', time);
+        console.log(_this.time);
+      }, 1000);
+    },
+    saveOnlineDuration: function saveOnlineDuration() {
+      this.$minApi.saveOnlineDuration({
+        onlineDuration: this.time,
+        studentId: uni.getStorageSync('studentId') }).
+      then(function (data) {
+        console.log(data);
+      });
+    } } };exports.default = _default;
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 
 /***/ }),
 /* 8 */,

@@ -73,6 +73,25 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
+  var g0 = (_vm.learningHoursToday / 60).toFixed(2)
+  var g1 = (_vm.accumulatedLearningTime / 60).toFixed()
+  var g2 = (_vm.timeChartList.lengthOfStudy / 60).toFixed(2)
+  var g3 = (_vm.timeChartList.lengthOfStudyCount / 60).toFixed(2)
+  var g4 = (_vm.timeChartList.lengthOfStudy / 60).toFixed(2)
+  var g5 = (_vm.timeChartList.lengthOfStudyCount / 60).toFixed(2)
+  _vm.$mp.data = Object.assign(
+    {},
+    {
+      $root: {
+        g0: g0,
+        g1: g1,
+        g2: g2,
+        g3: g3,
+        g4: g4,
+        g5: g5
+      }
+    }
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -370,14 +389,15 @@ var _uCharts = _interopRequireDefault(__webpack_require__(/*! @/components/u-cha
 //
 //
 //
-var _self;var canvaArea = null;var canvaColumn = null;var _default = { data: function data() {return { cWidth: '', cHeight: '', pixelRatio: 1, serverData: '', studentId: '', toDayactive: 'week', timesActive: 'week', timeChartList: [], worfChartList: [], studentRecordList: [], learningToday: 0, cumulativeLearning: 0, learningHoursToday: 0, accumulatedLearningTime: 0, studentRealname: "", studentAvatar: "" };}, methods: { // 返回
+var _self;var canvaArea = null;var canvaColumn = null;var _default = { data: function data() {return { cWidth: '', cHeight: '', pixelRatio: 1, serverData: '', studentId: '', toDayactive: 'week', timesActive: 'week', timeChartList: [], worfChartList: [], studentRecordList: [], learningToday: 0, cumulativeLearning: 0, learningHoursToday: 0, accumulatedLearningTime: 0, studentRealname: "", studentAvatar: "", studentNum: '' };}, methods: { // 返回
     goBack: function goBack() {uni.navigateBack({ delta: 1 });}, // 获取用户学习情况(今日时长,今日单词,总时长,总单词)
     getStudentRecord: function getStudentRecord(studentId) {var _this2 = this;this.$minApi.getStudentRecord({ studentId: this.studentId }).then(function (data) {_this2.studentRecordList = data.data;console.log(_this2.studentRecordList, 99);_this2.studentRecordList.forEach(function (data) {console.log(data.dateType, 66);if (data.dateType == "all") {_this2.cumulativeLearning = data.exerciseCount;_this2.accumulatedLearningTime = data.lengthOfStudy;} else if (data.dateType == "today") {_this2.learningToday = data.exerciseCount;_this2.learningHoursToday = data.lengthOfStudy;}});});}, // 获取用户学习时长图表
     getTimeChart: function getTimeChart(val) {var _this3 = this;var _this = this; // 折线图
-      var Area = { categories: [], series: [{ data: [], name: "" }] };if (val == 'week') {this.$minApi.getTimeChart({ studentId: this.studentId, type: "week" }).then(function (data) {console.log("dara");var arrX = [];var arrY = [];_this3.timeChartList = data.data;for (var i = -6; i <= 0; i++) {arrX.push(_this.getDay(i));arrY.push(0);}Area.categories = arrX;Area.series[0].data = arrY;var arrDuration = [];if (_this3.timeChartList.studentStudyInfoVOList.length != 0) {arrX.forEach(function (data) {_this3.timeChartList.studentStudyInfoVOList.forEach(function (val) {if (data == val.recordTime.slice(5)) {arrX.indexOf(data); // console.log(arrX.indexOf(data))
-                  arrY[arrX.indexOf(data)] = val.lengthOfStudy;}});});}Area.categories = arrX;Area.series[0].data = arrY;_self.showArea("canvasArea", Area);});}if (val == 'month') {this.$minApi.getTimeChart({ studentId: this.studentId, type: "month" }).then(function (data) {_this3.timeChartList = data.data; // console.log(data)
+      var Area = { categories: [], series: [{ data: [], name: "" }] };if (val == 'week') {this.$minApi.getTimeChart({ studentId: this.studentId, type: "week" }).then(function (data) {// console.log("dara")
+          var arrX = [];var arrY = [];_this3.timeChartList = data.data;for (var i = -6; i <= 0; i++) {arrX.push(_this.getDay(i));arrY.push(0);}Area.categories = arrX;Area.series[0].data = arrY;var arrDuration = [];if (_this3.timeChartList.studentStudyInfoVOList.length != 0) {arrX.forEach(function (data) {_this3.timeChartList.studentStudyInfoVOList.forEach(function (val) {if (data == val.recordTime.slice(5)) {arrX.indexOf(data); // console.log(arrX.indexOf(data))
+                  arrY[arrX.indexOf(data)] = (val.lengthOfStudy / 60).toFixed(2);}});});}Area.categories = arrX;Area.series[0].data = arrY;_self.showArea("canvasArea", Area);});}if (val == 'month') {this.$minApi.getTimeChart({ studentId: this.studentId, type: "month" }).then(function (data) {_this3.timeChartList = data.data; // console.log(data)
           var arrX = [];var arrY = [];var month = _this3.timeChartList.dateTimeType.slice(5);for (var i = 1; i <= month; i++) {if (i < 10) {i = "0" + i;} else {i = i.toString();}arrX.push(i);arrY.push(0);}if (_this3.timeChartList.studentStudyInfoVOList.length != 0) {arrX.forEach(function (data) {_this3.timeChartList.studentStudyInfoVOList.forEach(function (val) {if (data == val.recordTime.slice(5, 7)) {arrX.indexOf(data); // console.log(arrX.indexOf(data))
-                  arrY[arrX.indexOf(data)] = val.lengthOfStudy;}});});}Area.categories = arrX;Area.series[0].data = arrY;_self.showArea("canvasArea", Area);});}}, // 获取用户学习单词数图表
+                  arrY[arrX.indexOf(data)] = (val.lengthOfStudy / 60).toFixed(2);}});});}Area.categories = arrX;Area.series[0].data = arrY;_self.showArea("canvasArea", Area);});}}, // 获取用户学习单词数图表
     getWordChart: function getWordChart(val) {var _this4 = this;var _this = this; // 柱状图
       var ColumnStack = { categories: [],
         series: [{
@@ -411,7 +431,7 @@ var _self;var canvaArea = null;var canvaColumn = null;var _default = { data: fun
           if (_this4.worfChartList.studentStudyInfoVOList.length != 0) {
             arrX.forEach(function (data) {
               _this4.worfChartList.studentStudyInfoVOList.forEach(function (val) {
-                console.log(val.recordTime.slice(5));
+                // console.log(val.recordTime.slice(5))
                 if (data == val.recordTime.slice(5)) {
                   arrX.indexOf(data);
                   console.log(arrX.indexOf(data));
@@ -586,6 +606,7 @@ var _self;var canvaArea = null;var canvaColumn = null;var _default = { data: fun
     this.studentId = options.studentId;
     this.studentRealname = options.studentRealname;
     this.studentAvatar = options.studentAvatar;
+    this.studentNum = options.studentNum;
     this.getStudentRecord();
     this.getTimeChart("week");
     this.getWordChart("week");

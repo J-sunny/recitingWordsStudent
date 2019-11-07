@@ -111,10 +111,10 @@
 						newPassWord: this.newPwd,
 						oldPassWord: this.oldPwd,
 						userId: this.userId,
-						userIdenty:"1"
+						userIdenty:"0"
 					}).then(data => {
 						console.log(data)
-						// Toast('修改成功！')
+						Toast(data.msg)
 					})
 				}
 			}

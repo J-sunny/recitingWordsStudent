@@ -72,7 +72,7 @@
         color: white;
 }
 .rankingBox .rheadBigBox .rheadBox .switchBar .navs {
-          width: 375rpx;
+          width: 250rpx;
           float: left;
           position: relative;
 }

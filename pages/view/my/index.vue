@@ -51,13 +51,13 @@
 							<view class="dayTitle">
 								<image class="titleIcon" src="../../../static/images/todayTime.png"></image>今日学习时长
 							</view>
-							<view class="dayNum"><label class="bigFont">{{learningHoursToday}}</label>分钟</view>
+							<view class="dayNum"><label class="bigFont">{{(learningHoursToday/60).toFixed(2)}}</label>分钟</view>
 						</view>
 						<view class="toDay">
 							<view class="dayTitle">
 								<image class="titleIcon" src="../../../static/images/Cumulativelength3.png"></image>累计学习时长
 							</view>
-						<view class="dayNum"><label class="bigFont">{{accumulatedLearningTime}}</label>分钟</view>
+						<view class="dayNum"><label class="bigFont">{{(accumulatedLearningTime/60).toFixed(2)}}</label>分钟</view>
 						</view>
 					</view>
 				</view>
@@ -78,8 +78,8 @@
 					<view class="conRight">
 						<label class="looAll" v-if="collectWordTotal==0" >查看全部</label>
 						<label class="looAll looAllBlueColor" v-if="collectWordTotal>0" @click="toAllCollections()">查看全部</label>
-						<label class="specialReview" v-if="collectWordTotal==0">专项复习</label>
-						<label class="specialReview specialBlueColor" v-if="collectWordTotal>0">专项复习</label>
+						<label class="specialReview"  v-if="false">专项复习</label>
+						<label class="specialReview specialBlueColor"  v-if="false">专项复习</label>
 					</view>
 				</view>
 			</view>
@@ -117,7 +117,8 @@
 				accumulatedLearningTime: 0,
 				studentRecordList:[],
 				studentAvatar:"",
-				studentRealname:""
+				studentRealname:"",
+				studentNum:''
 			}
 		},
 		methods: {
@@ -142,7 +143,7 @@
 			// 查看详情跳转
 			look() {
 				uni.navigateTo({
-					url: 'dataDetails/index?studentId='+this.studentId+"&studentRealname="+this.studentRealname+"&studentAvatar="+this.studentAvatar
+					url: 'dataDetails/index?studentId='+this.studentId+"&studentRealname="+this.studentRealname+"&studentAvatar="+this.studentAvatar+'&studentNum='+this.studentNum
 				})
 			},
 			// 个人资料跳转
@@ -180,6 +181,7 @@
 					this.studentRealname=data.data.studentRealname
 					this.studentAvatar=data.data.studentAvatar
 					this.userInfoList = data.data
+					this.studentNum=data.data.studentNum
 					// 获取收藏
 					this.$minApi.getCollectWordsList({
 						studentId: this.studentId
@@ -187,7 +189,6 @@
 						this.collectWordTotal = data.data.collectWordTotal
 					})
 					this.getStudentRecord(data.data.studentId)
-
 				})
 			},
 			// 获取用户学习情况(今日时长,今日单词,总时长,总单词)

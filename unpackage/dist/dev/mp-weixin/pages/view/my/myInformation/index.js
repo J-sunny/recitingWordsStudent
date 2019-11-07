@@ -265,7 +265,8 @@ var time = __webpack_require__(/*! ../../../utils/getDate.js */ 45);var _default
         console.log(data);
         _this.getUserInfo();
       });
-      console.log(data);
+      // console.log(data)
+
       this.getUserInfo();
     },
 
@@ -372,7 +373,7 @@ var time = __webpack_require__(/*! ../../../utils/getDate.js */ 45);var _default
               } else {
                 console.log("ddd");
                 uni.showToast({
-                  title: "上修改失败，请稍后再试！",
+                  title: "修改失败，请稍后再试！",
                   icon: "none" });
 
               }

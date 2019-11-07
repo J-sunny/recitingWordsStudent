@@ -173,8 +173,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-var _default =
+
+var innerAudioContext = uni.createInnerAudioContext();
+innerAudioContext.autoplay = true;
+var p = 1;var _default =
 {
   data: function data() {
     return {
@@ -197,7 +199,6 @@ var _default =
       backwordPlanId: '',
       wordIdStr: '',
       allWordCount: 0 };
-
 
   },
   methods: {
@@ -232,8 +233,6 @@ var _default =
     },
     // 播放音频
     playAudio: function playAudio() {
-      var innerAudioContext = uni.createInnerAudioContext();
-      innerAudioContext.autoplay = true;
       innerAudioContext.src = 'https://img-cdn-qiniu.dcloud.net.cn/uniapp/audio/music.mp3';
       innerAudioContext.onPlay(function () {
         console.log('开始播放');
@@ -243,8 +242,16 @@ var _default =
         console.log(res.errCode);
       });
     },
+    // 停止播放
+    stopAudio: function stopAudio() {
+      console.log(innerAudioContext);
+      innerAudioContext.stop(function () {
+        console.log('停止播放');
+      });
+    },
     // 下一题
     nextQuestion: function nextQuestion() {
+      this.stopAudio();
       // console.log(this.lengthOfStudy)
       // console.log(this.wordIdList[Math.floor(Math.random() * this.wordIdList.length)])
       // console.log(this.index)
@@ -277,7 +284,8 @@ var _default =
     // 跳转页面
     linkTo: function linkTo() {
       uni.navigateTo({
-        url: '../test/index?wordIdList=' + this.wordIdList + '&studyType=' + this.studyType + '&taskType=' + this.taskType + '&lengthOfStudy=' + this.lengthOfStudy });
+        url: '../test/index?wordIdList=' + this.wordIdList + '&studyType=' + this.studyType + '&taskType=' + this.taskType +
+        '&lengthOfStudy=' + this.lengthOfStudy });
 
     },
     // 获取单词详情
@@ -292,7 +300,6 @@ var _default =
         _this2.example.forEach(function (val) {
           _this2.exampleArr.push(val.split("&"));
         });
-        // 开始计时
       });
     },
     // 学生保存或取消收藏单词
