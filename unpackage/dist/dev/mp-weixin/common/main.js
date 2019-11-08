@@ -85,9 +85,9 @@ var _toast = _interopRequireDefault(__webpack_require__(/*! @/wxcomponents/vant-
     this.getTime();
   },
   onHide: function onHide() {
-    console.log('App Hide');
+    // console.log('App Hide')
     clearInterval(this.timer);
-    console.log(this.time);
+    // console.log(this.time)
     if (uni.getStorageSync('token')) {
       this.saveOnlineDuration();
     }
@@ -99,7 +99,7 @@ var _toast = _interopRequireDefault(__webpack_require__(/*! @/wxcomponents/vant-
       this.timer = setInterval(function () {
         _this.time++;
         // uni.setStorageSync('onlineDuration', time);
-        console.log(_this.time);
+        // console.log(this.time)
       }, 1000);
     },
     saveOnlineDuration: function saveOnlineDuration() {

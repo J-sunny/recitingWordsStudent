@@ -73,11 +73,6 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  if (!_vm._isMounted) {
-    _vm.e0 = function($event) {
-      _vm.isLogin = !_vm.isLogin
-    }
-  }
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -179,8 +174,15 @@ var _toast = _interopRequireDefault(__webpack_require__(/*! @/wxcomponents/vant-
 //
 //
 //
-var _default = { data: function data() {return { isLogin: true, username: '', password: '', againPwd: '' };}, methods: { // 登录
-    loginByAccount: function loginByAccount() {if (this.username == '' || this.password == '') {(0, _toast.default)('请输入用户名或者密码');return;}this.$minApi.loginByAccount({ password: this.password, username: this.username, userSchoolId: '1', userIdenty: '0' }).then(function (data) {if (data.code == 200) {uni.setStorageSync('token', data.data.token), uni.switchTab({ url: '../../my/index' });(0, _toast.default)(data.msg);} else {(0, _toast.default)(data.msg);}});}, // 注册
+var _default = { data: function data() {return { isLogin: true, username: '', password: '', againPwd: '' };}, methods: { // 切换登录注册状态
+    loginOrregister: function loginOrregister() {this.isLogin = !this.isLogin;this.password = '';this.username = '';this.againPwd = '';}, // 登录
+    loginByAccount: function loginByAccount() {if (this.username == '' || this.password == '') {(0, _toast.default)('请输入用户名或者密码');return;}this.$minApi.loginByAccount({ password: this.password, username: this.username, userSchoolId: '1', userIdenty: '0' }).then(function (data) {if (data.code == 200) {uni.setStorageSync('token', data.data.token), uni.switchTab({ url: '../../my/index' });(0, _toast.default)(data.msg);} else {
+          (0, _toast.default)(data.msg);
+        }
+
+      });
+    },
+    // 注册
     registerUserInfo: function registerUserInfo() {
       if (this.username.trim() == '' || this.password.trim() == '' || this.againPwd.trim() == '') {
         uni.showToast({
@@ -206,8 +208,7 @@ var _default = { data: function data() {return { isLogin: true, username: '', pa
             }
 
           });
-        } else
-        {
+        } else {
           uni.showToast({
             title: '两次密码不一致！',
             icon: 'none' });

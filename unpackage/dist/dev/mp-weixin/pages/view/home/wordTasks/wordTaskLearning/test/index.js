@@ -330,17 +330,16 @@ var innerAudioContext = uni.createInnerAudioContext();var _default =
     // 下一题
     nextQuestion: function nextQuestion() {var _this3 = this;
       this.stopAudio();
-      this.optionsList = [];
-      this.subject = [];
-      this.optionsArr = [];
-      console.log(this.rightNum, 333);
-      console.log(this.allWordCount, 444);
       if (this.rightNum < this.allWordCount - 1) {
+        this.optionsList = [];
+        this.subject = [];
+        this.optionsArr = [];
         this.rightNum++;
         this.index++;
         this.percentage = this.rightNum / this.allWordCount * 100;
         this.getQuestion(this.wordIdList[this.index]);
       } else {
+        this.percentage = 100;
         clearInterval(this.timer);
         setTimeout(function () {
           uni.navigateTo({
@@ -352,11 +351,11 @@ var innerAudioContext = uni.createInnerAudioContext();var _default =
     },
     // 单词拼写下一题
     nextSpell: function nextSpell() {var _this4 = this;
+      var answerIndex = [];
       this.stopAudio();
       var flag = false;
       this.isClick = true;
       // console.log(this.answerValue)
-      var answerIndex = [];
       for (var item in this.answerValue) {
         answerIndex.push(item[item.length - 1]);
       }
@@ -400,11 +399,9 @@ var innerAudioContext = uni.createInnerAudioContext();var _default =
           setTimeout(function () {
             _this4.answerValue = {};
             _this4.isClick = false;
-          }, 500);
+          }, 1000);
         });
       }
-
-
     },
     // 选择选项
     check: function check(index) {var _this5 = this;

@@ -212,8 +212,18 @@ var _default =
       this.schoolId = e.detail.value.schoolId;
     },
     onConfirmGrade: function onConfirmGrade(e) {
-      this.showGrade = false;
-      this.selectGrade = e.detail.value;
+      var now = new Date();
+      var year = now.getFullYear();
+      if (e.detail.value > year) {
+        uni.showToast({
+          title: '不可超过当前年份！,请重新选择',
+          icon: 'none' });
+
+        // this.selectGrade = year
+      } else {
+        this.selectGrade = e.detail.value;
+        this.showGrade = false;
+      }
     },
     onConfirmClass: function onConfirmClass(e) {
       console.log(e);
@@ -255,6 +265,16 @@ var _default =
         userId: this.studentId }).
       then(function (data) {
         console.log(data);
+        uni.showToast({
+          title: '注册成功，待老师审批通过后方可登录！',
+          icon: 'none' });
+
+        setTimeout(function () {
+          uni.reLaunch({
+            url: '../login/index' });
+
+        }, 1000);
+
       });
     } },
 

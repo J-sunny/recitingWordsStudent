@@ -272,7 +272,8 @@ var _default =
     // 查看详情跳转
     look: function look() {
       uni.navigateTo({
-        url: 'dataDetails/index?studentId=' + this.studentId + "&studentRealname=" + this.studentRealname + "&studentAvatar=" + this.studentAvatar + '&studentNum=' + this.studentNum });
+        url: 'dataDetails/index?studentId=' + this.studentId + "&studentRealname=" + this.studentRealname +
+        "&studentAvatar=" + this.studentAvatar + '&studentNum=' + this.studentNum });
 
     },
     // 个人资料跳转
@@ -283,8 +284,15 @@ var _default =
     },
     // 查看全部收藏跳转
     toAllCollections: function toAllCollections() {
-      uni.navigateTo({
-        url: 'allCollections/index' });
+      if (this.collectWordTotal == 0) {
+        uni.showToast({
+          title: '还没有收藏！快去收藏吧' });
+
+      } else {
+        uni.navigateTo({
+          url: 'allCollections/index' });
+
+      }
 
     },
     // 退出登录
@@ -340,8 +348,10 @@ var _default =
 
 
 
-  created: function created() {
+  onShow: function onShow() {
     this.getUserInfo();
+  },
+  created: function created() {
     // 没有登录则跳转到登录页面
     // if (!uni.getStorageSync('token')) {
     // 	uni.redirectTo({

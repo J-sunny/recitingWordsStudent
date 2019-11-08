@@ -109,6 +109,9 @@
           font-size: 28rpx;
           font-weight: 500;
           color: #979dab;
+          width: 44rpx;
+          display: inline-block;
+          text-align: center;
 }
 .rankingBox .rankingConBox .minePh .mineleft .xz {
           width: 44rpx;

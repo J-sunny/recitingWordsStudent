@@ -68,7 +68,7 @@
 				uni.removeStorageSync('lengthOfStudy');
 				uni.removeStorageSync('wordIdStr');
 				uni.switchTab({
-					url:'../../../../rankingList/index'
+					url:'../../../../rankingList/index?sttudyLength=1'
 				})
 			},
 			// 个人任务答题

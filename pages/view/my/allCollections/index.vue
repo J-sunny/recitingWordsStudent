@@ -23,7 +23,17 @@
 				<view class="todayConBox">
 					<view class="todayCons" v-for="item in collectWordList.yesterday" :key='item.wordCollectionId'>
 					<view class="wordBox"><label class="word">{{item.wordSpell}}</label><label class="from">{{item.belongThesaurus}}</label></view>
-					<view class="explain">{{item.interpretation}}444</view>
+					<view class="explain">{{item.interpretation}}</view>
+					</view>
+				</view>
+			</view>
+			<!-- 其他 -->
+			<view class="todyBox">
+				<view class="title">其他</view>
+				<view class="todayConBox">
+					<view class="todayCons" v-for="item in collectWordList.otherday" :key='item.wordCollectionId'>
+					<view class="wordBox"><label class="word">{{item.wordSpell}}</label><label class="from">{{item.belongThesaurus}}</label></view>
+					<view class="explain">{{item.interpretation}}</view>
 					</view>
 				</view>
 			</view>

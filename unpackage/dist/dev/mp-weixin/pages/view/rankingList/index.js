@@ -304,6 +304,12 @@ var _default =
 
   onShow: function onShow() {
     this.getstudentStudyRank();
+  },
+  onLoad: function onLoad(options) {
+    console.log(options);
+    if (options.sttudyLength) {
+      this.rankType = options.sttudyLength;
+    }
   } };exports.default = _default;
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./node_modules/@dcloudio/uni-mp-weixin/dist/index.js */ 1)["default"]))
 

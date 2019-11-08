@@ -18,9 +18,9 @@
 			this.getTime()
 		},
 		onHide: function() {
-			console.log('App Hide')
+			// console.log('App Hide')
 			clearInterval(this.timer)
-			console.log(this.time)
+			// console.log(this.time)
 			if (uni.getStorageSync('token')) {
 				this.saveOnlineDuration()
 			}

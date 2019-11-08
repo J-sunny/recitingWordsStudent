@@ -140,7 +140,7 @@
 			// console.log('App Hide')
 			clearInterval(this.timer)
 		},
-		methods: {			
+		methods: {
 			// 返回
 			goBack() {
 				// uni.navigateBack({
@@ -223,17 +223,16 @@
 			// 下一题
 			nextQuestion() {
 				this.stopAudio()
-				this.optionsList = []
-				this.subject = []
-				this.optionsArr = []
-				console.log(this.rightNum, 333)
-				console.log(this.allWordCount, 444)
 				if (this.rightNum < this.allWordCount - 1) {
+					this.optionsList = []
+					this.subject = []
+					this.optionsArr = []
 					this.rightNum++
 					this.index++
 					this.percentage = ((this.rightNum) / this.allWordCount) * 100
 					this.getQuestion(this.wordIdList[this.index])
 				} else {
+					this.percentage = 100
 					clearInterval(this.timer)
 					setTimeout(() => {
 						uni.navigateTo({
@@ -245,11 +244,11 @@
 			},
 			// 单词拼写下一题
 			nextSpell() {
+				var answerIndex = []
 				this.stopAudio()
 				let flag = false
 				this.isClick = true
 				// console.log(this.answerValue)
-				var answerIndex = []
 				for (var item in this.answerValue) {
 					answerIndex.push(item[item.length - 1])
 				}
@@ -293,11 +292,9 @@
 						setTimeout(() => {
 							this.answerValue = {}
 							this.isClick = false;
-						}, 500)
+						}, 1000)
 					})
 				}
-
-
 			},
 			// 选择选项
 			check(index) {

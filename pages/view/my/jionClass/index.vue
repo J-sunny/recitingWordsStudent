@@ -54,7 +54,7 @@
 				showSchool: false,
 				columnsSchool: [],
 				showGrade: false,
-				columnsGrade: ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018',  '2019', '2020', '2021',
+				columnsGrade: ['2010', '2011', '2012', '2013', '2014', '2015', '2016', '2017', '2018', '2019', '2020', '2021',
 					'2022', '2023', '2024', '2025', '2026', '2027', '2028', '2029', '2030'
 				],
 				showClass: false,
@@ -105,8 +105,18 @@
 				this.schoolId = e.detail.value.schoolId
 			},
 			onConfirmGrade(e) {
-				this.showGrade = false
-				this.selectGrade = e.detail.value
+				var now = new Date();
+				let year = now.getFullYear();
+				if (e.detail.value > year) {
+					uni.showToast({
+						title: '不可超过当前年份！,请重新选择',
+						icon: 'none'
+					})
+					// this.selectGrade = year
+				} else {
+					this.selectGrade = e.detail.value
+					this.showGrade = false
+				}
 			},
 			onConfirmClass(e) {
 				console.log(e)
@@ -148,6 +158,16 @@
 					userId: this.studentId
 				}).then(data => {
 					console.log(data)
+					uni.showToast({
+						title: '注册成功，待老师审批通过后方可登录！',
+						icon: 'none'
+					})
+					setTimeout(() => {
+						uni.reLaunch({
+							url: '../login/index'
+						})
+					}, 1000)
+
 				})
 			}
 		},

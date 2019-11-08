@@ -174,6 +174,12 @@
 		},
 		onShow() {
 			this.getstudentStudyRank()
+		},
+		onLoad(options) {
+			console.log(options)
+			if (options.sttudyLength) {
+				this.rankType = options.sttudyLength
+			}
 		}
 	}
 </script>
@@ -278,6 +284,9 @@
 						font-size: 28rpx;
 						font-weight: 500;
 						color: rgba(151, 157, 171, 1);
+						width: 44rpx;
+						display: inline-block;
+						text-align: center;
 					}
 
 					.xz {

@@ -188,7 +188,7 @@
 					categories: [],
 					series: [{
 						data: [],
-						name: ""
+						name: "学习时长"
 					}]
 				};
 				if (val == 'week') {

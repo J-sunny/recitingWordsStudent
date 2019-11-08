@@ -9,9 +9,9 @@
 				<image class="headPortrait" src="" mode=""></image>
 				<view class="logins" @click="linkTodz()">登录/注册</view>
 			</view>
-			<view class="loginedHeadBox">
+			<view class="loginedHeadBox" >
 				<view class="infoBox" @click="toMyInformation()">
-					<image class="infoTx" src="../../../static/images/people@2.png" mode=""></image>
+					<image class="infoTx" :src="userInfoList.studentAvatar" mode=""></image>
 					<label class="infoName">
 						<view class="name">{{userInfoList.studentRealname}}</view>
 						<view class="classed">{{userInfoList.studentClass==0?'尚未加入班级':userInfoList.studentClass}}</view>
@@ -57,7 +57,7 @@
 							<view class="dayTitle">
 								<image class="titleIcon" src="../../../static/images/Cumulativelength3.png"></image>累计学习时长
 							</view>
-						<view class="dayNum"><label class="bigFont">{{(accumulatedLearningTime/60).toFixed(2)}}</label>分钟</view>
+							<view class="dayNum"><label class="bigFont">{{(accumulatedLearningTime/60).toFixed(2)}}</label>分钟</view>
 						</view>
 					</view>
 				</view>
@@ -76,10 +76,10 @@
 						</view>
 					</view>
 					<view class="conRight">
-						<label class="looAll" v-if="collectWordTotal==0" >查看全部</label>
+						<label class="looAll" v-if="collectWordTotal==0">查看全部</label>
 						<label class="looAll looAllBlueColor" v-if="collectWordTotal>0" @click="toAllCollections()">查看全部</label>
-						<label class="specialReview"  v-if="false">专项复习</label>
-						<label class="specialReview specialBlueColor"  v-if="false">专项复习</label>
+						<label class="specialReview" v-if="false">专项复习</label>
+						<label class="specialReview specialBlueColor" v-if="false">专项复习</label>
 					</view>
 				</view>
 			</view>
@@ -115,10 +115,10 @@
 				cumulativeLearning: 0,
 				learningHoursToday: 0,
 				accumulatedLearningTime: 0,
-				studentRecordList:[],
-				studentAvatar:"",
-				studentRealname:"",
-				studentNum:''
+				studentRecordList: [],
+				studentAvatar: "",
+				studentRealname: "",
+				studentNum: ''
 			}
 		},
 		methods: {
@@ -135,15 +135,16 @@
 				})
 			},
 			// 登录或注册
-			linkTodz(){
+			linkTodz() {
 				uni.navigateTo({
-					url:'login/index'
+					url: 'login/index'
 				})
 			},
 			// 查看详情跳转
 			look() {
 				uni.navigateTo({
-					url: 'dataDetails/index?studentId='+this.studentId+"&studentRealname="+this.studentRealname+"&studentAvatar="+this.studentAvatar+'&studentNum='+this.studentNum
+					url: 'dataDetails/index?studentId=' + this.studentId + "&studentRealname=" + this.studentRealname +
+						"&studentAvatar=" + this.studentAvatar + '&studentNum=' + this.studentNum
 				})
 			},
 			// 个人资料跳转
@@ -154,9 +155,16 @@
 			},
 			// 查看全部收藏跳转
 			toAllCollections() {
-				uni.navigateTo({
-					url: 'allCollections/index'
-				})
+				if (this.collectWordTotal == 0) {
+					uni.showToast({
+						title: '还没有收藏！快去收藏吧'
+					})
+				} else {
+					uni.navigateTo({
+						url: 'allCollections/index'
+					})
+				}
+
 			},
 			// 退出登录
 			loginOut() {
@@ -176,12 +184,12 @@
 				this.$minApi.getUserInfo({}).then(data => {
 					getApp().globalData.schoolId = data.data.belongSchoolId
 					getApp().globalData.studentId = data.data.studentId
-					 uni.setStorageSync('studentId', data.data.studentId);
+					uni.setStorageSync('studentId', data.data.studentId);
 					this.studentId = data.data.studentId
-					this.studentRealname=data.data.studentRealname
-					this.studentAvatar=data.data.studentAvatar
+					this.studentRealname = data.data.studentRealname
+					this.studentAvatar = data.data.studentAvatar
 					this.userInfoList = data.data
-					this.studentNum=data.data.studentNum
+					this.studentNum = data.data.studentNum
 					// 获取收藏
 					this.$minApi.getCollectWordsList({
 						studentId: this.studentId
@@ -211,8 +219,10 @@
 
 
 		},
-		created() {
+		onShow() {
 			this.getUserInfo()
+		},
+		created() {
 			// 没有登录则跳转到登录页面
 			// if (!uni.getStorageSync('token')) {
 			// 	uni.redirectTo({
@@ -300,7 +310,7 @@
 					.infoTx {
 						width: 96rpx;
 						height: 96rpx;
-						background: rgba(0, 0, 0, 0);
+						background: #F1F1F1;
 						border: 6rpx solid rgba(85, 229, 208, 1);
 						border-radius: 50%;
 						opacity: 1;
@@ -394,7 +404,7 @@
 					.stuList {
 						width: 686rpx;
 						height: 352rpx;
-						background:#FFFFFF;
+						background: #FFFFFF;
 						box-shadow: 0px 8rpx 36rpx rgba(201, 201, 201, 0.15);
 						opacity: 1;
 						border-radius: 16rpx;
@@ -521,7 +531,8 @@
 							text-align: center;
 							margin-right: 32rpx;
 						}
-						.looAllBlueColor{
+
+						.looAllBlueColor {
 							border: 2rpx solid #03BFB7;
 							color: #03BFB7;
 						}
@@ -541,9 +552,10 @@
 							opacity: 1;
 							text-align: center;
 						}
-						.specialBlueColor{
-							background:linear-gradient(180deg,rgba(3,191,183,1) 0%,rgba(31,217,181,1) 100%);
-							opacity:1;
+
+						.specialBlueColor {
+							background: linear-gradient(180deg, rgba(3, 191, 183, 1) 0%, rgba(31, 217, 181, 1) 100%);
+							opacity: 1;
 						}
 					}
 				}

@@ -25,7 +25,7 @@
 			<!-- 注册 -->
 			<view class="loginBtn" v-if='!isLogin' @click="registerUserInfo()">注册</view>
 			<!-- 注册 -->
-			<view class="register" @click="isLogin=!isLogin">{{isLogin==true?'没有账号？注册':'已有账号？登录'}}</view>
+			<view class="register" @click="loginOrregister()">{{isLogin==true?'没有账号？注册':'已有账号？登录'}}</view>
 		</view>
 		<van-toast id="van-toast" />
 	</view>
@@ -44,6 +44,13 @@
 			}
 		},
 		methods: {
+			// 切换登录注册状态
+			loginOrregister() {
+				this.isLogin = !this.isLogin
+				this.password=''
+				this.username=''
+				this.againPwd=''
+			},
 			// 登录
 			loginByAccount() {
 				if (this.username == '' || this.password == '') {
@@ -94,8 +101,7 @@
 							}
 
 						})
-					}
-					else{
+					} else {
 						uni.showToast({
 							title: '两次密码不一致！',
 							icon: 'none'
